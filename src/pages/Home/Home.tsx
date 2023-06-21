@@ -6,23 +6,29 @@ import JoinRoomModal from '../../components/JoinRoomModal';
 const Home = () => {
     const navigate = useNavigate()
     const [room, setRoom] = useState<string>('')
-    const [joinRoom, setJoinRoom] = useState<string>()
+    const [findRoom, setFindRoom] = useState<string>()
     const [joinRoomModal, setJoinRoomModal] = useState<boolean>(false)
     const [joinRoomError, setJoinRoomError] = useState('')
 
-    const socket = io(`http://localhost:3001`)
-    socket.on('connect', () => {
-        if (joinRoom) {
-            socket.emit('joinRoom', joinRoom)
+
+    useEffect(() => {
+        if (findRoom) {
+            const socket = io(`http://localhost:3001`);
+            socket.on('connect', () => {
+                socket.emit('findRoom', findRoom);
+            });
+            socket.on('navToLobby', () => {
+                navigate(`/lobby/${findRoom}`);
+            });
+            socket.on('errorMessage', message => {
+                setJoinRoomError(message);
+            });
+
+            return () => {
+                socket.disconnect();
+            };
         }
-        socket.on('navToLobby', () => {
-            navigate(`/lobby/${joinRoom}`)
-        })
-        socket.on('errorMessage', message => {
-            console.log('working')
-            setJoinRoomError(message)
-        })
-    })
+    }, [findRoom]);
 
     const roomGenerator = () => {
         const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ123456789'
@@ -45,7 +51,7 @@ const Home = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        setJoinRoom(event.currentTarget.room.value)
+        setFindRoom(event.currentTarget.room.value)
     }
 
     return (
