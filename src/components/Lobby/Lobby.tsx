@@ -1,19 +1,25 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useTransition } from 'react';
 import io from 'socket.io-client'
 import { SERVER_URL } from '../../utils/utils'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { connect } from 'http2';
 
-const Lobby = () => {
+type LobbyProps = {
+    handleStartGame: () => void
+}
+
+const Lobby = ({ handleStartGame }: LobbyProps) => {
     const effectRan = useRef(false)
     const { room } = useParams()
 
+
     const [players, setPlayers] = useState<string[]>()
+    const [startGame, setStartGame] = useState(false)
 
     // const socket = io(`${SERVER_URL}`);
+    const socket = io(`http://localhost:3001`)
 
     useEffect(() => {
-        const socket = io(`http://localhost:3001`)
 
         if (effectRan.current === false) {
             socket.on('connect', async () => {
@@ -30,12 +36,20 @@ const Lobby = () => {
                     console.log(players)
                     setPlayers(players)
                 })
+                socket.on('gameStarted', () => {
+                    handleStartGame()
+                })
             })
 
         }
+
         effectRan.current = true
 
     }, [])
+
+    const onStartGame = () => {
+        socket.emit('startGame', room)
+    }
 
 
     return (
@@ -45,6 +59,7 @@ const Lobby = () => {
             {players && players.map(player => {
                 return <p key={player}>{player}</p>
             })}
+            <button onClick={() => { onStartGame() }}>Start Game</button>
         </div>
     );
 };

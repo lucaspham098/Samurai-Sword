@@ -1,12 +1,20 @@
+import { connect } from 'http2';
 import React, { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import io from 'socket.io-client'
+import Lobby from '../../components/Lobby/Lobby';
 
 const GamePage = () => {
 
     const effectRan = useRef(false)
 
+    const { room } = useParams()
+
+    const [startGame, setStartGame] = useState(false)
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<string>('')
 
+    const [player1ID, setPlayer1ID] = useState<string>('')
     const [player1Hand, setPlayer1Hand] = useState<object[]>([])
     const [player1Character, setPlayer1Character] = useState<Character>()
     const [player1Role, setPlayer1Role] = useState<Role>()
@@ -15,6 +23,7 @@ const GamePage = () => {
     const [player1Health, setPlayer1Health] = useState<number>()
     const [player1HonourPoints, setPlayer1HonourPoints] = useState<number>(3)
 
+    const [player2ID, setPlayer2ID] = useState<string>('')
     const [player2Hand, setPlayer2Hand] = useState<object[]>([])
     const [player2Character, setPlayer2Character] = useState<Character>()
     const [player2Role, setPlayer2Role] = useState<Role>()
@@ -23,6 +32,7 @@ const GamePage = () => {
     const [player2Health, setPlayer2Health] = useState<number>()
     const [player2HonourPoints, setPlayer2HonourPoints] = useState<number>(3)
 
+    const [player3ID, setPlayer3ID] = useState<string>('')
     const [player3Hand, setPlayer3Hand] = useState<object[]>([])
     const [player3Character, setPlayer3Character] = useState<Character>()
     const [player3Role, setPlayer3Role] = useState<Role>()
@@ -524,6 +534,8 @@ const GamePage = () => {
         return arr
     }
 
+    const socket = io(`http://localhost:3001`)
+
     useEffect(() => {
 
         const shuffledMainDeck = shuffle(mainDeck)
@@ -531,6 +543,14 @@ const GamePage = () => {
         const shuffledCharacterDeck = shuffle(characterDeck)
 
         if (effectRan.current === false) {
+
+            socket.on('connect', () => {
+                console.log(socket.id)
+                socket.emit('askForPlayers', room)
+                socket.on('players', players => {
+                    console.log(players)
+                })
+            })
 
             const settingPlayer1States = async () => {
                 const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
@@ -609,46 +629,76 @@ const GamePage = () => {
             settingPlayer3States()
 
             setDrawDeck(shuffledMainDeck)
+
+            socket.emit('initGameState', {
+                player1Hand: player1Hand,
+                player1Character: player1Character,
+                player1Role: player1Role,
+                player1Health: player1Health,
+                player1HonourPoints: player1HonourPoints,
+                player2Hand: player2Hand,
+                player2Character: player2Character,
+                player2Role: player2Role,
+                player2Health: player2Health,
+                player2HonourPoints: player2HonourPoints,
+                player3Hand: player3Hand,
+                player3Character: player3Character,
+                player3Role: player3Role,
+                player3Health: player3Health,
+                player3HonourPoints: player3HonourPoints,
+            })
+
+            // socket.on('initGameState',)
             effectRan.current = true
         }
 
-
     }, [])
 
+    const handleStartGame = () => {
+        setStartGame(true)
+    }
+
     return (
-        <div>
-            <h1>{drawDeck.length}</h1>
-            <h1>Player 1</h1>
-            {player1Character && player1Role &&
-                <>
-                    <p>{player1Character.name}</p>
-                    <p>{player1Role.role}</p>
-                    <p>Attacks:{player1Attacks}</p>
-                    <p>Honour Points:{player1HonourPoints}</p>
-                </>
+        <>
 
-            }
-            <h1>Player 2</h1>
-            {player2Character && player2Role &&
-                <>
-                    <p>{player2Character.name}</p>
-                    <p>{player2Role.role}</p>
-                    <p>Attacks:{player2Attacks}</p>
-                    <p>Honour Points:{player2HonourPoints}</p>
-                </>
+            {!startGame && <Lobby handleStartGame={handleStartGame} />}
+            {startGame && (
+                <div>
+                    <h1>{drawDeck.length}</h1>
+                    <h1>Player 1</h1>
+                    {player1Character && player1Role &&
+                        <>
+                            <p>{player1Character.name}</p>
+                            <p>{player1Role.role}</p>
+                            <p>Attacks:{player1Attacks}</p>
+                            <p>Honour Points:{player1HonourPoints}</p>
+                        </>
 
-            }
-            <h1>Player 3</h1>
-            {player3Character && player3Role &&
-                <>
-                    <p>{player3Character.name}</p>
-                    <p>{player3Role.role}</p>
-                    <p>Attacks:{player3Attacks}</p>
-                    <p>Honour Points:{player3HonourPoints}</p>
-                </>
+                    }
+                    <h1>Player 2</h1>
+                    {player2Character && player2Role &&
+                        <>
+                            <p>{player2Character.name}</p>
+                            <p>{player2Role.role}</p>
+                            <p>Attacks:{player2Attacks}</p>
+                            <p>Honour Points:{player2HonourPoints}</p>
+                        </>
 
-            }
-        </div >
+                    }
+                    <h1>Player 3</h1>
+                    {player3Character && player3Role &&
+                        <>
+                            <p>{player3Character.name}</p>
+                            <p>{player3Role.role}</p>
+                            <p>Attacks:{player3Attacks}</p>
+                            <p>Honour Points:{player3HonourPoints}</p>
+                        </>
+
+                    }
+                </div >
+            )}
+
+        </>
     );
 };
 

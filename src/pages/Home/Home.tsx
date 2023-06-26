@@ -18,7 +18,7 @@ const Home = () => {
                 socket.emit('findRoom', findRoom);
             });
             socket.on('navToLobby', () => {
-                navigate(`/lobby/${findRoom}`);
+                navigate(`/game/${findRoom}`);
             });
             socket.on('errorMessage', message => {
                 setJoinRoomError(message);
@@ -45,7 +45,7 @@ const Home = () => {
 
     useEffect(() => {
         if (room) {
-            navigate(`/lobby/${room}`)
+            navigate(`/game/${room}`)
         }
     }, [room])
 
