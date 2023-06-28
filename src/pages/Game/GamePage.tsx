@@ -19,6 +19,8 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<string>('')
 
+    const [usersHand, setUsersHand] = useState<PlayableCard[]>()
+
     const [player1ID, setPlayer1ID] = useState<string>('')
     const [player1Hand, setPlayer1Hand] = useState<PlayableCard[]>([])
     const [player1Character, setPlayer1Character] = useState<Character>()
@@ -561,6 +563,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (dealtPlayer1Role.role === 'Shogun') {
                     setPlayer1HonourPoints(5)
+                    setPlayer1Attacks(2)
                     const dealtPlayer1Hand = []
                     for (let i = 0; i < 4; i++) {
                         dealtPlayer1Hand.push(shuffledMainDeck.pop())
@@ -568,12 +571,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayer1Hand(dealtPlayer1Hand as PlayableCard[])
                     if (dealtPlayer1Character.name === 'Goemon') {
                         setPlayer1Attacks(3)
-                    } else {
-                        setPlayer1Attacks(2)
                     }
+                } else {
+                    const dealtPlayer1Hand = []
+                    for (let i = 0; i < 5; i++) {
+                        dealtPlayer1Hand.push(shuffledMainDeck.pop())
+                    }
+                    setPlayer1Hand(dealtPlayer1Hand as PlayableCard[])
                 }
-
-
             }
             settingPlayer1States()
 
@@ -586,6 +591,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (dealtPlayer2Role.role === 'Shogun') {
                     setPlayer2HonourPoints(5)
+                    setPlayer2Attacks(2)
                     const dealtPlayer2Hand = []
                     for (let i = 0; i < 4; i++) {
                         dealtPlayer2Hand.push(shuffledMainDeck.pop())
@@ -593,16 +599,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
                     if (dealtPlayer2Character.name === 'Goemon') {
                         setPlayer2Attacks(3)
-                    } else {
-                        setPlayer2Attacks(2)
                     }
+                } else {
+                    const dealtPlayer2Hand = []
+                    for (let i = 0; i < 5; i++) {
+                        dealtPlayer2Hand.push(shuffledMainDeck.pop())
+                    }
+                    setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
                 }
-
-                const dealtPlayer2Hand = []
-                for (let i = 0; i < 5; i++) {
-                    dealtPlayer2Hand.push(shuffledMainDeck.pop())
-                }
-                setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
             }
             settingPlayer2States()
 
@@ -615,6 +619,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (dealtPlayer3Role.role === 'Shogun') {
                     setPlayer3HonourPoints(5)
+                    setPlayer3Attacks(2)
                     const dealtPlayer3Hand = []
                     for (let i = 0; i < 4; i++) {
                         dealtPlayer3Hand.push(shuffledMainDeck.pop())
@@ -622,40 +627,46 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayer3Hand(dealtPlayer3Hand as PlayableCard[])
                     if (dealtPlayer3Character.name === 'Goemon') {
                         setPlayer3Attacks(3)
-                    } else {
-                        setPlayer3Attacks(2)
                     }
+                } else {
+                    const dealtPlayer3Hand = []
+                    for (let i = 0; i < 5; i++) {
+                        dealtPlayer3Hand.push(shuffledMainDeck.pop())
+                    }
+                    setPlayer3Hand(dealtPlayer3Hand as PlayableCard[])
                 }
-
-                const dealtPlayer3Hand = []
-                for (let i = 0; i < 5; i++) {
-                    dealtPlayer3Hand.push(shuffledMainDeck.pop())
-                }
-                setPlayer3Hand(dealtPlayer3Hand as PlayableCard[])
             }
             settingPlayer3States()
 
             setDrawDeck(shuffledMainDeck)
 
-            socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, }) => {
-                setPlayer1Hand(player1Hand)
+            socket.on('getHand', hand => {
+                setUsersHand(hand)
+            })
+
+            socket.on('setTurn', shogun => {
+                setTurn(shogun)
+                console.log('received set turn')
+                console.log(shogun)
+            })
+
+            socket.on('initGameState', ({ player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks, }) => {
                 setPlayer1Character(player1Character)
                 setPlayer1Role(player1Role)
                 setPlayer1Health(player1Health)
                 setPlayer1HonourPoints(player1HonourPoints)
                 setPlayer1Attacks(player1Attacks)
-                setPlayer2Hand(player2Hand)
                 setPlayer2Character(player2Character)
                 setPlayer2Role(player2Role)
                 setPlayer2Health(player2Health)
                 setPlayer2HonourPoints(player2HonourPoints)
                 setPlayer2Attacks(player2Attacks)
-                setPlayer3Hand(player3Hand)
                 setPlayer3Character(player3Character)
                 setPlayer3Role(player3Role)
                 setPlayer3Health(player3Health)
                 setPlayer3HonourPoints(player3HonourPoints)
                 setPlayer3Attacks(player3Attacks)
+                socket.emit('getHand', room)
             })
 
             effectRan.current = true
@@ -667,38 +678,41 @@ const GamePage = ({ socket }: GamePageProp) => {
     const initGameState = () => {
         socket.emit('initGameState', [
             {
-                player1Hand: player1Hand,
+                hand: player1Hand,
+                role: player1Role
+            },
+            {
+                hand: player2Hand,
+                role: player2Role
+            },
+            {
+                hand: player3Hand,
+                role: player3Role
+            },
+        ],
+            {
                 player1Character: player1Character,
                 player1Role: player1Role,
                 player1Health: player1Health,
                 player1HonourPoints: player1HonourPoints,
-                player2Hand: player2Hand,
+                player1Attacks: player1Attacks,
                 player2Character: player2Character,
                 player2Role: player2Role,
                 player2Health: player2Health,
                 player2HonourPoints: player2HonourPoints,
-                player3Hand: player3Hand,
+                player2Attacks: player2Attacks,
                 player3Character: player3Character,
                 player3Role: player3Role,
                 player3Health: player3Health,
                 player3HonourPoints: player3HonourPoints,
-            }, {
-
-            },
-            {
-
+                player3Attacks: player3Attacks,
             }
-        ]
             , room)
     }
 
     const handleStartGame = () => {
         setStartGame(true)
     }
-
-    setTimeout(() => {
-        console.log(player1Hand)
-    }, 1000);
 
     return (
         <>
@@ -715,9 +729,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Health: {player1Health}</p>
                             <p>Attacks:{player1Attacks}</p>
                             <p>Honour Points:{player1HonourPoints}</p>
-                            {player1Hand.map((card: PlayableCard) => {
-                                return <p>{card.name}</p>
-                            })}
                         </>
 
                     }
@@ -729,9 +740,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Health: {player2Health}</p>
                             <p>Attacks:{player2Attacks}</p>
                             <p>Honour Points:{player2HonourPoints}</p>
-                            {player2Hand.map((card: PlayableCard) => {
-                                return <p>{card.name}</p>
-                            })}
                         </>
 
                     }
@@ -743,11 +751,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Health: {player3Health}</p>
                             <p>Attacks:{player3Attacks}</p>
                             <p>Honour Points:{player3HonourPoints}</p>
-                            {player3Hand.map((card: PlayableCard) => {
-                                return <p>{card.name}</p>
-                            })}
                         </>
                     }
+                    <h1>Players Hand</h1>
+                    {usersHand && usersHand.map((card: PlayableCard) => {
+                        return <p>{card.name}</p>
+                    })}
                 </div >
 
             )}
