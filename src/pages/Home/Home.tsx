@@ -1,9 +1,13 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import io from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import JoinRoomModal from '../../components/JoinRoomModal';
 
-const Home = () => {
+type HomeProp = {
+    socket: Socket;
+}
+
+const Home = ({ socket }: HomeProp) => {
     const navigate = useNavigate()
     const [room, setRoom] = useState<string>('')
     const [findRoom, setFindRoom] = useState<string>()
@@ -13,20 +17,14 @@ const Home = () => {
 
     useEffect(() => {
         if (findRoom) {
-            const socket = io(`http://localhost:3001`);
-            socket.on('connect', () => {
-                socket.emit('findRoom', findRoom);
-            });
+            socket.emit('findRoom', findRoom)
             socket.on('navToLobby', () => {
-                navigate(`/game/${findRoom}`);
-            });
+                navigate(`/game/${findRoom}`)
+            })
             socket.on('errorMessage', message => {
                 setJoinRoomError(message);
-            });
+            })
 
-            return () => {
-                socket.disconnect();
-            };
         }
     }, [findRoom]);
 

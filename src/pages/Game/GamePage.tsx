@@ -1,10 +1,14 @@
 import { connect } from 'http2';
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import io from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import Lobby from '../../components/Lobby/Lobby';
 
-const GamePage = () => {
+type GamePageProp = {
+    socket: Socket
+}
+
+const GamePage = ({ socket }: GamePageProp) => {
 
     const effectRan = useRef(false)
 
@@ -534,8 +538,6 @@ const GamePage = () => {
         return arr
     }
 
-    const socket = io(`http://localhost:3001`)
-
     useEffect(() => {
 
         const shuffledMainDeck = shuffle(mainDeck)
@@ -543,15 +545,6 @@ const GamePage = () => {
         const shuffledCharacterDeck = shuffle(characterDeck)
 
         if (effectRan.current === false) {
-
-            socket.on('connect', () => {
-                console.log(socket.id)
-                socket.emit('askForPlayers', room)
-                socket.on('players', players => {
-                    console.log(players)
-                })
-            })
-
             const settingPlayer1States = async () => {
                 const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -630,38 +623,87 @@ const GamePage = () => {
 
             setDrawDeck(shuffledMainDeck)
 
-            socket.emit('initGameState', {
-                player1Hand: player1Hand,
-                player1Character: player1Character,
-                player1Role: player1Role,
-                player1Health: player1Health,
-                player1HonourPoints: player1HonourPoints,
-                player2Hand: player2Hand,
-                player2Character: player2Character,
-                player2Role: player2Role,
-                player2Health: player2Health,
-                player2HonourPoints: player2HonourPoints,
-                player3Hand: player3Hand,
-                player3Character: player3Character,
-                player3Role: player3Role,
-                player3Health: player3Health,
-                player3HonourPoints: player3HonourPoints,
+            // socket.on('initGameState', () => {
+            //     console.log('receive initgamestate from server')
+            // })
+
+            socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, }) => {
+                console.log('init game state')
+                setPlayer1Hand(player1Hand)
+                setPlayer1Character(player1Character)
+                setPlayer1Role(player1Role)
+                setPlayer1Health(player1Health)
+                setPlayer1HonourPoints(player1HonourPoints)
+                setPlayer1Attacks(player1Attacks)
+                setPlayer2Hand(player2Hand)
+                setPlayer2Character(player2Character)
+                setPlayer2Role(player2Role)
+                setPlayer2Health(player2Health)
+                setPlayer2HonourPoints(player2HonourPoints)
+                setPlayer2Attacks(player2Attacks)
+                setPlayer3Hand(player3Hand)
+                setPlayer3Character(player3Character)
+                setPlayer3Role(player3Role)
+                setPlayer3Health(player3Health)
+                setPlayer3HonourPoints(player3HonourPoints)
+                setPlayer3Attacks(player3Attacks)
             })
 
-            // socket.on('initGameState',)
+            // socket.emit('initGameState', {
+            //     room: room,
+            //     player1Hand: player1Hand,
+            //     player1Character: player1Character,
+            //     player1Role: player1Role,
+            //     player1Health: player1Health,
+            //     player1HonourPoints: player1HonourPoints,
+            //     player2Hand: player2Hand,
+            //     player2Character: player2Character,
+            //     player2Role: player2Role,
+            //     player2Health: player2Health,
+            //     player2HonourPoints: player2HonourPoints,
+            //     player3Hand: player3Hand,
+            //     player3Character: player3Character,
+            //     player3Role: player3Role,
+            //     player3Health: player3Health,
+            //     player3HonourPoints: player3HonourPoints,
+            // })
+
             effectRan.current = true
         }
 
     }, [])
 
+
+    const initGameState = () => {
+        socket.emit('initGameState', {
+            room: room,
+            player1Hand: player1Hand,
+            player1Character: player1Character,
+            player1Role: player1Role,
+            player1Health: player1Health,
+            player1HonourPoints: player1HonourPoints,
+            player2Hand: player2Hand,
+            player2Character: player2Character,
+            player2Role: player2Role,
+            player2Health: player2Health,
+            player2HonourPoints: player2HonourPoints,
+            player3Hand: player3Hand,
+            player3Character: player3Character,
+            player3Role: player3Role,
+            player3Health: player3Health,
+            player3HonourPoints: player3HonourPoints,
+        })
+    }
+
     const handleStartGame = () => {
         setStartGame(true)
+        // initGameState()
     }
 
     return (
         <>
 
-            {!startGame && <Lobby handleStartGame={handleStartGame} />}
+            {!startGame && <Lobby handleStartGame={handleStartGame} initGameState={initGameState} socket={socket} />}
             {startGame && (
                 <div>
                     <h1>{drawDeck.length}</h1>
@@ -670,6 +712,7 @@ const GamePage = () => {
                         <>
                             <p>{player1Character.name}</p>
                             <p>{player1Role.role}</p>
+                            <p>Health: {player1Health}</p>
                             <p>Attacks:{player1Attacks}</p>
                             <p>Honour Points:{player1HonourPoints}</p>
                         </>
@@ -680,6 +723,7 @@ const GamePage = () => {
                         <>
                             <p>{player2Character.name}</p>
                             <p>{player2Role.role}</p>
+                            <p>Health: {player2Health}</p>
                             <p>Attacks:{player2Attacks}</p>
                             <p>Honour Points:{player2HonourPoints}</p>
                         </>
@@ -690,12 +734,15 @@ const GamePage = () => {
                         <>
                             <p>{player3Character.name}</p>
                             <p>{player3Role.role}</p>
+                            <p>Health: {player3Health}</p>
                             <p>Attacks:{player3Attacks}</p>
                             <p>Honour Points:{player3HonourPoints}</p>
                         </>
 
                     }
+                    {/* <button onClick={initGameState}>Deal</button> */}
                 </div >
+
             )}
 
         </>
