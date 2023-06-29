@@ -1,0 +1,26 @@
+.game {
+    &__flex-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__player-character {
+        border: 1px black solid;
+    }
+
+    &__deck-container {
+        width: 25%;
+        margin: auto;
+    }
+
+    &__user-container {
+        position: relative;
+        margin: auto;
+        width: 30%;
+        margin-top: 15%;
+    }
+
+    &__user-hand {
+        display: flex;
+    }
+}

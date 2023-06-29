@@ -7,9 +7,10 @@ type LobbyProps = {
     handleStartGame: () => void,
     socket: Socket,
     initGameState: () => void
+    handleSetPlayers: (player: string[]) => void
 }
 
-const Lobby = ({ handleStartGame, socket, initGameState }: LobbyProps) => {
+const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: LobbyProps) => {
     const effectRan = useRef(false);
     const { room } = useParams();
 
@@ -28,6 +29,7 @@ const Lobby = ({ handleStartGame, socket, initGameState }: LobbyProps) => {
             socket.on('players', (players) => {
                 console.log(players);
                 setPlayers(players);
+                handleSetPlayers(players)
                 if (socket.id === players[0]) {
                     setIsLeader(true)
                 }
