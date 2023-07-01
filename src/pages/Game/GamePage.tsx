@@ -19,7 +19,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<string>('')
 
-    const [usersHand, setUsersHand] = useState<PlayableCard[]>()
+    const [usersHand, setUsersHand] = useState<PlayableCard[]>([])
 
     const [player1, setPlayer1] = useState<string>('')
     const [player1Hand, setPlayer1Hand] = useState<PlayableCard[]>([])
@@ -50,33 +50,35 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     // const [gameStateInitialized, setGameStateInitialized] = useState<boolean>(false)
     const [players, setPlayers] = useState<string[]>([])
+    const [selectedPlayer, setSelectedPlayer] = useState<string>('')
+    const [selectedCard, SetSelectedCard] = useState<PlayableCard>()
     const [turn, setTurn] = useState('')
-    const [drawDeck, setDrawDeck] = useState<object[]>([])
-    const [discardPile, setDiscardPile] = useState<object[]>([])
+    const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
+    const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
 
-    interface Weapon {
-        type: 'weapon';
-        name: string;
-        reach: number;
-        damage: number;
-    }
+    // interface Weapon {
+    //     type: 'weapon';
+    //     name: string;
+    //     range: number;
+    //     damage: number;
+    // }
 
-    interface Action {
-        type: 'action';
-        name: string;
-        // effect: () => void;
-    }
+    // interface Action {
+    //     type: 'action';
+    //     name: string;
+    //     // effect: () => void;
+    // }
 
-    interface Property {
-        type: 'property';
-        name: string;
-        // effect: () => void;
-    }
+    // interface Property {
+    //     type: 'property';
+    //     name: string;
+    //     // effect: () => void;
+    // }
 
     interface PlayableCard {
         type: string;
         name: string;
-        reach?: number;
+        range?: number;
         damage?: number;
     }
 
@@ -92,191 +94,197 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
 
-    const mainDeck = [
+    const mainDeck: PlayableCard[] = [
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bokken',
-            reach: 1,
+            range: 1,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Kusarigama',
-            reach: 2,
+            range: 2,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kusarigama',
-            reach: 2,
+            range: 2,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kusarigama',
-            reach: 2,
+            range: 2,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kusarigama',
-            reach: 2,
+            range: 2,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Bo',
-            reach: 2,
+            range: 2,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bo',
-            reach: 2,
+            range: 2,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bo',
-            reach: 2,
+            range: 2,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bo',
-            reach: 2,
+            range: 2,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Bo',
-            reach: 2,
+            range: 2,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Daikyu',
-            reach: 5,
+            range: 5,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Nagayari',
-            reach: 4,
+            range: 4,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kiseri',
-            reach: 1,
+            range: 1,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kiseri',
-            reach: 1,
+            range: 1,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kiseri',
-            reach: 1,
+            range: 1,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kiseri',
-            reach: 1,
+            range: 1,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Kiseri',
-            reach: 1,
+            range: 1,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Shuriken',
-            reach: 3,
+            range: 3,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Shuriken',
-            reach: 3,
+            range: 3,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Shuriken',
-            reach: 3,
+            range: 3,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Wakizashi',
-            reach: 1,
+            range: 1,
             damage: 3,
         },
         {
             type: 'weapon',
             name: 'Naginata',
-            reach: 4,
+            range: 4,
+            damage: 1,
+        },
+        {
+            type: 'weapon',
+            name: 'Naginata',
+            range: 4,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Tanegashima',
-            reach: 5,
+            range: 5,
             damage: 1,
         },
         {
             type: 'weapon',
             name: 'Nodachi',
-            reach: 3,
+            range: 3,
             damage: 3,
         },
         {
             type: 'weapon',
             name: 'Kanabo',
-            reach: 3,
+            range: 3,
             damage: 2,
         },
         {
             type: 'weapon',
             name: 'Katana',
-            reach: 2,
+            range: 2,
             damage: 3,
         },
         {
@@ -381,10 +389,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'action',
-            name: 'Divertion'
-        },
-        {
-            type: 'action',
             name: 'Breathing'
         },
         {
@@ -394,6 +398,66 @@ const GamePage = ({ socket }: GamePageProp) => {
         {
             type: 'action',
             name: 'Breathing'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
         },
         {
             type: 'property',
@@ -422,6 +486,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         {
             type: 'property',
             name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
         },
         {
             type: 'property',
@@ -554,9 +622,16 @@ const GamePage = ({ socket }: GamePageProp) => {
         const shuffledMainDeck = shuffle(mainDeck)
         const shuffledRoleDeck = shuffle(roleDeck)
         const shuffledCharacterDeck = shuffle(characterDeck)
-        setPlayer1(players[0])
-        setPlayer2(players[1])
-        setPlayer3(players[2])
+
+        if (players.length > 0) {
+            setPlayer1(players[0])
+            setPlayer2(players[1])
+            setPlayer3(players[2])
+        }
+
+        if (player1) {
+            console.log(player1)
+        }
 
         if (effectRan.current === false) {
             const settingPlayer1States = async () => {
@@ -643,7 +718,13 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             settingPlayer3States()
 
-            setDrawDeck(shuffledMainDeck)
+            setDrawDeck(shuffledMainDeck as PlayableCard[])
+
+            // socket.on('players', players => {
+            //     setPlayers(players)
+            // })
+
+            // socket.emit('askForPlayers', room)
 
             socket.on('getHand', hand => {
                 setUsersHand(hand)
@@ -651,8 +732,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             socket.on('setTurn', shogun => {
                 setTurn(shogun)
-                console.log('received set turn')
-                console.log(shogun)
             })
 
             socket.on('initGameState', ({ player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks, }) => {
@@ -676,6 +755,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             effectRan.current = true
         }
+
 
     }, [])
 
@@ -727,10 +807,261 @@ const GamePage = ({ socket }: GamePageProp) => {
         setStartGame(true)
     }
 
+    useEffect(() => {
+        if (socket.id === turn) {
+
+            const newCards = []
+            for (let i = 0; i < 2; i++) {
+                newCards.push(drawDeck.pop() as PlayableCard)
+            }
+
+            setUsersHand([...usersHand, ...newCards])
+        }
+    }, [turn])
+
+    const handleSelectedPlayer = (target: HTMLDivElement) => {
+        setSelectedPlayer(target.id)
+    }
+
+    const handleSelectedCard = (card: PlayableCard) => {
+        SetSelectedCard(card)
+    }
+
+    const handleCardPlayer = () => {
+        const player = socket.id
+        if (turn !== player || !selectedCard || selectedPlayer === '') {
+            return
+        }
+        console.log(selectedCard)
+
+        if (selectedCard.type === 'weapon') {
+            const range = selectedCard.range
+            console.log(range)
+
+            const difficulty = () => {
+                const difficulty1 = Math.abs((player.indexOf(socket.id) + 1) - (player.indexOf(selectedPlayer) + 1))
+                const difficulty2 = player.length - difficulty1
+                if (difficulty1 > difficulty2) {
+                    return difficulty2
+                } else {
+                    return difficulty1
+                }
+            }
+
+            if (range !== undefined && range < difficulty()) {
+                // console.log('miss')
+            } else {
+                discardPile.push(selectedCard)
+                const indexOfCard = usersHand?.indexOf(selectedCard)
+                usersHand.splice(indexOfCard, 1)
+            }
+
+        }
+    }
+
+    handleCardPlayer()
+
+
     return (
         <>
             {!startGame && <Lobby handleStartGame={handleStartGame} initGameState={initGameState} socket={socket} handleSetPlayers={handleSetPlayers} />}
-            {/* {startGame && (
+
+
+            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === players[0] &&
+                <>
+                    {player2Role && player3Role && player2Character && player3Character &&
+                        <div className="game__flex-container">
+                            <div className='game__player-container'>
+                                <h1 className='game__player-name'>Player 2</h1>
+                                <div className='game__player-character' id={player2} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    <p>{player2Character.name}</p>
+                                </div>
+                                {player2Role.role === 'Shogun' &&
+                                    <div className='game__player-role'>
+                                        <p>{player2Role.role}</p>
+                                    </div>
+                                }
+                                <p>Health: {player2Health}</p>
+                                <p>Honour Points:{player2HonourPoints}</p>
+                                <p>Attacks:{player2Attacks}</p>
+                                <p>Card #:{player2Hand.length} </p>
+                            </div>
+
+                            <div className='game__player-container'>
+                                <h1 className='game__player-name'>Player 3</h1>
+                                <div className='game__player-character' id={player3} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    <p>{player3Character.name}</p>
+                                </div>
+                                {player3Role.role === 'Shogun' &&
+                                    <div className='game__player-role'>
+                                        <p>{player3Role.role}</p>
+                                    </div>
+                                }
+                                <p>Health: {player3Health}</p>
+                                <p>Honour Points:{player3HonourPoints}</p>
+                                <p>Attacks:{player3Attacks}</p>
+                                <p>Card #:{player3Hand.length} </p>
+                            </div>
+                        </div>}
+
+
+                    <div className='game__deck-container'>
+                        <p>Draw Deck #: {drawDeck.length}</p>
+                        {discardPile.length > 0 && <p>Discard Pile:{discardPile[discardPile.length - 1].name}</p>}
+                    </div>
+
+
+                    {player1Role && player1Character &&
+                        <div className='game__user-container'>
+                            <div className='game__player-character' id={socket.id}>
+                                <p>{player1Character.name}</p>
+                            </div>
+                            {player1Role.role === 'Shogun' &&
+                                <div className='game__user-role'>
+                                    <p>{player1Role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {player1Health}</p>
+                            <p>Honour Points:{player1HonourPoints}</p>
+                            <p>Attacks:{player1Attacks}</p>
+                            <div className='game__user-hand'>
+                                {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
+                                    return <p className='c key={index}ard' onClick={() => { handleSelectedCard(card) }}>{card.name}</p>
+                                })}
+                            </div>
+                        </div>}
+                </>
+            }
+
+            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player2 &&
+                <>
+                    <div className="game__flex-container">
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 3</h1>
+                            <div className='game__player-character' id={player3} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{player3Character.name}</p>
+                            </div>
+                            {player3Role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{player3Role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {player3Health}</p>
+                            <p>Honour Points:{player3HonourPoints}</p>
+                            <p>Attacks:{player3Attacks}</p>
+                            <p>Card #:{player3Hand.length} </p>
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 1</h1>
+                            <div className='game__player-character' id={player1} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{player1Character.name}</p>
+                            </div>
+                            {player1Role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{player1Role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {player1Health}</p>
+                            <p>Honour Points:{player1HonourPoints}</p>
+                            <p>Attacks:{player1Attacks}</p>
+                            <p>Card #:{player1Hand.length} </p>
+                        </div>
+                    </div>
+
+
+                    <div className='game__deck-container'>
+                        <p>Draw Deck #: {drawDeck.length}</p>
+                        {discardPile.length > 0 && <p>Discard Pile:{discardPile[discardPile.length - 1].name}</p>}
+                    </div>
+
+
+                    <div className='game__user-container'>
+                        <div className='game__player-character' id={socket.id}>
+                            <p>{player2Character.name}</p>
+                        </div>
+                        {player2Role.role === 'Shogun' &&
+                            <div className='game__user-role'>
+                                <p>{player2Role.role}</p>
+                            </div>
+                        }
+                        <p>Health: {player2Health}</p>
+                        <p>Honour Points:{player2HonourPoints}</p>
+                        <p>Attacks:{player2Attacks}</p>
+                        <div className='game__user-hand'>
+                            {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
+                                return <p className='card' key={index} onClick={() => { handleSelectedCard(card) }}>{card.name}</p>
+                            })}
+                        </div>
+                    </div>
+                </>
+            }
+
+            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player3 &&
+                <>
+                    <div className="game__flex-container">
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 1</h1>
+                            <div className='game__player-character' id={player1} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{player1Character.name}</p>
+                            </div>
+                            {player1Role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{player1Role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {player1Health}</p>
+                            <p>Honour Points:{player1HonourPoints}</p>
+                            <p>Attacks:{player1Attacks}</p>
+                            <p>Card #:{player1Hand.length} </p>
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 2</h1>
+                            <div className='game__player-character' id={player2} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{player2Character.name}</p>
+                            </div>
+                            {player2Role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{player2Role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {player2Health}</p>
+                            <p>Honour Points:{player2HonourPoints}</p>
+                            <p>Attacks:{player2Attacks}</p>
+                            <p>Card #:{player2Hand.length} </p>
+                        </div>
+                    </div>
+
+
+                    <div className='game__deck-container'>
+                        <p>Draw Deck #: {drawDeck.length}</p>
+                        {discardPile.length > 0 && <p>Discard Pile:{discardPile[discardPile.length - 1].name}</p>}
+                    </div>
+
+
+                    <div className='game__user-container'>
+                        <div className='game__player-character' id={socket.id}>
+                            <p>{player3Character.name}</p>
+                        </div>
+                        {player3Role.role === 'Shogun' &&
+                            <div className='game__player-role'>
+                                <p>{player3Role.role}</p>
+                            </div>
+                        }
+                        <p>Health: {player3Health}</p>
+                        <p>Honour Points:{player3HonourPoints}</p>
+                        <p>Attacks:{player3Attacks}</p>
+                        <div className='game__user-hand'>
+                            {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
+                                return <p className='card' key={index} onClick={() => { handleSelectedCard(card) }}>{card.name}</p>
+                            })}
+                        </div>
+                    </div>
+                </>
+            }
+            {/* 
+            {startGame && (
                 <div>
                     <h1>{drawDeck.length}</h1>
                     <h1>Player 1</h1>
@@ -765,201 +1096,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{player3HonourPoints}</p>
                         </>
                     }
-                    <h1>Players Hand</h1>
-                    {usersHand && usersHand.map((card: PlayableCard) => {
-                        return <p>{card.name}</p>
-                    })}
                 </div >
             )} */}
-
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player1 &&
-                <>
-                    <div className="game__flex-container">
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
-                            <div className='game__player-character' id={player2}>
-                                <p>{player2Character.name}</p>
-                            </div>
-                            {player2Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player2Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player2Health}</p>
-                            <p>Honour Points:{player2HonourPoints}</p>
-                            <p>Attacks:{player2Attacks}</p>
-                            <p>Card #:{player2Hand.length} </p>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 3</h1>
-                            <div className='game__player-character' id={player3}>
-                                <p>{player3Character.name}</p>
-                            </div>
-                            {player3Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player3Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player3Health}</p>
-                            <p>Honour Points:{player3HonourPoints}</p>
-                            <p>Attacks:{player3Attacks}</p>
-                            <p>Card #:{player3Hand.length} </p>
-                        </div>
-                    </div>
-
-
-                    <div className='game__deck-container'>
-                        <p>Draw Deck #: {drawDeck.length}</p>
-                    </div>
-
-
-                    <div className='game__user-container'>
-                        <div className='game__player-character' id={socket.id}>
-                            <p>{player1Character.name}</p>
-                        </div>
-                        {player1Role.role === 'Shogun' &&
-                            <div className='game__user-role'>
-                                <p>{player1Role.role}</p>
-                            </div>
-                        }
-                        <p>Health: {player1Health}</p>
-                        <p>Honour Points:{player1HonourPoints}</p>
-                        <p>Attacks:{player1Attacks}</p>
-                        <div className='game__user-hand'>
-                            {usersHand && usersHand.map((card: PlayableCard) => {
-                                return <p>{card.name}</p>
-                            })}
-                        </div>
-                    </div>
-                </>
-            }
-
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player2 &&
-                <>
-                    <div className="game__flex-container">
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 3</h1>
-                            <div className='game__player-character' id={player3}>
-                                <p>{player3Character.name}</p>
-                            </div>
-                            {player3Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player3Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player3Health}</p>
-                            <p>Honour Points:{player3HonourPoints}</p>
-                            <p>Attacks:{player3Attacks}</p>
-                            <p>Card #:{player3Hand.length} </p>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 1</h1>
-                            <div className='game__player-character' id={player1}>
-                                <p>{player1Character.name}</p>
-                            </div>
-                            {player1Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player1Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player1Health}</p>
-                            <p>Honour Points:{player1HonourPoints}</p>
-                            <p>Attacks:{player1Attacks}</p>
-                            <p>Card #:{player1Hand.length} </p>
-                        </div>
-                    </div>
-
-
-                    <div className='game__deck-container'>
-                        <p>Draw Deck #: {drawDeck.length}</p>
-                    </div>
-
-
-                    <div className='game__user-container'>
-                        <div className='game__player-character' id={socket.id}>
-                            <p>{player2Character.name}</p>
-                        </div>
-                        {player2Role.role === 'Shogun' &&
-                            <div className='game__user-role'>
-                                <p>{player2Role.role}</p>
-                            </div>
-                        }
-                        <p>Health: {player2Health}</p>
-                        <p>Honour Points:{player2HonourPoints}</p>
-                        <p>Attacks:{player2Attacks}</p>
-                        <div className='game__user-hand'>
-                            {usersHand && usersHand.map((card: PlayableCard) => {
-                                return <p >{card.name}</p>
-                            })}
-                        </div>
-                    </div>
-                </>
-            }
-
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player3 &&
-                <>
-                    <div className="game__flex-container">
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 1</h1>
-                            <div className='game__player-character' id={player1}>
-                                <p>{player1Character.name}</p>
-                            </div>
-                            {player1Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player1Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player1Health}</p>
-                            <p>Honour Points:{player1HonourPoints}</p>
-                            <p>Attacks:{player1Attacks}</p>
-                            <p>Card #:{player1Hand.length} </p>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
-                            <div className='game__player-character' id={player2}>
-                                <p>{player2Character.name}</p>
-                            </div>
-                            {player2Role.role === 'Shogun' &&
-                                <div className='game__player-role'>
-                                    <p>{player2Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player2Health}</p>
-                            <p>Honour Points:{player2HonourPoints}</p>
-                            <p>Attacks:{player2Attacks}</p>
-                            <p>Card #:{player2Hand.length} </p>
-                        </div>
-                    </div>
-
-
-                    <div className='game__deck-container'>
-                        <p>Draw Deck #: {drawDeck.length}</p>
-                    </div>
-
-
-                    <div className='game__user-container'>
-                        <div className='game__player-character' id={socket.id}>
-                            <p>{player3Character.name}</p>
-                        </div>
-                        {player3Role.role === 'Shogun' &&
-                            <div className='game__player-role'>
-                                <p>{player3Role.role}</p>
-                            </div>
-                        }
-                        <p>Health: {player3Health}</p>
-                        <p>Honour Points:{player3HonourPoints}</p>
-                        <p>Attacks:{player3Attacks}</p>
-                        <div className='game__user-hand'>
-                            {usersHand && usersHand.map((card: PlayableCard) => {
-                                return <p>{card.name}</p>
-                            })}
-                        </div>
-                    </div>
-                </>
-            }
         </>
     );
 };
