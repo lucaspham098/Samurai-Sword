@@ -26,7 +26,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [player1Character, setPlayer1Character] = useState<Character>()
     const [player1Role, setPlayer1Role] = useState<Role>()
     const [player1Attacks, setPlayer1Attacks] = useState<number>(1)
-    const [player1Difficulty, setPlayer1Difficulty] = useState<number>()
     const [player1Health, setPlayer1Health] = useState<number>()
     const [player1HonourPoints, setPlayer1HonourPoints] = useState<number>(3)
 
@@ -35,7 +34,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [player2Character, setPlayer2Character] = useState<Character>()
     const [player2Role, setPlayer2Role] = useState<Role>()
     const [player2Attacks, setPlayer2Attacks] = useState<number>(1)
-    const [player2Difficulty, setPlayer2Difficulty] = useState<number>()
     const [player2Health, setPlayer2Health] = useState<number>()
     const [player2HonourPoints, setPlayer2HonourPoints] = useState<number>(3)
 
@@ -44,7 +42,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [player3Character, setPlayer3Character] = useState<Character>()
     const [player3Role, setPlayer3Role] = useState<Role>()
     const [player3Attacks, setPlayer3Attacks] = useState<number>(1)
-    const [player3Difficulty, setPlayer3Difficulty] = useState<number>()
     const [player3Health, setPlayer3Health] = useState<number>()
     const [player3HonourPoints, setPlayer3HonourPoints] = useState<number>(3)
 
@@ -629,10 +626,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setPlayer3(players[2])
         }
 
-        if (player1) {
-            console.log(player1)
-        }
-
         if (effectRan.current === false) {
             const settingPlayer1States = async () => {
                 const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
@@ -720,37 +713,54 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             setDrawDeck(shuffledMainDeck as PlayableCard[])
 
-            // socket.on('players', players => {
-            //     setPlayers(players)
-            // })
-
-            // socket.emit('askForPlayers', room)
-
             socket.on('getHand', hand => {
-                setUsersHand(hand)
+                setUsersHand([...hand])
             })
 
             socket.on('setTurn', shogun => {
-                setTurn(shogun)
+                setTimeout(() => {
+                    setTurn(shogun)
+                }, 500);
             })
 
-            socket.on('initGameState', ({ player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks, }) => {
+            socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks }) => {
+                setPlayer1Hand(player1Hand)
                 setPlayer1Character(player1Character)
                 setPlayer1Role(player1Role)
                 setPlayer1Health(player1Health)
                 setPlayer1HonourPoints(player1HonourPoints)
                 setPlayer1Attacks(player1Attacks)
+                setPlayer2Hand(player2Hand)
                 setPlayer2Character(player2Character)
                 setPlayer2Role(player2Role)
                 setPlayer2Health(player2Health)
                 setPlayer2HonourPoints(player2HonourPoints)
                 setPlayer2Attacks(player2Attacks)
+                setPlayer3Hand(player3Hand)
                 setPlayer3Character(player3Character)
                 setPlayer3Role(player3Role)
                 setPlayer3Health(player3Health)
                 setPlayer3HonourPoints(player3HonourPoints)
                 setPlayer3Attacks(player3Attacks)
                 socket.emit('getHand', room)
+            })
+
+            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, discardPile, drawDeck }) => {
+                console.log('receive update game')
+                setPlayer1Hand(player1Hand)
+                setPlayer1Health(player1Health)
+                setPlayer1HonourPoints(player1HonourPoints)
+                setPlayer1Attacks(player1Attacks)
+                setPlayer2Hand(player2Hand)
+                setPlayer2Health(player2Health)
+                setPlayer2HonourPoints(player2HonourPoints)
+                setPlayer2Attacks(player2Attacks)
+                setPlayer3Hand(player3Hand)
+                setPlayer3Health(player3Health)
+                setPlayer3HonourPoints(player3HonourPoints)
+                setPlayer3Attacks(player3Attacks)
+                setDrawDeck(drawDeck)
+                setDiscardPile(discardPile)
             })
 
             effectRan.current = true
@@ -776,16 +786,19 @@ const GamePage = ({ socket }: GamePageProp) => {
             },
         ],
             {
+                player1Hand: player1Hand,
                 player1Character: player1Character,
                 player1Role: player1Role,
                 player1Health: player1Health,
                 player1HonourPoints: player1HonourPoints,
                 player1Attacks: player1Attacks,
+                player2Hand: player2Hand,
                 player2Character: player2Character,
                 player2Role: player2Role,
                 player2Health: player2Health,
                 player2HonourPoints: player2HonourPoints,
                 player2Attacks: player2Attacks,
+                player3Hand: player3Hand,
                 player3Character: player3Character,
                 player3Role: player3Role,
                 player3Health: player3Health,
@@ -793,6 +806,94 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3Attacks: player3Attacks,
             }
             , room)
+    }
+
+    const updateGameState = () => {
+        if (socket.id === players[0]) {
+            socket.emit('updateGameState', [
+                {
+                    hand: usersHand
+                },
+                {
+                    hand: player2Hand
+                },
+                {
+                    hand: player3Hand
+                },
+            ], {
+                player1Hand: usersHand,
+                player1Health: player1Health,
+                player1HonourPoints: player1HonourPoints,
+                player1Attacks: player1Attacks,
+                player2Hand: player2Hand,
+                player2Health: player2Health,
+                player2HonourPoints: player2HonourPoints,
+                player2Attacks: player2Attacks,
+                player3Hand: player3Hand,
+                player3Health: player3Health,
+                player3HonourPoints: player3HonourPoints,
+                player3Attacks: player3Attacks,
+                drawDeck: drawDeck,
+                discardPile: discardPile
+            }, room)
+        }
+        if (socket.id === players[1]) {
+            socket.emit('updateGameState', [
+                {
+                    hand: player1Hand
+                },
+                {
+                    hand: usersHand
+                },
+                {
+                    hand: player3Hand
+                },
+            ], {
+                player1Hand: player1Hand,
+                player1Health: player1Health,
+                player1HonourPoints: player1HonourPoints,
+                player1Attacks: player1Attacks,
+                player2Hand: usersHand,
+                player2Health: player2Health,
+                player2HonourPoints: player2HonourPoints,
+                player2Attacks: player2Attacks,
+                player3Hand: player3Hand,
+                player3Health: player3Health,
+                player3HonourPoints: player3HonourPoints,
+                player3Attacks: player3Attacks,
+                drawDeck: drawDeck,
+                discardPile: discardPile
+            }, room)
+        }
+        if (socket.id === players[2]) {
+            socket.emit('updateGameState', [
+                {
+                    hand: player1Hand
+                },
+                {
+                    hand: player2Hand
+                },
+                {
+                    hand: usersHand
+                },
+            ], {
+                player1Hand: player1Hand,
+                player1Health: player1Health,
+                player1HonourPoints: player1HonourPoints,
+                player1Attacks: player1Attacks,
+                player2Hand: player2Hand,
+                player2Health: player2Health,
+                player2HonourPoints: player2HonourPoints,
+                player2Attacks: player2Attacks,
+                player3Hand: usersHand,
+                player3Health: player3Health,
+                player3HonourPoints: player3HonourPoints,
+                player3Attacks: player3Attacks,
+                drawDeck: drawDeck,
+                discardPile: discardPile
+            }, room)
+        }
+
     }
 
     // if (player1Character && player2Character && player3Character) {
@@ -807,25 +908,33 @@ const GamePage = ({ socket }: GamePageProp) => {
         setStartGame(true)
     }
 
-    useEffect(() => {
-        if (socket.id === turn) {
-
-            const newCards = []
-            for (let i = 0; i < 2; i++) {
-                newCards.push(drawDeck.pop() as PlayableCard)
-            }
-
-            setUsersHand([...usersHand, ...newCards])
-        }
-    }, [turn])
-
     const handleSelectedPlayer = (target: HTMLDivElement) => {
         setSelectedPlayer(target.id)
+        console.log(target.id)
     }
 
     const handleSelectedCard = (card: PlayableCard) => {
         SetSelectedCard(card)
     }
+
+    useEffect(() => {
+        if (socket.id === turn) {
+            const newCards: PlayableCard[] = [];
+            for (let i = 0; i < 2; i++) {
+                if (drawDeck.length > 0) {
+                    newCards.push(drawDeck.pop() as PlayableCard);
+                    console.log(newCards);
+                    console.log(usersHand)
+                }
+            }
+            setUsersHand([...usersHand, ...newCards])
+        }
+
+    }, [turn]);
+    useEffect(() => {
+        updateGameState()
+    }, [usersHand])
+
 
     const handleCardPlayer = () => {
         const player = socket.id
@@ -926,14 +1035,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Attacks:{player1Attacks}</p>
                             <div className='game__user-hand'>
                                 {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
-                                    return <p className='c key={index}ard' onClick={() => { handleSelectedCard(card) }}>{card.name}</p>
+                                    return <p className='card' key={index} onClick={() => { handleSelectedCard(card) }}>{card.name}</p>
                                 })}
                             </div>
                         </div>}
                 </>
             }
 
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player2 &&
+            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === players[1] &&
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
@@ -997,7 +1106,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === player3 &&
+            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === players[2] &&
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
