@@ -3,6 +3,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import Lobby from '../../components/Lobby/Lobby';
+import { Link } from 'react-router-dom';
+import AttackModule from '../../components/AttackModule/AttackModule';
+import ParryModule from '../../components/ParryModule/ParryModule';
 
 
 type GamePageProp = {
@@ -20,13 +23,14 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [winner, setWinner] = useState<string>('')
 
     const [usersHand, setUsersHand] = useState<PlayableCard[]>([])
+    const [indexOfParry, setIndexOfParry] = useState<number>(-1)
 
     const [player1, setPlayer1] = useState<string>('')
     const [player1Hand, setPlayer1Hand] = useState<PlayableCard[]>([])
     const [player1Character, setPlayer1Character] = useState<Character>()
     const [player1Role, setPlayer1Role] = useState<Role>()
     const [player1Attacks, setPlayer1Attacks] = useState<number>(1)
-    const [player1Health, setPlayer1Health] = useState<number>()
+    const [player1Health, setPlayer1Health] = useState<number>(0)
     const [player1HonourPoints, setPlayer1HonourPoints] = useState<number>(3)
 
     const [player2, setPlayer2] = useState<string>('')
@@ -34,7 +38,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [player2Character, setPlayer2Character] = useState<Character>()
     const [player2Role, setPlayer2Role] = useState<Role>()
     const [player2Attacks, setPlayer2Attacks] = useState<number>(1)
-    const [player2Health, setPlayer2Health] = useState<number>()
+    const [player2Health, setPlayer2Health] = useState<number>(0)
     const [player2HonourPoints, setPlayer2HonourPoints] = useState<number>(3)
 
     const [player3, setPlayer3] = useState<string>('')
@@ -42,17 +46,27 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [player3Character, setPlayer3Character] = useState<Character>()
     const [player3Role, setPlayer3Role] = useState<Role>()
     const [player3Attacks, setPlayer3Attacks] = useState<number>(1)
-    const [player3Health, setPlayer3Health] = useState<number>()
+    const [player3Health, setPlayer3Health] = useState<number>(0)
     const [player3HonourPoints, setPlayer3HonourPoints] = useState<number>(3)
 
     // const [gameStateInitialized, setGameStateInitialized] = useState<boolean>(false)
     const [players, setPlayers] = useState<string[]>([])
     const [selectedPlayer, setSelectedPlayer] = useState<string>('')
-    const [selectedCard, SetSelectedCard] = useState<PlayableCard>()
+    const [selectedCard, SetSelectedCard] = useState<PlayableCard | undefined>()
+
+    const [weaponCard, setWeaponCard] = useState<PlayableCard>()
+    const [attacker, setAttacker] = useState<string>('')
+    const [victim, setVictim] = useState<string>('')
+    const [wounds, setWounds] = useState<number>()
+
     const [turn, setTurn] = useState('')
+    // const [victimsTurn, setVictimsturn] = useState<string>('')
+    const [newTurn, setNewTurn] = useState<boolean>(true)
+
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
 
+    const [parryModule, setParryModule] = useState<boolean>(false)
     // interface Weapon {
     //     type: 'weapon';
     //     name: string;
@@ -723,6 +737,16 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }, 500);
             })
 
+            socket.on('attacked', () => {
+                setParryModule(true)
+            })
+
+            socket.on('switchTurn', victim => {
+                setTimeout(() => {
+                    setTurn(victim)
+                }, 1000);
+            })
+
             socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks }) => {
                 setPlayer1Hand(player1Hand)
                 setPlayer1Character(player1Character)
@@ -745,7 +769,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 socket.emit('getHand', room)
             })
 
-            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, discardPile, drawDeck }) => {
+            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, discardPile, drawDeck, attacker, victim, wounds, selectedCard, turn, weaponCard }) => {
                 console.log('receive update game')
                 setPlayer1Hand(player1Hand)
                 setPlayer1Health(player1Health)
@@ -761,6 +785,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setPlayer3Attacks(player3Attacks)
                 setDrawDeck(drawDeck)
                 setDiscardPile(discardPile)
+                setAttacker(attacker)
+                setVictim(victim)
+                setWounds(wounds)
+                SetSelectedCard(selectedCard)
+                // setTurn(turn)
+                setWeaponCard(weaponCard)
             })
 
             effectRan.current = true
@@ -834,7 +864,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3HonourPoints: player3HonourPoints,
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
-                discardPile: discardPile
+                discardPile: discardPile,
+                attacker: attacker,
+                victim: victim,
+                wounds: wounds,
+                selectedCard: selectedCard,
+                // turn: turn,
+                weaponCard: weaponCard
             }, room)
         }
         if (socket.id === players[1]) {
@@ -862,7 +898,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3HonourPoints: player3HonourPoints,
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
-                discardPile: discardPile
+                discardPile: discardPile,
+                attacker: attacker,
+                victim: victim,
+                wounds: wounds,
+                selectedCard: selectedCard,
+                // turn: turn,
+                weaponCard: weaponCard
             }, room)
         }
         if (socket.id === players[2]) {
@@ -890,7 +932,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3HonourPoints: player3HonourPoints,
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
-                discardPile: discardPile
+                discardPile: discardPile,
+                attacker: attacker,
+                victim: victim,
+                wounds: wounds,
+                selectedCard: selectedCard,
+                // turn: turn,
+                weaponCard: weaponCard
             }, room)
         }
 
@@ -914,67 +962,114 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     const handleSelectedCard = (card: PlayableCard) => {
+        setSelectedPlayer('')
         SetSelectedCard(card)
     }
 
     useEffect(() => {
-        if (socket.id === turn) {
+        if (socket.id === turn && newTurn) {
             const newCards: PlayableCard[] = [];
             for (let i = 0; i < 2; i++) {
                 if (drawDeck.length > 0) {
                     newCards.push(drawDeck.pop() as PlayableCard);
-                    console.log(newCards);
-                    console.log(usersHand)
                 }
             }
             setUsersHand([...usersHand, ...newCards])
+            setNewTurn(false)
         }
 
     }, [turn]);
+
     useEffect(() => {
-        updateGameState()
+        if (turn === socket.id)
+            updateGameState()
+    }, [usersHand, discardPile, weaponCard, attacker, victim, player1Health, player2Health, player3Health])
+
+    useEffect(() => {
+        const index = usersHand.findIndex(card => card.type === 'action' && card.name === 'Parry')
+        setIndexOfParry(index)
     }, [usersHand])
 
+    const handleParry = () => {
+        setDiscardPile([...discardPile, {
+            type: 'action',
+            name: 'Parry'
+        } as PlayableCard])
+        usersHand.splice(indexOfParry, 1)
+    }
 
-    const handleCardPlayer = () => {
-        const player = socket.id
-        if (turn !== player || !selectedCard || selectedPlayer === '') {
-            return
+    const handleGetAttacked = () => {
+        if (socket.id === players[0] && wounds) {
+            setPlayer1Health(player1Health - wounds)
         }
-        console.log(selectedCard)
-
-        if (selectedCard.type === 'weapon') {
-            const range = selectedCard.range
-            console.log(range)
-
-            const difficulty = () => {
-                const difficulty1 = Math.abs((player.indexOf(socket.id) + 1) - (player.indexOf(selectedPlayer) + 1))
-                const difficulty2 = player.length - difficulty1
-                if (difficulty1 > difficulty2) {
-                    return difficulty2
-                } else {
-                    return difficulty1
-                }
-            }
-
-            if (range !== undefined && range < difficulty()) {
-                // console.log('miss')
-            } else {
-                discardPile.push(selectedCard)
-                const indexOfCard = usersHand?.indexOf(selectedCard)
-                usersHand.splice(indexOfCard, 1)
-            }
-
+        if (socket.id === players[1] && wounds) {
+            setPlayer2Health(player2Health - wounds)
+        }
+        if (socket.id === players[2] && wounds) {
+            setPlayer3Health(player3Health - wounds)
         }
     }
 
-    handleCardPlayer()
+    useEffect(() => {
+        const handleCardPlayer = () => {
+            const player = socket.id
+            if (turn === socket.id) {
+                console.log(selectedCard)
+            }
+            if (turn !== player || !selectedCard || selectedPlayer === '' || parryModule) {
+                return
+            }
+            console.log(selectedPlayer)
+
+            if (!!selectedCard && selectedCard.type === 'weapon') {
+                const range = selectedCard.range
+                console.log(range)
+
+                const difficulty = () => {
+                    const difficulty1 = Math.abs((player.indexOf(socket.id) + 1) - (player.indexOf(selectedPlayer) + 1))
+                    const difficulty2 = player.length - difficulty1
+                    if (difficulty1 > difficulty2) {
+                        return difficulty2
+                    } else {
+                        return difficulty1
+                    }
+                }
+
+                if (range !== undefined && range < difficulty()) {
+                    console.log('miss')
+
+                } else {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const indexOfCard = usersHand.indexOf(selectedCard)
+                    const hand = usersHand
+                    hand.splice(indexOfCard, 1)
+                    setWounds(selectedCard.damage)
+                    setUsersHand(hand)
+                    setWeaponCard(selectedCard)
+                    setAttacker(player)
+                    setVictim(selectedPlayer)
+                    socket.emit('attacked', selectedPlayer, room)
+                    setSelectedPlayer('')
+                    SetSelectedCard(undefined)
+                    setTurn(selectedPlayer)
+                }
+
+            }
+        }
+
+        handleCardPlayer()
+    }, [selectedCard, selectedPlayer])
+
 
 
     return (
         <>
+
             {!startGame && <Lobby handleStartGame={handleStartGame} initGameState={initGameState} socket={socket} handleSetPlayers={handleSetPlayers} />}
 
+            {victim && attacker && <AttackModule attacker={attacker} victim={victim} wounds={wounds} weaponCard={weaponCard} />}
+
+            {parryModule && <ParryModule wounds={wounds} usersHand={usersHand} indexOfParry={indexOfParry} handleParry={handleParry} handleGetAttacked={handleGetAttacked} />}
 
             {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === players[0] &&
                 <>
@@ -982,7 +1077,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className="game__flex-container">
                             <div className='game__player-container'>
                                 <h1 className='game__player-name'>Player 2</h1>
-                                <div className='game__player-character' id={player2} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character' id={players[1]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                     <p>{player2Character.name}</p>
                                 </div>
                                 {player2Role.role === 'Shogun' &&
@@ -998,7 +1093,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                             <div className='game__player-container'>
                                 <h1 className='game__player-name'>Player 3</h1>
-                                <div className='game__player-character' id={player3} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character' id={players[2]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                     <p>{player3Character.name}</p>
                                 </div>
                                 {player3Role.role === 'Shogun' &&
@@ -1047,7 +1142,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     <div className="game__flex-container">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 3</h1>
-                            <div className='game__player-character' id={player3} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                            <div className='game__player-character' id={players[2]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                 <p>{player3Character.name}</p>
                             </div>
                             {player3Role.role === 'Shogun' &&
@@ -1063,7 +1158,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 1</h1>
-                            <div className='game__player-character' id={player1} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                            <div className='game__player-character' id={players[0]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                 <p>{player1Character.name}</p>
                             </div>
                             {player1Role.role === 'Shogun' &&
@@ -1111,7 +1206,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     <div className="game__flex-container">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 1</h1>
-                            <div className='game__player-character' id={player1} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                            <div className='game__player-character' id={players[0]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                 <p>{player1Character.name}</p>
                             </div>
                             {player1Role.role === 'Shogun' &&
@@ -1127,7 +1222,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 2</h1>
-                            <div className='game__player-character' id={player2} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                            <div className='game__player-character' id={players[1]} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
                                 <p>{player2Character.name}</p>
                             </div>
                             {player2Role.role === 'Shogun' &&
