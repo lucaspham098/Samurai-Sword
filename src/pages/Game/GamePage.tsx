@@ -1096,8 +1096,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
 
                 if (range !== undefined && range < difficulty()) {
-                    console.log('miss')
-
+                    alert('Cannot reach target')
                 } else {
                     setWeaponCardPlayed(true)
                     setActionCardPlayed(false)
