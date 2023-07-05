@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import Lobby from '../../components/Lobby/Lobby';
 import { Link } from 'react-router-dom';
-import AttackModule from '../../components/AttackModule/AttackModule';
+import AnnouncementModule from '../../components/AnnouncementModule/AnnouncementModule';
 import ParryModule from '../../components/ParryModule/ParryModule';
+import { visitFunctionBody } from 'typescript';
 
 
 type GamePageProp = {
@@ -54,19 +55,27 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [selectedPlayer, setSelectedPlayer] = useState<string>('')
     const [selectedCard, SetSelectedCard] = useState<PlayableCard | undefined>()
 
-    const [weaponCard, setWeaponCard] = useState<PlayableCard>()
-    const [attacker, setAttacker] = useState<string>('')
+    const [cardPlayed, setCardPlayed] = useState<PlayableCard>()
+    const [currentPlayer, setCurrentPlayer] = useState<string>('')
     const [victim, setVictim] = useState<string>('')
     const [wounds, setWounds] = useState<number>()
 
     const [turn, setTurn] = useState('')
-    // const [victimsTurn, setVictimsturn] = useState<string>('')
     const [newTurn, setNewTurn] = useState<boolean>(true)
 
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
 
     const [parryModule, setParryModule] = useState<boolean>(false)
+
+    const [weaponCardPlayed, setWeaponCardPlayed] = useState<boolean>(false)
+    const [actionCardPlayed, setActionCardPlayed] = useState<boolean>(false)
+    const [propertyCardPlayed, setPropertyCardPlayed] = useState<boolean>(false)
+    const [parryPlayed, setParryPlayed] = useState<boolean>(false)
+    const [playerHit, setPlayerHit] = useState<boolean>(false)
+    // const [weaponCardPlayed, setWeaponCardPlayed] = useState<boolean>(false)
+
+
     // interface Weapon {
     //     type: 'weapon';
     //     name: string;
@@ -744,7 +753,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             socket.on('switchTurn', victim => {
                 setTimeout(() => {
                     setTurn(victim)
-                }, 1000);
+                }, 500);
+            })
+
+            socket.on('setTurnBack', currentPlayer => {
+                setTurn(currentPlayer)
             })
 
             socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks }) => {
@@ -769,8 +782,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 socket.emit('getHand', room)
             })
 
-            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, discardPile, drawDeck, attacker, victim, wounds, selectedCard, turn, weaponCard }) => {
-                console.log('receive update game')
+            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, discardPile, drawDeck, currentPlayer, victim, wounds, selectedCard, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit }) => {
                 setPlayer1Hand(player1Hand)
                 setPlayer1Health(player1Health)
                 setPlayer1HonourPoints(player1HonourPoints)
@@ -785,12 +797,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setPlayer3Attacks(player3Attacks)
                 setDrawDeck(drawDeck)
                 setDiscardPile(discardPile)
-                setAttacker(attacker)
+                setCurrentPlayer(currentPlayer)
                 setVictim(victim)
                 setWounds(wounds)
                 SetSelectedCard(selectedCard)
-                // setTurn(turn)
-                setWeaponCard(weaponCard)
+                setCardPlayed(cardPlayed)
+                setNewTurn(newTurn)
+                setParryPlayed(parryPlayed)
+                setWeaponCardPlayed(weaponCardPlayed)
+                setActionCardPlayed(actionCardPlayed)
+                setPropertyCardPlayed(propertyCardPlayed)
+                setPlayerHit(playerHit)
             })
 
             effectRan.current = true
@@ -865,12 +882,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
                 discardPile: discardPile,
-                attacker: attacker,
+                currentPlayer: currentPlayer,
                 victim: victim,
                 wounds: wounds,
                 selectedCard: selectedCard,
-                // turn: turn,
-                weaponCard: weaponCard
+                newTurn: newTurn,
+                cardPlayed: cardPlayed,
+                parryPlayed: parryPlayed,
+                weaponCardPlayed: weaponCardPlayed,
+                actionCardPlayed: actionCardPlayed,
+                propertyCardPlayed: propertyCardPlayed,
+                playerHit: playerHit
             }, room)
         }
         if (socket.id === players[1]) {
@@ -899,12 +921,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
                 discardPile: discardPile,
-                attacker: attacker,
+                currentPlayer: currentPlayer,
                 victim: victim,
                 wounds: wounds,
                 selectedCard: selectedCard,
-                // turn: turn,
-                weaponCard: weaponCard
+                newTurn: newTurn,
+                cardPlayed: cardPlayed,
+                parryPlayed: parryPlayed,
+                weaponCardPlayed: weaponCardPlayed,
+                actionCardPlayed: actionCardPlayed,
+                propertyCardPlayed: propertyCardPlayed,
+                playerHit: playerHit
             }, room)
         }
         if (socket.id === players[2]) {
@@ -933,20 +960,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                 player3Attacks: player3Attacks,
                 drawDeck: drawDeck,
                 discardPile: discardPile,
-                attacker: attacker,
+                currentPlayer: currentPlayer,
                 victim: victim,
                 wounds: wounds,
                 selectedCard: selectedCard,
-                // turn: turn,
-                weaponCard: weaponCard
+                newTurn: newTurn,
+                cardPlayed: cardPlayed,
+                parryPlayed: parryPlayed,
+                weaponCardPlayed: weaponCardPlayed,
+                actionCardPlayed: actionCardPlayed,
+                propertyCardPlayed: propertyCardPlayed,
+                playerHit: playerHit
             }, room)
         }
 
     }
-
-    // if (player1Character && player2Character && player3Character) {
-    //     setGameStateInitialized(true)
-    // }
 
     const handleSetPlayers: (players: string[]) => void = (players: string[]) => {
         setPlayers(players)
@@ -983,12 +1011,16 @@ const GamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         if (turn === socket.id)
             updateGameState()
-    }, [usersHand, discardPile, weaponCard, attacker, victim, player1Health, player2Health, player3Health])
+    }, [usersHand, discardPile, cardPlayed, currentPlayer, victim, player1Health, player2Health, player3Health, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed])
 
     useEffect(() => {
         const index = usersHand.findIndex(card => card.type === 'action' && card.name === 'Parry')
         setIndexOfParry(index)
     }, [usersHand])
+
+    const setTurnBack = () => {
+        socket.emit('setTurnBack', currentPlayer, room)
+    }
 
     const handleParry = () => {
         setDiscardPile([...discardPile, {
@@ -996,17 +1028,45 @@ const GamePage = ({ socket }: GamePageProp) => {
             name: 'Parry'
         } as PlayableCard])
         usersHand.splice(indexOfParry, 1)
+        setParryModule(false)
+        setActionCardPlayed(false)
+        setWeaponCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(true)
+        setTurnBack()
     }
 
     const handleGetAttacked = () => {
         if (socket.id === players[0] && wounds) {
             setPlayer1Health(player1Health - wounds)
+            setPlayerHit(true)
+            setParryModule(false)
+            setActionCardPlayed(false)
+            setWeaponCardPlayed(false)
+            setPropertyCardPlayed(false)
+            setParryPlayed(false)
+            setTurnBack()
         }
         if (socket.id === players[1] && wounds) {
             setPlayer2Health(player2Health - wounds)
+            setPlayerHit(true)
+            setParryModule(false)
+            setActionCardPlayed(false)
+            setWeaponCardPlayed(false)
+            setPropertyCardPlayed(false)
+            setParryPlayed(false)
+            setTurnBack()
         }
         if (socket.id === players[2] && wounds) {
             setPlayer3Health(player3Health - wounds)
+            setPlayerHit(true)
+            setParryModule(false)
+            setActionCardPlayed(false)
+            setWeaponCardPlayed(false)
+            setPropertyCardPlayed(false)
+            setParryPlayed(false)
+            setTurnBack()
         }
     }
 
@@ -1039,19 +1099,23 @@ const GamePage = ({ socket }: GamePageProp) => {
                     console.log('miss')
 
                 } else {
+                    setWeaponCardPlayed(true)
+                    setActionCardPlayed(false)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
                     setDiscardPile([...discardPile, selectedCard])
                     const indexOfCard = usersHand.indexOf(selectedCard)
                     const hand = usersHand
                     hand.splice(indexOfCard, 1)
                     setWounds(selectedCard.damage)
                     setUsersHand(hand)
-                    setWeaponCard(selectedCard)
-                    setAttacker(player)
+                    setCardPlayed(selectedCard)
+                    setCurrentPlayer(player)
                     setVictim(selectedPlayer)
                     socket.emit('attacked', selectedPlayer, room)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
-                    setTurn(selectedPlayer)
                 }
 
             }
@@ -1067,7 +1131,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             {!startGame && <Lobby handleStartGame={handleStartGame} initGameState={initGameState} socket={socket} handleSetPlayers={handleSetPlayers} />}
 
-            {victim && attacker && <AttackModule attacker={attacker} victim={victim} wounds={wounds} weaponCard={weaponCard} />}
+            <AnnouncementModule currentPlayer={currentPlayer} victim={victim} wounds={wounds} cardPlayed={cardPlayed} weaponCardPlayed={weaponCardPlayed} actionCardPlayed={actionCardPlayed} propertyCardPlayed={propertyCardPlayed} playerHit={playerHit} parryPlayed={parryPlayed} />
 
             {parryModule && <ParryModule wounds={wounds} usersHand={usersHand} indexOfParry={indexOfParry} handleParry={handleParry} handleGetAttacked={handleGetAttacked} />}
 
