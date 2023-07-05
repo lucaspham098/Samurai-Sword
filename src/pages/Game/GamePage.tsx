@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import AnnouncementModule from '../../components/AnnouncementModule/AnnouncementModule';
 import ParryModule from '../../components/ParryModule/ParryModule';
 import { visitFunctionBody } from 'typescript';
+import { start } from 'repl';
 
 
 type GamePageProp = {
@@ -377,15 +378,15 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'action',
-            name: 'Daiymo'
+            name: 'Daimyo'
         },
         {
             type: 'action',
-            name: 'Daiymo'
+            name: 'Daimyo'
         },
         {
             type: 'action',
-            name: 'Daiymo'
+            name: 'Daimyo'
         },
         {
             type: 'action',
@@ -760,6 +761,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setTurn(currentPlayer)
             })
 
+            socket.on('newTurn', newTurn => {
+                console.log('newturn')
+                setTurn(newTurn)
+                setNewTurn(true)
+            })
+
             socket.on('initGameState', ({ player1Hand, player1Character, player1Role, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Character, player2Role, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Character, player3Role, player3Health, player3HonourPoints, player3Attacks }) => {
                 setPlayer1Hand(player1Hand)
                 setPlayer1Character(player1Character)
@@ -1116,6 +1123,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                 }
+            }
+
+            if (!!selectedCard && selectedCard.type === 'action') {
+
+                if (selectedCard.name === 'Daimyo') {
+                    const newCards: PlayableCard[] = [];
+                    for (let i = 0; i < 2; i++) {
+                        if (drawDeck.length > 0) {
+                            newCards.push(drawDeck.pop() as PlayableCard);
+                        }
+                        setUsersHand([...usersHand, ...newCards])
+                    }
+                }
+
 
             }
         }
@@ -1123,6 +1144,17 @@ const GamePage = ({ socket }: GamePageProp) => {
         handleCardPlayer()
     }, [selectedCard, selectedPlayer])
 
+
+    const endTurn = () => {
+        const usersSocketIndex = players.indexOf(socket.id)
+        if (!!players[usersSocketIndex + 1]) {
+            const newTurn = players[usersSocketIndex + 1]
+            socket.emit('newTurn', newTurn, room)
+        } else {
+            const newTurn = players[0]
+            socket.emit('newTurn', newTurn, room)
+        }
+    }
 
 
     return (
@@ -1327,6 +1359,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     </div>
                 </>
             }
+
+            {startGame && turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
             {/* 
             {startGame && (
                 <div>
