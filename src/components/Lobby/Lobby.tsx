@@ -7,14 +7,30 @@ type LobbyProps = {
     handleStartGame: () => void,
     socket: Socket,
     initGameState: () => void
-    handleSetPlayers: (player: string[]) => void
+    handleSetPlayers: (player: object[]) => void
+}
+interface PlayersData {
+    socketID: string,
+    role: string,
+    character: string,
+    hand: PlayableCard[],
+    attacks: number,
+    health: number,
+    honourPoints: number
+}
+
+interface PlayableCard {
+    type: string;
+    name: string;
+    range?: number;
+    damage?: number;
 }
 
 const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: LobbyProps) => {
     const effectRan = useRef(false);
     const { room } = useParams();
 
-    const [players, setPlayers] = useState<string[]>([]);
+    const [playersData, setPlayersData] = useState<PlayersData[]>([]);
     const [isLeader, setIsLeader] = useState<boolean>(false)
 
     useEffect(() => {
@@ -26,11 +42,10 @@ const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: Lob
             socket.on('joinedRoom', () => {
                 socket.emit('askForPlayers', room);
             });
-            socket.on('players', (players) => {
-                console.log(players);
-                setPlayers(players);
-                handleSetPlayers(players)
-                if (socket.id === players[0]) {
+            socket.on('players', (playersData) => {
+                setPlayersData(playersData);
+                handleSetPlayers(playersData)
+                if (socket.id === playersData[0].socketID) {
                     setIsLeader(true)
                 }
             });
@@ -52,9 +67,9 @@ const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: Lob
     return (
         <div>
             <p>Players</p>
-            {players &&
-                players.map((player) => {
-                    return <p key={player}>{player}</p>;
+            {playersData &&
+                playersData.map((player, index) => {
+                    return <p key={index}>{player.socketID}</p>;
                 })}
             {isLeader && <button onClick={onStartGame}>Start Game</button>}
         </div>
