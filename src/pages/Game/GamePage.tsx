@@ -16,8 +16,8 @@ type GamePageProp = {
 
 interface PlayersData {
     socketID: string,
-    role: string,
-    character: string,
+    role: Role,
+    character: Character,
     hand: PlayableCard[],
     attacks: number,
     health: number,
@@ -689,6 +689,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
                     setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
                 }
+
+
             }
             settingPlayer2States()
 
@@ -752,6 +754,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setNewTurn(true)
             })
 
+            socket.on('alterVictimHand', (victimHand) => {
+                console.log(victimHand)
+                setUsersHand([...victimHand])
+            })
+
             socket.on('initGameState', (playerData) => {
                 console.log(playerData)
                 setPlayersData(playerData)
@@ -776,19 +783,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 socket.emit('getHand', room)
             })
 
-            socket.on('updateGameState', ({ player1Hand, player1Health, player1HonourPoints, player1Attacks, player2Hand, player2Health, player2HonourPoints, player2Attacks, player3Hand, player3Health, player3HonourPoints, player3Attacks, playersData, discardPile, drawDeck, currentPlayer, victim, wounds, selectedCard, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit }) => {
-                // setPlayer1Hand(player1Hand)
-                // setPlayer1Health(player1Health)
-                // setPlayer1HonourPoints(player1HonourPoints)
-                // setPlayer1Attacks(player1Attacks)
-                // setPlayer2Hand(player2Hand)
-                // setPlayer2Health(player2Health)
-                // setPlayer2HonourPoints(player2HonourPoints)
-                // setPlayer2Attacks(player2Attacks)
-                // setPlayer3Hand(player3Hand)
-                // setPlayer3Health(player3Health)
-                // setPlayer3HonourPoints(player3HonourPoints)
-                // setPlayer3Attacks(player3Attacks)
+            socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, selectedCard, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit }) => {
                 setPlayersData(playersData)
                 setDrawDeck(drawDeck)
                 setDiscardPile(discardPile)
@@ -811,8 +806,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     }, [])
 
-
     const initGameState = () => {
+
         socket.emit('initGameState', [
             {
                 role: player1Role,
@@ -839,28 +834,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 health: player3Health,
                 honourPoints: player3HonourPoints
             },
-        ]
-            // {
-            //     player1Hand: player1Hand,
-            //     player1Character: player1Character,
-            //     player1Role: player1Role,
-            //     player1Health: player1Health,
-            //     player1HonourPoints: player1HonourPoints,
-            //     player1Attacks: player1Attacks,
-            //     player2Hand: player2Hand,
-            //     player2Character: player2Character,
-            //     player2Role: player2Role,
-            //     player2Health: player2Health,
-            //     player2HonourPoints: player2HonourPoints,
-            //     player2Attacks: player2Attacks,
-            //     player3Hand: player3Hand,
-            //     player3Character: player3Character,
-            //     player3Role: player3Role,
-            //     player3Health: player3Health,
-            //     player3HonourPoints: player3HonourPoints,
-            //     player3Attacks: player3Attacks,
-            // }
-            , room)
+        ], room)
     }
 
     const updateGameState = () => {
@@ -881,124 +855,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             propertyCardPlayed: propertyCardPlayed,
             playerHit: playerHit
         }, room)
-
-        // if (socket.id === players[0]) {
-        //     socket.emit('updateGameState', [
-        //         {
-        //             hand: usersHand
-        //         },
-        //         {
-        //             hand: player2Hand
-        //         },
-        //         {
-        //             hand: player3Hand
-        //         },
-        //     ], {
-        //         player1Hand: usersHand,
-        //         player1Health: player1Health,
-        //         player1HonourPoints: player1HonourPoints,
-        //         player1Attacks: player1Attacks,
-        //         player2Hand: player2Hand,
-        //         player2Health: player2Health,
-        //         player2HonourPoints: player2HonourPoints,
-        //         player2Attacks: player2Attacks,
-        //         player3Hand: player3Hand,
-        //         player3Health: player3Health,
-        //         player3HonourPoints: player3HonourPoints,
-        //         player3Attacks: player3Attacks,
-        //         drawDeck: drawDeck,
-        //         discardPile: discardPile,
-        //         currentPlayer: currentPlayer,
-        //         victim: victim,
-        //         wounds: wounds,
-        //         selectedCard: selectedCard,
-        //         newTurn: newTurn,
-        //         cardPlayed: cardPlayed,
-        //         parryPlayed: parryPlayed,
-        //         weaponCardPlayed: weaponCardPlayed,
-        //         actionCardPlayed: actionCardPlayed,
-        //         propertyCardPlayed: propertyCardPlayed,
-        //         playerHit: playerHit
-        //     }, room)
-        // }
-        // if (socket.id === players[1]) {
-        //     socket.emit('updateGameState', [
-        //         {
-        //             hand: player1Hand
-        //         },
-        //         {
-        //             hand: usersHand
-        //         },
-        //         {
-        //             hand: player3Hand
-        //         },
-        //     ], {
-        //         player1Hand: player1Hand,
-        //         player1Health: player1Health,
-        //         player1HonourPoints: player1HonourPoints,
-        //         player1Attacks: player1Attacks,
-        //         player2Hand: usersHand,
-        //         player2Health: player2Health,
-        //         player2HonourPoints: player2HonourPoints,
-        //         player2Attacks: player2Attacks,
-        //         player3Hand: player3Hand,
-        //         player3Health: player3Health,
-        //         player3HonourPoints: player3HonourPoints,
-        //         player3Attacks: player3Attacks,
-        //         drawDeck: drawDeck,
-        //         discardPile: discardPile,
-        //         currentPlayer: currentPlayer,
-        //         victim: victim,
-        //         wounds: wounds,
-        //         selectedCard: selectedCard,
-        //         newTurn: newTurn,
-        //         cardPlayed: cardPlayed,
-        //         parryPlayed: parryPlayed,
-        //         weaponCardPlayed: weaponCardPlayed,
-        //         actionCardPlayed: actionCardPlayed,
-        //         propertyCardPlayed: propertyCardPlayed,
-        //         playerHit: playerHit
-        //     }, room)
-        // }
-        // if (socket.id === players[2]) {
-        //     socket.emit('updateGameState', [
-        //         {
-        //             hand: player1Hand
-        //         },
-        //         {
-        //             hand: player2Hand
-        //         },
-        //         {
-        //             hand: usersHand
-        //         },
-        //     ], {
-        //         player1Hand: player1Hand,
-        //         player1Health: player1Health,
-        //         player1HonourPoints: player1HonourPoints,
-        //         player1Attacks: player1Attacks,
-        //         player2Hand: player2Hand,
-        //         player2Health: player2Health,
-        //         player2HonourPoints: player2HonourPoints,
-        //         player2Attacks: player2Attacks,
-        //         player3Hand: usersHand,
-        //         player3Health: player3Health,
-        //         player3HonourPoints: player3HonourPoints,
-        //         player3Attacks: player3Attacks,
-        //         drawDeck: drawDeck,
-        //         discardPile: discardPile,
-        //         currentPlayer: currentPlayer,
-        //         victim: victim,
-        //         wounds: wounds,
-        //         selectedCard: selectedCard,
-        //         newTurn: newTurn,
-        //         cardPlayed: cardPlayed,
-        //         parryPlayed: parryPlayed,
-        //         weaponCardPlayed: weaponCardPlayed,
-        //         actionCardPlayed: actionCardPlayed,
-        //         propertyCardPlayed: propertyCardPlayed,
-        //         playerHit: playerHit
-        //     }, room)
-        // }
     }
 
     useEffect(() => {
@@ -1049,6 +905,22 @@ const GamePage = ({ socket }: GamePageProp) => {
         SetSelectedCard(card)
     }
 
+    const indexOfSelectedPlayer: () => number = () => {
+        return playersData.findIndex(player => player.socketID === selectedPlayer)
+    }
+
+    const indexOfSelectedCard: () => number = () => {
+        if (selectedCard) {
+            return usersHand.indexOf(selectedCard)
+        } else return -1
+    }
+
+    const randomCard: (arr: PlayableCard[]) => number = (arr) => {
+        const randomIndex = Math.floor(Math.random() * arr.length)
+        return randomIndex
+    }
+
+
     useEffect(() => {
         if (socket.id === turn && newTurn) {
             const newCards: PlayableCard[] = [];
@@ -1059,6 +931,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             setUsersHand([...usersHand, ...newCards])
             setNewTurn(false)
+            setCurrentPlayer(socket.id)
         }
 
     }, [turn]);
@@ -1066,7 +939,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         if (turn === socket.id)
             updateGameState()
-    }, [playersData, discardPile, cardPlayed, currentPlayer, victim, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed])
+    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed])
 
 
 
@@ -1079,7 +952,9 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Parry'
         } as PlayableCard])
-        usersHand.splice(indexOfParry, 1)
+        const data = [...playersData]
+        data[indexOfPlayer].hand.splice(indexOfParry, 1)
+        setPlayersData(data)
         setParryModule(false)
         setActionCardPlayed(false)
         setWeaponCardPlayed(false)
@@ -1090,9 +965,9 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     const handleGetAttacked = () => {
-        // if (!!indexOfPlayer && playersData.length > 2) {
         const data = [...playersData]
         data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+        setPlayersData(data)
         setPlayerHit(true)
         setParryModule(false)
         setActionCardPlayed(false)
@@ -1100,37 +975,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setPropertyCardPlayed(false)
         setParryPlayed(false)
         setTurnBack()
-        // } else console.log('no')
-        // if (socket.id === playersData[0] && wounds) {
-        //     setPlayer1Health(player1Health - wounds)
-        //     setPlayerHit(true)
-        //     setParryModule(false)
-        //     setActionCardPlayed(false)
-        //     setWeaponCardPlayed(false)
-        //     setPropertyCardPlayed(false)
-        //     setParryPlayed(false)
-        //     setTurnBack()
-        // }
-        // if (socket.id === playersData[1] && wounds) {
-        //     setPlayer2Health(player2Health - wounds)
-        //     setPlayerHit(true)
-        //     setParryModule(false)
-        //     setActionCardPlayed(false)
-        //     setWeaponCardPlayed(false)
-        //     setPropertyCardPlayed(false)
-        //     setParryPlayed(false)
-        //     setTurnBack()
-        // }
-        // if (socket.id === playersData[2] && wounds) {
-        //     setPlayer3Health(player3Health - wounds)
-        //     setPlayerHit(true)
-        //     setParryModule(false)
-        //     setActionCardPlayed(false)
-        //     setWeaponCardPlayed(false)
-        //     setPropertyCardPlayed(false)
-        //     setParryPlayed(false)
-        //     setTurnBack()
-        // }
+
     }
 
     useEffect(() => {
@@ -1139,17 +984,15 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (turn === socket.id) {
                 console.log(selectedCard)
             }
-            if (turn !== player || !selectedCard || selectedPlayer === '' || parryModule) {
+            if (turn !== player || !selectedCard || parryModule) {
                 return
             }
-            console.log(selectedPlayer)
 
-            if (!!selectedCard && selectedCard.type === 'weapon') {
+            if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
                 const range = selectedCard.range
 
                 const difficulty = () => {
-                    const indexOfSelectedPlayer = playersData.findIndex(player => player.socketID === selectedPlayer)
-                    const difficulty1 = Math.abs((indexOfPlayer + 1) - (indexOfSelectedPlayer + 1))
+                    const difficulty1 = Math.abs((indexOfPlayer + 1) - (indexOfSelectedPlayer() as number + 1))
                     const difficulty2 = playersData.length - difficulty1
                     if (difficulty1 > difficulty2) {
                         return difficulty2
@@ -1168,13 +1011,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setDiscardPile([...discardPile, selectedCard])
-                    const indexOfCard = usersHand.indexOf(selectedCard)
                     const hand = [...usersHand]
-                    hand.splice(indexOfCard, 1)
+                    hand.splice(indexOfSelectedCard(), 1)
                     setUsersHand(hand)
                     setWounds(selectedCard.damage as number)
                     setCardPlayed(selectedCard)
-                    setCurrentPlayer(player)
                     setVictim(selectedPlayer)
                     socket.emit('attacked', selectedPlayer, room)
                     setSelectedPlayer('')
@@ -1185,16 +1026,76 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (!!selectedCard && selectedCard.type === 'action') {
 
                 if (selectedCard.name === 'Daimyo') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
+
                     const newCards: PlayableCard[] = [];
                     for (let i = 0; i < 2; i++) {
                         if (drawDeck.length > 0) {
                             newCards.push(drawDeck.pop() as PlayableCard);
                         }
-                        setUsersHand([...usersHand, ...newCards])
                     }
+                    setUsersHand([...hand, ...newCards])
+
+                    setCardPlayed(selectedCard)
+                    setWeaponCardPlayed(false)
+                    setActionCardPlayed(true)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
+                    SetSelectedCard(undefined)
                 }
 
+                if (selectedCard.name === 'Divertion' && selectedPlayer !== '') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
 
+                    const data = [...playersData]
+                    const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(hand)]
+                    const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
+                    data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
+                    socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
+
+                    setUsersHand([...hand, cardTook])
+                    setPlayersData(data)
+
+                    setCardPlayed(selectedCard)
+                    setVictim(selectedPlayer)
+                    setWeaponCardPlayed(false)
+                    setActionCardPlayed(true)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
+                    setSelectedPlayer('')
+                    SetSelectedCard(undefined)
+                }
+
+                if (selectedCard.name === 'Breathing' && selectedPlayer !== '') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
+                    setUsersHand([...hand])
+
+                    const data: PlayersData[] = [...playersData]
+                    console.log(data[indexOfPlayer].character)
+                    data[indexOfPlayer].health = data[indexOfPlayer].character.health
+                    const newCard = drawDeck.pop()
+                    data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
+                    socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
+                    setPlayersData(data)
+
+                    setCardPlayed(selectedCard)
+                    setVictim(selectedPlayer)
+                    setWeaponCardPlayed(false)
+                    setActionCardPlayed(true)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
+                    setSelectedPlayer('')
+                    SetSelectedCard(undefined)
+                }
             }
         }
 

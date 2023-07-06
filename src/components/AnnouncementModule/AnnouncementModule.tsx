@@ -1,4 +1,5 @@
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 
 type AnnouncementModuleProps = {
     currentPlayer: string
@@ -44,6 +45,12 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
             }
 
             {playerHit && <p>{victim} took {wounds} wound(s) from {currentPlayer}</p>}
+
+            {cardPlayed?.name === "Divertion" && <p>{currentPlayer} used {cardPlayed.name} against {victim}</p>}
+
+            {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim} to draw a card</p>}
+
+            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
         </div>
     );
 };
