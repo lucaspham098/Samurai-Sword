@@ -8,6 +8,7 @@ import AnnouncementModule from '../../components/AnnouncementModule/Announcement
 import ParryModule from '../../components/ParryModule/ParryModule';
 import { visitFunctionBody } from 'typescript';
 import { start } from 'repl';
+import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
 
 
 type GamePageProp = {
@@ -91,13 +92,16 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [victim, setVictim] = useState<string>('')
     const [wounds, setWounds] = useState<number>(0)
 
-    const [turn, setTurn] = useState('')
+    const [turn, setTurn] = useState<string[]>([])
     const [newTurn, setNewTurn] = useState<boolean>(true)
 
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
 
     const [parryModule, setParryModule] = useState<boolean>(false)
+    const [battlecryJujitsuModule, setBattlecryJujitsuModule] = useState<boolean>(false)
+    const [battlecryInfo, setBattlecryInfo] = useState<object>([])
+    const [jujitsuInfo, setJujitsucryInfo] = useState<object>([])
 
     const [weaponCardPlayed, setWeaponCardPlayed] = useState<boolean>(false)
     const [actionCardPlayed, setActionCardPlayed] = useState<boolean>(false)
@@ -730,7 +734,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             socket.on('setTurn', shogun => {
                 setTimeout(() => {
-                    setTurn(shogun)
+                    setTurn([shogun])
                 }, 500);
             })
 
@@ -740,23 +744,33 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             socket.on('switchTurn', victim => {
                 setTimeout(() => {
-                    setTurn(victim)
+                    setTurn([victim])
                 }, 500);
             })
 
             socket.on('setTurnBack', currentPlayer => {
-                setTurn(currentPlayer)
+                setTurn([currentPlayer])
             })
 
             socket.on('newTurn', newTurn => {
-                console.log('newturn')
-                setTurn(newTurn)
+                setTurn([newTurn])
                 setNewTurn(true)
             })
 
             socket.on('alterVictimHand', (victimHand) => {
                 console.log(victimHand)
                 setUsersHand([...victimHand])
+            })
+
+            socket.on('teaCeremony', (data: PlayersData[]) => {
+                console.log('tea party')
+                const playersIndex = data.findIndex(player => player.socketID === socket.id)
+                const newHand = data[playersIndex].hand
+                setUsersHand([...newHand])
+            })
+
+            socket.on('battlecryPlayed', newTurn => {
+                setTurn(newTurn)
             })
 
             socket.on('initGameState', (playerData) => {
@@ -922,7 +936,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (socket.id === turn && newTurn) {
+        if (!!turn.indexOf(socket.id) && newTurn) {
             const newCards: PlayableCard[] = [];
             for (let i = 0; i < 2; i++) {
                 if (drawDeck.length > 0) {
@@ -937,7 +951,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     }, [turn]);
 
     useEffect(() => {
-        if (turn === socket.id)
+        if (!!turn.indexOf(socket.id))
             updateGameState()
     }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed])
 
@@ -954,6 +968,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         } as PlayableCard])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
+        setUsersHand(data[indexOfPlayer].hand)
         setPlayersData(data)
         setParryModule(false)
         setActionCardPlayed(false)
@@ -962,6 +977,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setPlayerHit(false)
         setParryPlayed(true)
         setTurnBack()
+
     }
 
     const handleGetAttacked = () => {
@@ -978,13 +994,23 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     }
 
+    const handleBattlecryDiscard = () => {
+        setDiscardPile([...discardPile, {
+            type: 'action',
+            name: 'Parry'
+        } as PlayableCard])
+        const data = [...playersData]
+        data[indexOfPlayer].hand.splice(indexOfParry, 1)
+        setUsersHand(data[indexOfPlayer].hand)
+    }
+
     useEffect(() => {
         const handleCardPlayer = () => {
             const player = socket.id
-            if (turn === socket.id) {
+            if (!!turn.indexOf(socket.id)) {
                 console.log(selectedCard)
             }
-            if (turn !== player || !selectedCard || parryModule) {
+            if (!turn.indexOf(socket.id) || !selectedCard || parryModule) {
                 return
             }
 
@@ -1096,6 +1122,60 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                 }
+
+                if (selectedCard.name === 'Tea Ceremony') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
+                    const newCards: PlayableCard[] = [];
+                    for (let i = 0; i < 3; i++) {
+                        if (drawDeck.length > 0) {
+                            newCards.push(drawDeck.pop() as PlayableCard);
+                        }
+                    }
+
+                    setUsersHand([...hand, ...newCards])
+                    const data = [...playersData]
+                    for (let i = 0; i < data.length; i++) {
+                        if (i !== indexOfPlayer) {
+                            data[i].hand.push(drawDeck.pop() as PlayableCard)
+                        }
+                    }
+                    setPlayersData(data)
+                    socket.emit('teaCeremony', data, room)
+
+                    setCardPlayed(selectedCard)
+                    setWeaponCardPlayed(false)
+                    setActionCardPlayed(true)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
+                    SetSelectedCard(undefined)
+                }
+
+                if (selectedCard.name === 'Battlecry') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
+                    setUsersHand([...hand])
+                    setCardPlayed(selectedCard)
+                    setWounds(1)
+                    setWeaponCardPlayed(false)
+                    setActionCardPlayed(true)
+                    setPropertyCardPlayed(false)
+                    setPlayerHit(false)
+                    setParryPlayed(false)
+                    SetSelectedCard(undefined)
+
+                    const newTurn: string[] = []
+                    for (let i = 0; i < playersData.length; i++) {
+                        if (i !== indexOfPlayer) {
+                            newTurn.push(playersData[i].socketID)
+                        }
+                    }
+                    socket.emit('battlecryPlayed', newTurn, room)
+
+                }
             }
         }
 
@@ -1126,7 +1206,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                 usersHand={usersHand}
                 indexOfParry={indexOfParry}
                 handleParry={handleParry}
-                handleGetAttacked={handleGetAttacked} />}
+                handleGetAttacked={handleGetAttacked}
+                cardPlayed={cardPlayed}
+
+            />}
+
+            {/* {battlecryJujitsuModule && <BattlecryJujitsuModule cardPlayed={cardPlayed} />} */}
 
             {startGame &&
                 player1Role && player2Role && player3Role && player1Character && player2Character && player3Character &&
@@ -1324,7 +1409,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
-            {startGame && turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
+            {startGame && currentPlayer === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
             {/* 
             {startGame && (
                 <div>

@@ -50,6 +50,8 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim} to draw a card</p>}
 
+            {cardPlayed?.name === 'Battlecry' && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard parry or take a wound.</p>}
+
             {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
         </div>
     );
