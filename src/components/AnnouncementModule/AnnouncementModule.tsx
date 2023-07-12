@@ -12,6 +12,7 @@ type AnnouncementModuleProps = {
     playerHit: boolean
     parryPlayed: boolean
     battlecryInfo: string[]
+    jujitsuInfo: string[]
     playersData: PlayersData[]
 }
 
@@ -43,7 +44,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, playersData }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -73,15 +74,23 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim} to draw a card</p>}
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard parry or take a wound.</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
+
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer}'s battlecry</p>}
 
-            {battlecryInfo.length > 0 && battlecryInfo.map(info => {
-                return <p>{info}</p>
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer}'s jujitsu</p>}
+
+            {battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
+                return <p key={index}>{info}</p>
             })}
 
-            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
+            {jujitsuInfo.length > 0 && jujitsuInfo.map((info, index) => {
+                return <p key={index}>{info}</p>
+            })}
+
+            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
         </div>
     );
 };

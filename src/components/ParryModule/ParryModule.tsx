@@ -8,6 +8,7 @@ type ParryModuleProps = {
     cardPlayed: PlayableCard | undefined
     handleBattlecryDiscard: () => void
     handleBattlecryWound: () => void
+    handleJujitsuWound: () => void
 }
 
 interface PlayableCard {
@@ -17,7 +18,7 @@ interface PlayableCard {
     damage?: number;
 }
 
-const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound }: ParryModuleProps) => {
+const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound }: ParryModuleProps) => {
     return (
         <div>
             {cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' &&
@@ -27,11 +28,19 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                     <button onClick={() => handleGetAttacked()}>Get Attacked</button>
                 </>
             }
+
             {cardPlayed?.name === 'Battlecry' &&
                 <>
                     <p>Discard a parry or suffer 1 wound</p>
                     {indexOfParry !== -1 ? <button onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button disabled>Parry</button>}
                     <button onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
+                </>
+            }
+
+            {cardPlayed?.name === 'Jujitsu' &&
+                <>
+                    <p>Select a weapon fromm hand to discard or suffer 1 wound</p>
+                    <button onClick={() => handleJujitsuWound()}>Suffer 1 wound</button>
                 </>
             }
 
