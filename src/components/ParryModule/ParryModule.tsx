@@ -2,11 +2,12 @@ import React from 'react';
 
 type ParryModuleProps = {
     wounds: number | undefined
-    usersHand: PlayableCard[]
     indexOfParry: number
     handleParry: () => void
     handleGetAttacked: () => void
     cardPlayed: PlayableCard | undefined
+    handleBattlecryDiscard: () => void
+    handleBattlecryWound: () => void
 }
 
 interface PlayableCard {
@@ -16,7 +17,7 @@ interface PlayableCard {
     damage?: number;
 }
 
-const ParryModule = ({ wounds, usersHand, indexOfParry, handleParry, handleGetAttacked, cardPlayed }: ParryModuleProps) => {
+const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound }: ParryModuleProps) => {
     return (
         <div>
             {cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' &&
@@ -29,8 +30,8 @@ const ParryModule = ({ wounds, usersHand, indexOfParry, handleParry, handleGetAt
             {cardPlayed?.name === 'Battlecry' &&
                 <>
                     <p>Discard a parry or suffer 1 wound</p>
-                    {indexOfParry !== -1 ? <button onClick={() => handleParry()}>Discard Parry</button> : <button disabled>Parry</button>}
-                    <button>Suffer 1 wound</button>
+                    {indexOfParry !== -1 ? <button onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button disabled>Parry</button>}
+                    <button onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
                 </>
             }
 

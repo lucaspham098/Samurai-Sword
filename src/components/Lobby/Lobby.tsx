@@ -43,6 +43,7 @@ const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: Lob
                 socket.emit('askForPlayers', room);
             });
             socket.on('players', (playersData) => {
+                console.log(playersData)
                 setPlayersData(playersData);
                 handleSetPlayers(playersData)
                 if (socket.id === playersData[0].socketID) {

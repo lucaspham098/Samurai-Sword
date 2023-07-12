@@ -11,6 +11,8 @@ type AnnouncementModuleProps = {
     propertyCardPlayed: boolean
     playerHit: boolean
     parryPlayed: boolean
+    battlecryInfo: string[]
+    playersData: PlayersData[]
 }
 
 interface PlayableCard {
@@ -20,7 +22,28 @@ interface PlayableCard {
     damage?: number;
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed }: AnnouncementModuleProps) => {
+interface PlayersData {
+    socketID: string,
+    role: Role,
+    character: Character,
+    hand: PlayableCard[],
+    attacks: number,
+    health: number,
+    honourPoints: number
+}
+
+interface Character {
+    name: string;
+    health: number;
+}
+
+interface Role {
+    role: string;
+    team: string;
+    stars?: number
+}
+
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, playersData }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -50,9 +73,15 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim} to draw a card</p>}
 
-            {cardPlayed?.name === 'Battlecry' && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard parry or take a wound.</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard parry or take a wound.</p>}
 
-            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer}'s battlecry</p>}
+
+            {battlecryInfo.length > 0 && battlecryInfo.map(info => {
+                return <p>{info}</p>
+            })}
+
+            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
         </div>
     );
 };
