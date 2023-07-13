@@ -14,6 +14,7 @@ type AnnouncementModuleProps = {
     battlecryInfo: string[]
     jujitsuInfo: string[]
     playersData: PlayersData[]
+    bushidoWeapon: boolean | undefined
 }
 
 interface PlayableCard {
@@ -48,7 +49,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -100,6 +101,10 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
                 <p>{currentPlayer} gave Bushido to {victim}</p>
+            }
+
+            {bushidoWeapon === true &&
+                <p>{currentPlayer} flipped a weapon card for bushido. Waiting to see if {currentPlayer} will discard a weapon or lose a honour point</p>
             }
         </div>
     );

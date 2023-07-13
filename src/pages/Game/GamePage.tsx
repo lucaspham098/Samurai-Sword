@@ -103,11 +103,12 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
 
     const [parryModule, setParryModule] = useState<boolean>(false)
-    // const [battlecryJujitsuModule, setBattlecryJujitsuModule] = useState<boolean>(false)
-    // const [battlecryInPlay, setBattlecryInPlay] = useState<boolean>(false)
-    // const [jujitsuInPlay, setJujitsucryInPlay] = useState<boolean>(false)
+
     const [battlecryInfo, setBattlecryInfo] = useState<string[]>([])
     const [jujitsuInfo, setJujitsuInfo] = useState<string[]>([])
+    const [jujitsuInEffect, setJujitsuInEffect] = useState<boolean>(false)
+    const [bushidoWeapon, setBushidoWeapon] = useState<boolean | undefined>()
+
 
     const [weaponCardPlayed, setWeaponCardPlayed] = useState<boolean>(false)
     const [actionCardPlayed, setActionCardPlayed] = useState<boolean>(false)
@@ -822,6 +823,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setTimeout(() => {
                     setTurn(shogun)
                 }, 500);
+                setCurrentPlayer(shogun)
             })
 
             socket.on('attacked', () => {
@@ -862,7 +864,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             })
 
             socket.on('jujitsuPlayed', () => {
-                console.log('received jujitsu')
+                setJujitsuInEffect(true)
                 setParryModule(true)
                 SetSelectedCard(undefined)
                 setTurn(socket.id)
@@ -1018,8 +1020,12 @@ const GamePage = ({ socket }: GamePageProp) => {
     const handleSelectedCard = (card: PlayableCard) => {
         setSelectedPlayer('')
         SetSelectedCard(card)
-        if (card.type === 'weapon' && turn === socket.id && parryModule) {
+        if (card.type === 'weapon' && turn === socket.id && jujitsuInEffect) {
             handleJujitsuDiscard(card)
+            setJujitsuInEffect(false)
+        }
+        if (card.type === 'weapon' && turn === socket.id && bushidoWeapon) {
+
         }
     }
 
@@ -1039,17 +1045,33 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
 
+    const drawCards = () => {
+        const newCards: PlayableCard[] = [];
+        for (let i = 0; i < 2; i++) {
+            if (drawDeck.length > 0) {
+                newCards.push(drawDeck.pop() as PlayableCard);
+            }
+        }
+        setUsersHand([...usersHand, ...newCards])
+        setNewTurn(false)
+    }
+
     useEffect(() => {
         if (turn === socket.id && newTurn) {
-            const newCards: PlayableCard[] = [];
-            for (let i = 0; i < 2; i++) {
-                if (drawDeck.length > 0) {
-                    newCards.push(drawDeck.pop() as PlayableCard);
+            if (playersData[indexOfPlayer].bushido === true) {
+                const drawnCard = drawDeck.pop() as PlayableCard
+                setDiscardPile([...discardPile, drawnCard])
+
+                if (drawnCard.type === 'weapon') {
+                    setBushidoWeapon(true)
+                    setParryModule(true)
+                } else {
+                    setBushidoWeapon(false)
                 }
+
+            } else {
+                drawCards()
             }
-            setUsersHand([...usersHand, ...newCards])
-            setNewTurn(false)
-            setCurrentPlayer(socket.id)
         }
 
     }, [turn]);
@@ -1191,14 +1213,18 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
     }
 
+    const handleBushidoDiscard = () => {
+
+    }
+    const handleLoseHonourPoint = () => {
+
+    }
+
     useEffect(() => {
         const handleCardPlayer = () => {
             if (turn === socket.id) {
                 console.log(selectedCard)
             }
-            // if (turn !== socket.id || !selectedCard || parryModule || battlecryInPlay || jujitsuInPlay) {
-            //     return
-            // }
 
             if (turn !== socket.id || !selectedCard || parryModule) {
                 return
@@ -1478,9 +1504,11 @@ const GamePage = ({ socket }: GamePageProp) => {
     const endTurn = () => {
         if (!!playersData[indexOfPlayer + 1]) {
             const newTurn = playersData[indexOfPlayer + 1].socketID
+            setCurrentPlayer(newTurn)
             socket.emit('newTurn', newTurn, room)
         } else {
             const newTurn = playersData[0].socketID
+            setCurrentPlayer(newTurn)
             socket.emit('newTurn', newTurn, room)
         }
     }
@@ -1503,7 +1531,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 parryPlayed={parryPlayed}
                 battlecryInfo={battlecryInfo}
                 jujitsuInfo={jujitsuInfo}
-                playersData={playersData} />
+                playersData={playersData}
+                bushidoWeapon={bushidoWeapon}
+            />
 
             {parryModule && playersData.length > 0 && <ParryModule
                 wounds={wounds}
@@ -1514,6 +1544,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleBattlecryDiscard={handleBattlecryDiscard}
                 handleBattlecryWound={handleBattlecryWound}
                 handleJujitsuWound={handleJujitsuWound}
+                bushidoWeapon={bushidoWeapon}
             />}
 
             {startGame &&

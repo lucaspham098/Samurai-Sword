@@ -9,6 +9,7 @@ type ParryModuleProps = {
     handleBattlecryDiscard: () => void
     handleBattlecryWound: () => void
     handleJujitsuWound: () => void
+    bushidoWeapon: boolean | undefined
 }
 
 interface PlayableCard {
@@ -18,7 +19,7 @@ interface PlayableCard {
     damage?: number;
 }
 
-const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound }: ParryModuleProps) => {
+const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon }: ParryModuleProps) => {
     return (
         <div>
             {cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' &&
@@ -44,7 +45,12 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                 </>
             }
 
-
+            {bushidoWeapon &&
+                <>
+                    <p>Select a weapon fromm hand to discard or lose 1 honour point</p>
+                    <button>Lose 1 Hounour Point</button>
+                </>
+            }
 
         </div>
     );
