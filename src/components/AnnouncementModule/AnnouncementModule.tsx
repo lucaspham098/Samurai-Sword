@@ -30,7 +30,11 @@ interface PlayersData {
     hand: PlayableCard[],
     attacks: number,
     health: number,
-    honourPoints: number
+    honourPoints: number,
+    focus: number,
+    armor: number,
+    fastDraw: number,
+    bushido: boolean
 }
 
 interface Character {
@@ -82,15 +86,21 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer}'s jujitsu</p>}
 
-            {battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
             })}
 
-            {jujitsuInfo.length > 0 && jujitsuInfo.map((info, index) => {
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length > 0 && jujitsuInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
             })}
 
             {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
+
+            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
+
+            {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
+                <p>{currentPlayer} gave Bushido to {victim}</p>
+            }
         </div>
     );
 };

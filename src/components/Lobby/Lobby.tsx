@@ -16,7 +16,11 @@ interface PlayersData {
     hand: PlayableCard[],
     attacks: number,
     health: number,
-    honourPoints: number
+    honourPoints: number,
+    focus: number,
+    armor: number,
+    fastDraw: number,
+    bushido: boolean
 }
 
 interface PlayableCard {
