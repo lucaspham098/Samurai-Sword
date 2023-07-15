@@ -651,8 +651,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             const settingPlayer1States = async () => {
                 // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Character = {
-                    name: 'Benkai',
-                    health: 5,
+                    name: 'Ushiwaka',
+                    health: 4,
                 }
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
                 await setPlayer1Character(dealtPlayer1Character)
@@ -1076,13 +1076,21 @@ const GamePage = ({ socket }: GamePageProp) => {
     const handleGetAttacked = () => {
         const data = [...playersData]
         data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+
+        if (playersData[indexOfPlayer].character.name === "Ushiwaka") {
+            const newCards: PlayableCard[] = []
+            for (let i = 0; i < wounds; i++) {
+                if (drawDeck.length > 0) {
+                    newCards.push(drawDeck.pop() as PlayableCard);
+                }
+            }
+            setUsersHand([...usersHand, ...newCards])
+        }
+
         setPlayersData(data)
         setPlayerHit(true)
         setParryModule(false)
-        // setActionCardPlayed(false)
         setWeaponCardPlayed(false)
-        // setPropertyCardPlayed(false)
-        // setParryPlayed(false)
         setTimeout(() => {
             setTurn('')
         }, 250);
