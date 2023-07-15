@@ -121,226 +121,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const mainDeck: PlayableCard[] = [
         {
             type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'zero range',
-            range: 0,
-            damage: 1,
-        },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {
-            type: 'weapon',
             name: 'Bokken',
             range: 1,
             damage: 1,
@@ -871,7 +651,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             const settingPlayer1States = async () => {
                 // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Character = {
-                    name: 'Kojiro',
+                    name: 'Benkai',
                     health: 5,
                 }
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -1569,8 +1349,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const difficulty1 = Math.abs((indexOfPlayer + 1) - (indexOfSelectedPlayer() as number + 1))
                     const difficulty2 = playersData.length - difficulty1
                     if (difficulty1 > difficulty2) {
+                        if (playersData[indexOfSelectedPlayer()].character.name === 'Benkai') {
+                            return difficulty2 + 1
+                        }
                         return difficulty2
                     } else {
+                        if (playersData[indexOfSelectedPlayer()].character.name === 'Benkai') {
+                            return difficulty1 + 1
+                        }
                         return difficulty1
                     }
                 }

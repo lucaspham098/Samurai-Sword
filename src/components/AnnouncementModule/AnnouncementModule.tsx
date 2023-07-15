@@ -66,29 +66,29 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
         <div>
             {weaponCardPlayed &&
                 <>
-                    <p>{currentPlayer?.socketID} attacked {victim?.socketID} with {cardPlayed?.name} causing {wounds} wound(s)</p>
-                    <p>Waiting to see if {victim?.socketID} will Parry</p>
+                    <p>{currentPlayer?.character.name} attacked {victim?.character.name} with {cardPlayed?.name} causing {wounds} wound(s)</p>
+                    <p>Waiting to see if {victim?.character.name} will Parry</p>
                 </>
             }
 
             {parryPlayed &&
-                <p>{victim?.socketID} parried the attack from {currentPlayer?.socketID}</p>
+                <p>{victim?.character.name} parried the attack from {currentPlayer?.character.name}</p>
 
             }
 
-            {playerHit && <p>{victim?.socketID} took {wounds} wound(s) from {currentPlayer?.socketID}</p>}
+            {playerHit && <p>{victim?.character.name} took {wounds} wound(s) from {currentPlayer?.character.name}</p>}
 
-            {cardPlayed?.name === "Divertion" && <p>{currentPlayer?.socketID} used {cardPlayed.name} against {victim?.socketID}</p>}
+            {cardPlayed?.name === "Divertion" && <p>{currentPlayer?.character.name} used {cardPlayed.name} against {victim?.character.name}</p>}
 
-            {cardPlayed?.name === "Breathing" && <p>{currentPlayer?.socketID} used {cardPlayed.name} and healed to full health and chose {victim?.socketID} to draw a card</p>}
+            {cardPlayed?.name === "Breathing" && <p>{currentPlayer?.character.name} used {cardPlayed.name} and healed to full health and chose {victim?.character.name} to draw a card</p>}
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.socketID} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.socketID} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.socketID}'s battlecry</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.socketID}'s jujitsu</p>}
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
@@ -99,25 +99,25 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
             })}
 
             {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
-                <p>{currentPlayer?.socketID} played {cardPlayed?.name}</p>
+                <p>{currentPlayer?.character.name} played {cardPlayed?.name}</p>
             }
 
             {geishaInfo &&
                 <p>{geishaInfo}</p>
             }
 
-            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p>{currentPlayer?.socketID} played {cardPlayed?.name}</p>}
+            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p>{currentPlayer?.character.name} played {cardPlayed?.name}</p>}
 
             {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
-                <p>{currentPlayer?.socketID} gave Bushido to {victim?.socketID}</p>
+                <p>{currentPlayer?.character.name} gave Bushido to {victim?.character.name}</p>
             }
 
             {bushidoWeapon === true &&
-                <p>{currentPlayer?.socketID} flipped a weapon card for bushido. Waiting to see if {currentPlayer?.socketID} will discard a weapon or lose a honour point</p>
+                <p>{currentPlayer?.character.name} flipped a weapon card for bushido. Waiting to see if {currentPlayer?.character.name} will discard a weapon or lose a honour point</p>
             }
 
             {bushidoWeapon === false &&
-                <p>{currentPlayer?.socketID} did not flip  weapon card for bushido. Bushido is passed.</p>
+                <p>{currentPlayer?.character.name} did not flip  weapon card for bushido. Bushido is passed.</p>
             }
 
             {bushidoInfo &&
