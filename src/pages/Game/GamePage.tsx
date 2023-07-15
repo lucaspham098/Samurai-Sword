@@ -1327,6 +1327,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     setDiscardPile([...discardPile, selectedCard])
                     const hand = [...usersHand]
                     hand.splice(indexOfSelectedCard(), 1)
@@ -1362,6 +1363,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
                 }
 
@@ -1387,6 +1389,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                 }
@@ -1413,6 +1416,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                 }
@@ -1445,6 +1449,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
                 }
 
@@ -1461,6 +1466,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -1485,6 +1491,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -1510,6 +1517,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
 
                     const data = [...playersData]
@@ -1528,6 +1536,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
 
                     const data = [...playersData]
@@ -1546,6 +1555,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayerHit(false)
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
 
                     const data = [...playersData]
