@@ -3,7 +3,7 @@ import { act } from 'react-dom/test-utils';
 
 type AnnouncementModuleProps = {
     currentPlayer: string
-    victim: string
+    victim: PlayersData | undefined
     wounds: number | undefined
     cardPlayed: PlayableCard | undefined
     weaponCardPlayed: boolean
@@ -16,6 +16,7 @@ type AnnouncementModuleProps = {
     playersData: PlayersData[]
     bushidoWeapon: boolean | undefined
     bushidoInfo: string | undefined
+    geishaInfo: string | undefined
 }
 
 interface PlayableCard {
@@ -50,7 +51,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo, geishaInfo }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -64,21 +65,21 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
         <div>
             {weaponCardPlayed &&
                 <>
-                    <p>{currentPlayer} attacked {victim} with {cardPlayed?.name} causing {wounds} wound(s)</p>
-                    <p>Waiting to see if {victim} will Parry</p>
+                    <p>{currentPlayer} attacked {victim?.socketID} with {cardPlayed?.name} causing {wounds} wound(s)</p>
+                    <p>Waiting to see if {victim?.socketID} will Parry</p>
                 </>
             }
 
             {parryPlayed &&
-                <p>{victim} parried the attack from {currentPlayer}</p>
+                <p>{victim?.socketID} parried the attack from {currentPlayer}</p>
 
             }
 
-            {playerHit && <p>{victim} took {wounds} wound(s) from {currentPlayer}</p>}
+            {playerHit && <p>{victim?.socketID} took {wounds} wound(s) from {currentPlayer}</p>}
 
-            {cardPlayed?.name === "Divertion" && <p>{currentPlayer} used {cardPlayed.name} against {victim}</p>}
+            {cardPlayed?.name === "Divertion" && <p>{currentPlayer} used {cardPlayed.name} against {victim?.socketID}</p>}
 
-            {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim} to draw a card</p>}
+            {cardPlayed?.name === "Breathing" && <p>{currentPlayer} used {cardPlayed.name} and healed to full health and chose {victim?.socketID} to draw a card</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
 
@@ -96,12 +97,18 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
                 return <p key={index}>{info}</p>
             })}
 
-            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
+            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
+                <p>{currentPlayer} played {cardPlayed?.name}</p>
+            }
+
+            {geishaInfo &&
+                <p>{geishaInfo}</p>
+            }
 
             {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p>{currentPlayer} played {cardPlayed?.name}</p>}
 
             {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
-                <p>{currentPlayer} gave Bushido to {victim}</p>
+                <p>{currentPlayer} gave Bushido to {victim?.socketID}</p>
             }
 
             {bushidoWeapon === true &&

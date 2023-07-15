@@ -93,7 +93,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [cardPlayed, setCardPlayed] = useState<PlayableCard>()
     const [currentPlayer, setCurrentPlayer] = useState<string>('')
-    const [victim, setVictim] = useState<string>('')
+    const [victim, setVictim] = useState<PlayersData>()
     const [wounds, setWounds] = useState<number>(0)
 
     const [turn, setTurn] = useState<string>('')
@@ -109,8 +109,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [jujitsuInEffect, setJujitsuInEffect] = useState<boolean>(false)
     const [bushidoWeapon, setBushidoWeapon] = useState<boolean | undefined>()
     const [bushidoInfo, setBushidoInfo] = useState<string>()
-
-
+    const [geishaInfo, setGeishaInfo] = useState<string>()
 
     const [weaponCardPlayed, setWeaponCardPlayed] = useState<boolean>(false)
     const [actionCardPlayed, setActionCardPlayed] = useState<boolean>(false)
@@ -544,86 +543,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Bushido'
         },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        }, {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
     ]
 
     const characterDeck: Character[] = [
@@ -898,7 +817,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 socket.emit('getHand', room)
             })
 
-            socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo }) => {
+            socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo }) => {
                 setPlayersData(playersData)
                 setDrawDeck(drawDeck)
                 setDiscardPile(discardPile)
@@ -916,6 +835,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setJujitsuInfo(jujitsuInfo)
                 setBushidoWeapon(bushidoWeapon)
                 setBushidoInfo(bushidoInfo)
+                setGeishaInfo(geishaInfo)
             })
 
             effectRan.current = true
@@ -974,7 +894,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             battlecryInfo: battlecryInfo,
             jujitsuInfo: jujitsuInfo,
             bushidoWeapon: bushidoWeapon,
-            bushidoInfo: bushidoInfo
+            bushidoInfo: bushidoInfo,
+            geishaInfo: geishaInfo
         }, room)
     }
 
@@ -1119,7 +1040,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (turn === socket.id && !parryModule) {
             updateGameState()
         }
-    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, currentPlayer])
+    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, currentPlayer, geishaInfo])
 
 
 
@@ -1137,10 +1058,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         setUsersHand(data[indexOfPlayer].hand)
         setPlayersData(data)
         setParryModule(false)
-        setActionCardPlayed(false)
+        // setActionCardPlayed(false)
         setWeaponCardPlayed(false)
-        setPropertyCardPlayed(false)
-        setPlayerHit(false)
+        // setPropertyCardPlayed(false)
+        // setPlayerHit(false)
         setParryPlayed(true)
         setTimeout(() => {
             setTurn('')
@@ -1155,10 +1076,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         setPlayersData(data)
         setPlayerHit(true)
         setParryModule(false)
-        setActionCardPlayed(false)
+        // setActionCardPlayed(false)
         setWeaponCardPlayed(false)
-        setPropertyCardPlayed(false)
-        setParryPlayed(false)
+        // setPropertyCardPlayed(false)
+        // setParryPlayed(false)
         setTimeout(() => {
             setTurn('')
         }, 250);
@@ -1294,6 +1215,120 @@ const GamePage = ({ socket }: GamePageProp) => {
         setBushidoWeapon(undefined)
     }
 
+    const handleDiscardRandomCard = () => {
+        setParryModule(false)
+
+        const data = [...playersData]
+        const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(data[indexOfSelectedPlayer()].hand)]
+        const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
+        data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
+        socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
+
+        setWeaponCardPlayed(false)
+        setActionCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(false)
+        setGeishaInfo(undefined)
+        setBushidoInfo(undefined)
+        setBushidoWeapon(undefined)
+        setGeishaInfo(`${currentPlayer} removed a random card from ${victim}'s hand`)
+        setDiscardPile([...discardPile, cardTook])
+        setPlayersData(data)
+    }
+
+    const handleRemoveFocus = () => {
+        setParryModule(false)
+
+        const data = [...playersData]
+        data[indexOfSelectedPlayer()].focus = data[indexOfSelectedPlayer()].focus - 1
+
+        setDiscardPile([...discardPile, {
+            type: 'property',
+            name: 'Focus'
+        } as PlayableCard])
+
+        setWeaponCardPlayed(false)
+        setActionCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(false)
+        setGeishaInfo(undefined)
+        setBushidoInfo(undefined)
+        setBushidoWeapon(undefined)
+        setGeishaInfo(`${currentPlayer} removed 1 Focus from ${victim}`)
+        setPlayersData(data)
+    }
+
+    const handleRemoveArmor = () => {
+        setParryModule(false)
+
+        const data = [...playersData]
+        data[indexOfSelectedPlayer()].armor = data[indexOfSelectedPlayer()].armor - 1
+
+        setDiscardPile([...discardPile, {
+            type: 'property',
+            name: 'Armor'
+        } as PlayableCard])
+
+        setWeaponCardPlayed(false)
+        setActionCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(false)
+        setGeishaInfo(undefined)
+        setBushidoInfo(undefined)
+        setBushidoWeapon(undefined)
+        setGeishaInfo(`${currentPlayer} removed 1 Armor from ${victim}`)
+        setPlayersData(data)
+    }
+
+    const handleRemoveFastDraw = () => {
+        setParryModule(false)
+
+        const data = [...playersData]
+        data[indexOfSelectedPlayer()].fastDraw = data[indexOfSelectedPlayer()].fastDraw - 1
+
+        setDiscardPile([...discardPile, {
+            type: 'property',
+            name: 'Fast Draw'
+        } as PlayableCard])
+
+        setWeaponCardPlayed(false)
+        setActionCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(false)
+        setGeishaInfo(undefined)
+        setBushidoInfo(undefined)
+        setBushidoWeapon(undefined)
+        setGeishaInfo(`${currentPlayer} removed 1 Fast Draw from ${victim}`)
+        setPlayersData(data)
+    }
+
+    const handleRemoveBushido = () => {
+        setParryModule(false)
+
+        const data = [...playersData]
+        data[indexOfSelectedPlayer()].bushido = false
+
+        setDiscardPile([...discardPile, {
+            type: 'property',
+            name: 'Bushido'
+        } as PlayableCard])
+
+        setWeaponCardPlayed(false)
+        setActionCardPlayed(false)
+        setPropertyCardPlayed(false)
+        setPlayerHit(false)
+        setParryPlayed(false)
+        setGeishaInfo(undefined)
+        setBushidoInfo(undefined)
+        setBushidoWeapon(undefined)
+        setGeishaInfo(`${currentPlayer} removed Bushido from ${victim}`)
+        setPlayersData(data)
+    }
+
     useEffect(() => {
         const handleCardPlayer = () => {
             if (turn === socket.id) {
@@ -1326,6 +1361,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDiscardPile([...discardPile, selectedCard])
@@ -1334,7 +1370,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setUsersHand(hand)
                     setWounds(selectedCard.damage as number)
                     setCardPlayed(selectedCard)
-                    setVictim(selectedPlayer)
+                    setVictim(playersData[indexOfSelectedPlayer()])
                     socket.emit('attacked', selectedPlayer, room)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
@@ -1362,6 +1398,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1373,7 +1410,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     hand.splice(indexOfSelectedCard(), 1)
 
                     const data = [...playersData]
-                    const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(hand)]
+                    const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(data[indexOfSelectedPlayer()].hand)]
                     const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
                     data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
                     socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
@@ -1382,12 +1419,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayersData(data)
 
                     setCardPlayed(selectedCard)
-                    setVictim(selectedPlayer)
+                    setVictim(playersData[indexOfSelectedPlayer()])
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(true)
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setSelectedPlayer('')
@@ -1409,12 +1447,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayersData(data)
 
                     setCardPlayed(selectedCard)
-                    setVictim(selectedPlayer)
+                    setVictim(playersData[indexOfSelectedPlayer()])
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(true)
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setSelectedPlayer('')
@@ -1448,6 +1487,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1465,6 +1505,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1490,6 +1531,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1501,6 +1543,17 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     socket.emit('jujitsuPlayed', room)
 
+                }
+
+                if (selectedCard.name === 'Geisha' && selectedPlayer !== '') {
+                    setDiscardPile([...discardPile, selectedCard])
+                    const hand = [...usersHand]
+                    hand.splice(indexOfSelectedCard(), 1)
+                    setUsersHand([...hand])
+                    setVictim(playersData[indexOfSelectedPlayer()])
+                    setCardPlayed(selectedCard)
+                    SetSelectedCard(undefined)
+                    setParryModule(true)
                 }
             }
 
@@ -1516,6 +1569,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(true)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1535,6 +1589,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(true)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1554,6 +1609,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(true)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
@@ -1572,12 +1628,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                         hand.splice(indexOfSelectedCard(), 1)
                         setUsersHand([...hand])
                         setCardPlayed(selectedCard)
-                        setVictim(selectedPlayer)
+                        setVictim(playersData[indexOfSelectedPlayer()])
                         setWeaponCardPlayed(false)
                         setActionCardPlayed(false)
                         setPropertyCardPlayed(true)
                         setPlayerHit(false)
                         setParryPlayed(false)
+                        setGeishaInfo(undefined)
                         setBushidoInfo(undefined)
                         SetSelectedCard(undefined)
 
@@ -1626,6 +1683,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 playersData={playersData}
                 bushidoWeapon={bushidoWeapon}
                 bushidoInfo={bushidoInfo}
+                geishaInfo={geishaInfo}
             />
 
             {parryModule && playersData.length > 0 && <ParryModule
@@ -1639,6 +1697,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleJujitsuWound={handleJujitsuWound}
                 bushidoWeapon={bushidoWeapon}
                 handleLoseHonourPoint={handleLoseHonourPoint}
+                victim={victim}
+                handleDiscardRandomCard={handleDiscardRandomCard}
+                handleRemoveFocus={handleRemoveFocus}
+                handleRemoveArmor={handleRemoveArmor}
+                handleRemoveFastDraw={handleRemoveFastDraw}
+                handleRemoveBushido={handleRemoveBushido}
+
             />}
 
             {startGame &&
