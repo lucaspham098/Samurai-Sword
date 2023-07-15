@@ -92,7 +92,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [selectedCard, SetSelectedCard] = useState<PlayableCard | undefined>()
 
     const [cardPlayed, setCardPlayed] = useState<PlayableCard>()
-    const [currentPlayer, setCurrentPlayer] = useState<string>('')
+    const [currentPlayer, setCurrentPlayer] = useState<PlayersData>()
     const [victim, setVictim] = useState<PlayersData>()
     const [wounds, setWounds] = useState<number>(0)
 
@@ -742,7 +742,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             socket.on('setTurn', shogun => {
                 setTimeout(() => {
-                    setTurn(shogun)
+                    setTurn(shogun.socketID)
                 }, 500);
                 setCurrentPlayer(shogun)
             })
@@ -758,12 +758,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             })
 
             socket.on('setTurnBack', currentPlayer => {
-                setTurn(currentPlayer)
+                setTurn(currentPlayer.socketID)
                 // setBattlecryInPlay(false)
             })
 
             socket.on('newTurn', () => {
-                setCurrentPlayer(socket.id)
+                setCurrentPlayer(playersData[indexOfPlayer])
                 setNewTurn(true)
                 setTurn(socket.id)
             })
@@ -1040,7 +1040,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (turn === socket.id && !parryModule) {
             updateGameState()
         }
-    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, currentPlayer, geishaInfo])
+    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo])
 
 
 
@@ -1232,7 +1232,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer} removed a random card from ${victim}'s hand`)
+        setGeishaInfo(`${currentPlayer?.socketID} removed a random card from ${victim}'s hand`)
         setDiscardPile([...discardPile, cardTook])
         setPlayersData(data)
     }
@@ -1256,7 +1256,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer} removed 1 Focus from ${victim}`)
+        setGeishaInfo(`${currentPlayer?.socketID} removed 1 Focus from ${victim}`)
         setPlayersData(data)
     }
 
@@ -1279,7 +1279,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer} removed 1 Armor from ${victim}`)
+        setGeishaInfo(`${currentPlayer?.socketID} removed 1 Armor from ${victim}`)
         setPlayersData(data)
     }
 
@@ -1302,7 +1302,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer} removed 1 Fast Draw from ${victim}`)
+        setGeishaInfo(`${currentPlayer?.socketID} removed 1 Fast Draw from ${victim}`)
         setPlayersData(data)
     }
 
@@ -1325,7 +1325,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer} removed Bushido from ${victim}`)
+        setGeishaInfo(`${currentPlayer?.socketID} removed Bushido from ${victim}`)
         setPlayersData(data)
     }
 
