@@ -1,11 +1,17 @@
 import React from 'react';
 
-const IeyasuModule = () => {
+type IeyasuModuleProps = {
+    drawCardFromDiscard: () => void
+    drawCards: () => void
+}
+
+
+const IeyasuModule = ({ drawCardFromDiscard, drawCards }: IeyasuModuleProps) => {
     return (
         <div>
             <p>Draw your first card from the top of the draw pile? </p>
-            <button>Yes</button>
-            <button>no</button>
+            <button onClick={() => drawCardFromDiscard()}>Yes</button>
+            <button onClick={() => drawCards()}>No</button>
         </div>
     );
 };

@@ -1110,8 +1110,19 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         setUsersHand([...usersHand, ...newCards])
         setNewTurn(false)
+        if (ieyasuModule === true) {
+            setIeyasuModule(false)
+        }
     }
 
+    const drawCardFromDiscard = () => {
+        setUsersHand([...usersHand, discardPile.pop() as PlayableCard, drawDeck.pop() as PlayableCard])
+
+        setNewTurn(false)
+        if (ieyasuModule === true) {
+            setIeyasuModule(false)
+        }
+    }
 
 
     useEffect(() => {
@@ -1153,12 +1164,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setPlayersData(data)
                 }
-
+            } else if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
+                setIeyasuModule(true)
             }
-            // if (turn === socket.id && newTurn && playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length < 0) {
-            //     setIeyasuModule(true)
-            // }
-
             else {
                 drawCards()
             }
@@ -1319,8 +1327,19 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newDiscardPile: PlayableCard[] = [...discardPile, card]
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(index, 1)
-        setUsersHand(data[indexOfPlayer].hand)
 
+        if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
+            setUsersHand(data[indexOfPlayer].hand)
+            setIeyasuModule(true)
+        } else {
+            const newCards: PlayableCard[] = []
+            for (let i = 0; i < 2; i++) {
+                if (drawDeck.length > 0) {
+                    newCards.push(drawDeck.pop() as PlayableCard);
+                }
+            }
+            setUsersHand([...data[indexOfPlayer].hand, ...newCards])
+        }
 
         data[indexOfPlayer].bushido = false
 
@@ -1332,7 +1351,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].socketID} discarded a weapon.Bushido is passed on`
         setBushidoInfo(newInfo)
-
         setDiscardPile(newDiscardPile)
         setPlayersData(data)
     }
@@ -1350,12 +1368,16 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].socketID} lost a honour point. Bushido is discarded`
 
-        drawCards()
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
         setPlayersData(data)
         setBushidoWeapon(undefined)
 
+        if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
+            setIeyasuModule(true)
+        } else {
+            drawCards()
+        }
     }
 
     const handleDiscardRandomCard = () => {
@@ -1854,9 +1876,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleRemoveBushido={handleRemoveBushido}
             />}
 
-            {ieyasuModule &&
-                <IeyasuModule />
-            }
+            {ieyasuModule && <IeyasuModule
+                drawCardFromDiscard={drawCardFromDiscard}
+                drawCards={drawCards}
+            />}
 
             {startGame &&
                 player1Role && player2Role && player3Role && player1Character && player2Character && player3Character &&
