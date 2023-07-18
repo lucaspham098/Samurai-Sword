@@ -9,6 +9,7 @@ import ParryModule from '../../components/ParryModule/ParryModule';
 import { visitFunctionBody } from 'typescript';
 import { start } from 'repl';
 import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
+import IeyasuModule from '../../components/IeyasuModule/IeyasuModule';
 
 
 type GamePageProp = {
@@ -117,6 +118,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [parryPlayed, setParryPlayed] = useState<boolean>(false)
     const [playerHit, setPlayerHit] = useState<boolean>(false)
 
+    const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
 
     const mainDeck: PlayableCard[] = [
         {
@@ -543,6 +545,125 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Bushido'
         },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
+        {
+            type: 'property',
+            name: 'Bushido'
+        },
     ]
 
     const characterDeck: Character[] = [
@@ -651,8 +772,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             const settingPlayer1States = async () => {
                 // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Character = {
-                    name: 'Ushiwaka',
-                    health: 4,
+                    name: 'Ieyasu',
+                    health: 5,
                 }
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
                 await setPlayer1Character(dealtPlayer1Character)
@@ -937,16 +1058,16 @@ const GamePage = ({ socket }: GamePageProp) => {
         console.log(target.id)
     }
 
-    const handleSelectedCard = (card: PlayableCard) => {
+    const handleSelectedCard = (card: PlayableCard, index: number) => {
         if (turn === socket.id) {
             setSelectedPlayer('')
             SetSelectedCard(card)
             if (card.type === 'weapon' && turn === socket.id && jujitsuInEffect) {
-                handleJujitsuDiscard(card)
+                handleJujitsuDiscard(card, index)
                 setJujitsuInEffect(false)
             }
             if (card.type === 'weapon' && turn === socket.id && bushidoWeapon) {
-                handleBushidoDiscard(card)
+                handleBushidoDiscard(card, index)
                 setBushidoWeapon(undefined)
             }
         }
@@ -992,10 +1113,10 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
 
+
     useEffect(() => {
         if (turn === socket.id && newTurn) {
             if (playersData[indexOfPlayer].bushido === true) {
-                console.log('have busdhido')
                 const drawnCard = drawDeck.pop() as PlayableCard
 
                 setDiscardPile([...discardPile, drawnCard])
@@ -1006,6 +1127,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setBushidoInfo(undefined)
                     setBushidoWeapon(true)
 
                     setTimeout(() => {
@@ -1018,6 +1140,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPropertyCardPlayed(false)
                     setPlayerHit(false)
                     setParryPlayed(false)
+                    setBushidoInfo(undefined)
                     setBushidoWeapon(false)
                     drawCards()
                     const data = [...playersData]
@@ -1031,7 +1154,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setPlayersData(data)
                 }
 
-            } else {
+            }
+            // if (turn === socket.id && newTurn && playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length < 0) {
+            //     setIeyasuModule(true)
+            // }
+
+            else {
                 drawCards()
             }
 
@@ -1143,13 +1271,14 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
     }
 
-    const handleJujitsuDiscard = (card: PlayableCard) => {
+    const handleJujitsuDiscard = (card: PlayableCard, index: number) => {
         const newDiscardPile: PlayableCard[] = [...discardPile, card]
         const data = [...playersData]
-        data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+        data[indexOfPlayer].hand.splice(index, 1)
         setUsersHand(data[indexOfPlayer].hand)
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} discarded a weapon`
+
+        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1184,13 +1313,14 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
     }
 
-    const handleBushidoDiscard = (card: PlayableCard) => {
+    const handleBushidoDiscard = (card: PlayableCard, index: number) => {
         setParryModule(false)
 
         const newDiscardPile: PlayableCard[] = [...discardPile, card]
         const data = [...playersData]
-        data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+        data[indexOfPlayer].hand.splice(index, 1)
         setUsersHand(data[indexOfPlayer].hand)
+
 
         data[indexOfPlayer].bushido = false
 
@@ -1220,10 +1350,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].socketID} lost a honour point. Bushido is discarded`
 
+        drawCards()
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
         setPlayersData(data)
         setBushidoWeapon(undefined)
+
     }
 
     const handleDiscardRandomCard = () => {
@@ -1346,7 +1478,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 console.log(selectedCard)
             }
 
-            if (turn !== socket.id || !selectedCard || parryModule) {
+            if (turn !== socket.id || !selectedCard || parryModule || ieyasuModule) {
                 return
             }
 
@@ -1720,8 +1852,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleRemoveArmor={handleRemoveArmor}
                 handleRemoveFastDraw={handleRemoveFastDraw}
                 handleRemoveBushido={handleRemoveBushido}
-
             />}
+
+            {ieyasuModule &&
+                <IeyasuModule />
+            }
 
             {startGame &&
                 player1Role && player2Role && player3Role && player1Character && player2Character && player3Character &&
@@ -1826,7 +1961,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
                                     return <p className='card' key={index}
                                         onClick={() => {
-                                            handleSelectedCard(card)
+                                            handleSelectedCard(card, index)
                                         }}>{card.name}</p>
                                 })}
                             </div>
@@ -1933,7 +2068,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
                                     onClick={() => {
-                                        handleSelectedCard(card)
+                                        handleSelectedCard(card, index)
                                     }}>{card.name}</p>
                             })}
                         </div>
@@ -2040,7 +2175,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
                                     onClick={() => {
-                                        handleSelectedCard(card)
+                                        handleSelectedCard(card, index)
                                     }}>{card.name}</p>
                             })}
                         </div>
