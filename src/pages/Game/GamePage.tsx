@@ -653,7 +653,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             const settingPlayer1States = async () => {
                 // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Character = {
-                    name: 'Chiyome',
+                    name: 'Hanzo',
                     health: 4,
                 }
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -957,6 +957,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleBushidoDiscard(card, index)
                 setBushidoWeapon(undefined)
             }
+            if (card.type === 'weapon' && turn === socket.id && weaponCardPlayed && parryModule && playersData[indexOfPlayer].character.name === "Hanzo" && playersData[indexOfPlayer].hand.length > 1) {
+                handleHanzoWeaponParry(card, index)
+            }
         }
 
     }
@@ -1074,6 +1077,22 @@ const GamePage = ({ socket }: GamePageProp) => {
         socket.emit('setTurnBack', currentPlayer)
     }
 
+    const handleHanzoWeaponParry = (card: PlayableCard, index: number) => {
+        setParryModule(false)
+
+        setDiscardPile([...discardPile, card])
+        const data = [...playersData]
+        data[indexOfPlayer].hand.splice(index, 1)
+        setUsersHand(data[indexOfPlayer].hand)
+
+        setWeaponCardPlayed(false)
+        setParryPlayed(true)
+        setTimeout(() => {
+            setTurn('')
+        }, 250);
+        setTurnBack()
+    }
+
     const handleParry = () => {
         setDiscardPile([...discardPile, {
             type: 'action',
@@ -1084,10 +1103,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setUsersHand(data[indexOfPlayer].hand)
         setPlayersData(data)
         setParryModule(false)
-        // setActionCardPlayed(false)
         setWeaponCardPlayed(false)
-        // setPropertyCardPlayed(false)
-        // setPlayerHit(false)
         setParryPlayed(true)
         setTimeout(() => {
             setTurn('')
@@ -1304,7 +1320,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
-        setGeishaInfo(`${currentPlayer?.socketID} removed a random card from ${victim}'s hand`)
+        setGeishaInfo(`${currentPlayer?.character.name} removed a random card from ${victim?.character.name}'s hand`)
         setDiscardPile([...discardPile, cardTook])
         setPlayersData(data)
     }

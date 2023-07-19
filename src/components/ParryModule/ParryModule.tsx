@@ -54,9 +54,17 @@ interface Role {
 const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus }: ParryModuleProps) => {
     return (
         <div>
-            {cardPlayed?.type === 'weapon' &&
+            {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' &&
                 <>
                     <p>Parry the attack or take {wounds} wound(s)</p>
+                    {indexOfParry !== -1 ? <button onClick={() => handleParry()}>Parry</button> : <button disabled>Parry</button>}
+                    <button onClick={() => handleGetAttacked()}>Get Attacked</button>
+                </>
+            }
+
+            {cardPlayed?.type === 'weapon' && victim?.character.name === 'Hanzo' &&
+                <>
+                    <p>Parry the attack with a parry card, select a weapon in hand to use as parry (unless it is your last card), or take {wounds} wound(s)</p>
                     {indexOfParry !== -1 ? <button onClick={() => handleParry()}>Parry</button> : <button disabled>Parry</button>}
                     <button onClick={() => handleGetAttacked()}>Get Attacked</button>
                 </>
