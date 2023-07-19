@@ -545,125 +545,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Bushido'
         },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
-        {
-            type: 'property',
-            name: 'Bushido'
-        },
     ]
 
     const characterDeck: Character[] = [
@@ -772,8 +653,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             const settingPlayer1States = async () => {
                 // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
                 const dealtPlayer1Character = {
-                    name: 'Ieyasu',
-                    health: 5,
+                    name: 'Chiyome',
+                    health: 4,
                 }
                 const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
                 await setPlayer1Character(dealtPlayer1Character)
@@ -904,21 +785,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setUsersHand([...newHand])
             })
 
-            socket.on('battlecryPlayed', () => {
-                setParryModule(true)
-                setTurn(socket.id)
-            })
-
-            socket.on('jujitsuPlayed', () => {
-                setJujitsuInEffect(true)
-                setParryModule(true)
-                SetSelectedCard(undefined)
-                setTurn(socket.id)
-            })
-
-
-            socket.on('initGameState', (playerData) => {
-                console.log(playerData)
+            socket.on('initGameState', (playerData: PlayersData[]) => {
+                const playerIndex = playerData.findIndex(player => player.socketID === socket.id)
+                setIndexOfPlayer(playerIndex)
                 setPlayersData(playerData)
                 setPlayer1Hand(playerData[0].hand)
                 setPlayer1Character(playerData[0].character)
@@ -960,6 +829,26 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setBushidoWeapon(bushidoWeapon)
                 setBushidoInfo(bushidoInfo)
                 setGeishaInfo(geishaInfo)
+            })
+
+            socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
+                const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+                // console.log(playersData[playerIndex])
+                if (playersData[playerIndex].character.name !== 'Chiyome') {
+                    setParryModule(true)
+                    setTurn(socket.id)
+                }
+            })
+
+            socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
+                const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+                // console.log(playersData[playerIndex])
+                if (playersData[playerIndex].character.name !== 'Chiyome') {
+                    setJujitsuInEffect(true)
+                    setParryModule(true)
+                    SetSelectedCard(undefined)
+                    setTurn(socket.id)
+                }
             })
 
             effectRan.current = true
@@ -1026,8 +915,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         if (playersData.length > 0 && startGame) {
             console.log('player data change')
-            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            setIndexOfPlayer(playerIndex)
             setPlayer1Hand(playersData[0].hand)
             setPlayer1Attacks(playersData[0].attacks)
             setPlayer1Health(playersData[0].health)
@@ -1243,7 +1130,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
         setUsersHand(data[indexOfPlayer].hand)
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} discarded a parry`
+        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1255,7 +1142,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             setTurn('')
         }, 250);
 
-        if (newBattlecryInfo.length === playersData.length - 1) {
+
+        if ((playersData.findIndex(player => player.character.name === 'Chiyome') !== -1 && currentPlayer?.character.name !== 'Chiyome')) {
+            if (newBattlecryInfo.length === playersData.length - 2) {
+                setTurnBack()
+            }
+        } else if (newBattlecryInfo.length === playersData.length - 1) {
             setTurnBack()
         }
     }
@@ -1265,7 +1157,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
         setPlayersData(data)
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} took 1 wound`
+        const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
         setBattlecryInfo(newBattlecryInfo)
 
@@ -1274,7 +1166,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             setTurn('')
         }, 250);
 
-        if (newBattlecryInfo.length === playersData.length - 1) {
+        if ((playersData.findIndex(player => player.character.name === 'Chiyome') !== -1 && currentPlayer?.character.name !== 'Chiyome')) {
+            if (newBattlecryInfo.length === playersData.length - 2) {
+                setTurnBack()
+            }
+        } else if (newBattlecryInfo.length === playersData.length - 1) {
             setTurnBack()
         }
     }
@@ -1297,7 +1193,13 @@ const GamePage = ({ socket }: GamePageProp) => {
         setTimeout(() => {
             setTurn('')
         }, 250);
-        if (newJujitsuInfo.length === playersData.length - 1) {
+
+
+        if ((playersData.findIndex(player => player.character.name === 'Chiyome') !== -1 && currentPlayer?.character.name !== 'Chiyome')) {
+            if (newJujitsuInfo.length === playersData.length - 2) {
+                setTurnBack()
+            }
+        } else if (newJujitsuInfo.length === playersData.length - 1) {
             setTurnBack()
         }
     }
@@ -1307,7 +1209,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
         setPlayersData(data)
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} took 1 wound`
+        const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
         setJujitsuInfo(newJujitsuInfo)
 
@@ -1316,7 +1218,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             setTurn('')
         }, 250);
 
-        if (newJujitsuInfo.length === playersData.length - 1) {
+
+        if ((playersData.findIndex(player => player.character.name === 'Chiyome') !== -1 && currentPlayer?.character.name !== 'Chiyome')) {
+            if (newJujitsuInfo.length === playersData.length - 2) {
+                setTurnBack()
+            }
+        } else if (newJujitsuInfo.length === playersData.length - 1) {
             setTurnBack()
         }
     }
@@ -1686,7 +1593,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setTurn('')
                     }, 250);
 
-                    socket.emit('battlecryPlayed', room)
+                    socket.emit('battlecryPlayed', room, playersData)
 
                 }
 
@@ -1712,7 +1619,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setTurn('')
                     }, 250);
 
-                    socket.emit('jujitsuPlayed', room)
+                    socket.emit('jujitsuPlayed', room, playersData)
 
                 }
 

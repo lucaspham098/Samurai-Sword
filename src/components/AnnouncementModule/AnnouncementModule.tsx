@@ -82,13 +82,32 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {cardPlayed?.name === "Breathing" && <p>{currentPlayer?.character.name} used {cardPlayed.name} and healed to full health and chose {victim?.character.name} to draw a card</p>}
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+            {cardPlayed?.name === 'Battlecry' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
+            {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+
+            {cardPlayed?.name === 'Jujitsu' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+            {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>}
 
+            {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length === playersData.length - 2 &&
+                <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>
+            }
+
+
+
             {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>}
+
+            {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length === playersData.length - 2 &&
+                <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>
+            }
+
+
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
