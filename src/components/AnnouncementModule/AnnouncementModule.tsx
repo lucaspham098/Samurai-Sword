@@ -18,6 +18,7 @@ type AnnouncementModuleProps = {
     bushidoWeapon: boolean | undefined
     bushidoInfo: string | undefined
     geishaInfo: string | undefined
+    death: boolean
 }
 
 interface PlayableCard {
@@ -52,7 +53,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo, geishaInfo }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo, geishaInfo, death }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -141,6 +142,10 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
             {bushidoInfo &&
                 <p>{bushidoInfo}</p>
+            }
+
+            {death &&
+                <p>{currentPlayer?.character.name} defeated {victim?.character.name} and gained an honour point</p>
             }
 
         </div>

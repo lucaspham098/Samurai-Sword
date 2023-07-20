@@ -90,6 +90,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [propertyCardPlayed, setPropertyCardPlayed] = useState<boolean>(false)
     const [parryPlayed, setParryPlayed] = useState<boolean>(false)
     const [playerHit, setPlayerHit] = useState<boolean>(false)
+    const [death, setDeath] = useState<boolean>(false)
 
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
 
@@ -660,7 +661,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setPlayersData(playersData)
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death }) => {
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
             setDiscardPile(discardPile)
@@ -679,6 +680,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setBushidoWeapon(bushidoWeapon)
             setBushidoInfo(bushidoInfo)
             setGeishaInfo(geishaInfo)
+            setDeath(death)
         })
 
         socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
@@ -849,7 +851,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             jujitsuInfo: jujitsuInfo,
             bushidoWeapon: bushidoWeapon,
             bushidoInfo: bushidoInfo,
-            geishaInfo: geishaInfo
+            geishaInfo: geishaInfo,
+            death: death
         }, room)
     }
 
@@ -889,6 +892,10 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const indexOfSelectedPlayer: () => number = () => {
         return playersData.findIndex(player => player.socketID === selectedPlayer)
+    }
+
+    const indexOfCurrentPlayer = () => {
+        return playersData.findIndex(player => player.socketID == currentPlayer?.socketID)
     }
 
     const indexOfSelectedCard: () => number = () => {
@@ -969,6 +976,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(true)
+                    setDeath(false)
 
                     setTimeout(() => {
                         setParryModule(true)
@@ -982,6 +990,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(false)
+                    setDeath(false)
+
                     const data = [...playersData]
                     data[indexOfPlayer].bushido = false
                     if (!!playersData[indexOfPlayer + 1]) {
@@ -1065,7 +1075,16 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const handleGetAttacked = () => {
         const data = [...playersData]
-        data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+
+        if (data[indexOfPlayer].health - wounds === 0 || data[indexOfPlayer].health - wounds < 0) {
+            data[indexOfPlayer].health = 0
+            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
+
+            setDeath(true)
+        } else {
+            data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+        }
 
         if (playersData[indexOfPlayer].character.name === "Ushiwaka") {
             const newCards: PlayableCard[] = []
@@ -1120,7 +1139,17 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const handleBattlecryWound = () => {
         const data = [...playersData]
-        data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+
+        if (data[indexOfPlayer].health - wounds === 0) {
+            data[indexOfPlayer].health = 0
+            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
+
+            setDeath(true)
+        } else {
+            data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+        }
+
         setPlayersData(data)
 
         const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
@@ -1171,7 +1200,17 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const handleJujitsuWound = () => {
         const data = [...playersData]
-        data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+
+        if (data[indexOfPlayer].health - wounds === 0) {
+            data[indexOfPlayer].health = 0
+            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
+
+            setDeath(true)
+        } else {
+            data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
+        }
+
         setPlayersData(data)
 
         const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
@@ -1278,6 +1317,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
+        setDeath(false)
+
         setGeishaInfo(`${currentPlayer?.character.name} removed a random card from ${victim?.character.name}'s hand`)
         setDiscardPile([...discardPile, cardTook])
         setPlayersData(data)
@@ -1302,6 +1343,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
+        setDeath(false)
+
         setGeishaInfo(`${currentPlayer?.socketID} removed 1 Focus from ${victim}`)
         setPlayersData(data)
     }
@@ -1325,6 +1368,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
+        setDeath(false)
+
         setGeishaInfo(`${currentPlayer?.socketID} removed 1 Armor from ${victim}`)
         setPlayersData(data)
     }
@@ -1348,6 +1393,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
+        setDeath(false)
+
         setGeishaInfo(`${currentPlayer?.socketID} removed 1 Fast Draw from ${victim}`)
         setPlayersData(data)
     }
@@ -1371,6 +1418,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setGeishaInfo(undefined)
         setBushidoInfo(undefined)
         setBushidoWeapon(undefined)
+        setDeath(false)
+
         setGeishaInfo(`${currentPlayer?.socketID} removed Bushido from ${victim}`)
         setPlayersData(data)
     }
@@ -1418,6 +1467,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
 
@@ -1462,6 +1513,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
                     setPlayersData(data)
                 }
@@ -1488,6 +1541,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                     setPlayersData(data)
@@ -1514,6 +1569,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
                     setPlayersData(data)
@@ -1548,6 +1605,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
                     setPlayersData(data)
                 }
@@ -1566,6 +1625,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -1592,6 +1653,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -1630,6 +1693,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
                     setPlayersData(data)
                 }
@@ -1647,6 +1712,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
 
                     setPlayersData(data)
@@ -1665,6 +1732,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setGeishaInfo(undefined)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
+                    setDeath(false)
+
                     SetSelectedCard(undefined)
 
                     setPlayersData(data)
@@ -1731,6 +1800,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 bushidoWeapon={bushidoWeapon}
                 bushidoInfo={bushidoInfo}
                 geishaInfo={geishaInfo}
+                death={death}
             />
 
             {parryModule && playersData.length > 0 && <ParryModule
@@ -2085,6 +2155,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
             {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
+
+            <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button>
 
             {/* <button onClick={() => {
                 console.log(currentPlayer)
