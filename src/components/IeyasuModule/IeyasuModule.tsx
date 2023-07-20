@@ -2,7 +2,7 @@ import React from 'react';
 
 type IeyasuModuleProps = {
     drawCardFromDiscard: () => void
-    drawCards: () => void
+    drawCards: (number: number) => void
 }
 
 
@@ -11,7 +11,7 @@ const IeyasuModule = ({ drawCardFromDiscard, drawCards }: IeyasuModuleProps) => 
         <div>
             <p>Draw your first card from the top of the draw pile? </p>
             <button onClick={() => drawCardFromDiscard()}>Yes</button>
-            <button onClick={() => drawCards()}>No</button>
+            <button onClick={() => drawCards(2)}>No</button>
         </div>
     );
 };

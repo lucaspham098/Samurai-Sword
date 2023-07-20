@@ -715,6 +715,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer1Character = {
+            //     name: 'Tomoe',
+            //     health: 5,
+            // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             data[0].character = dealtPlayer1Character
             data[0].health = dealtPlayer1Character.health
@@ -746,11 +750,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
 
-            // const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
-            const dealtPlayer2Character = {
-                name: 'Goemon',
-                health: 5,
-            } as Character
+            const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
             data[1].character = dealtPlayer2Character
             data[1].health = dealtPlayer2Character.health
@@ -902,12 +902,12 @@ const GamePage = ({ socket }: GamePageProp) => {
         return randomIndex
     }
 
-    const drawCards = () => {
+    const drawCards = (number: number) => {
         if (playersData.length > 0) {
             const data = [...playersData]
 
             const newCards: PlayableCard[] = []
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < number; i++) {
                 if (drawDeck.length > 0) {
                     newCards.push(drawDeck.pop() as PlayableCard);
                 }
@@ -933,6 +933,13 @@ const GamePage = ({ socket }: GamePageProp) => {
             setIeyasuModule(false)
         }
     }
+
+
+    useEffect(() => {
+        if (turn === socket.id && playersData[indexOfPlayer].character.name === 'Tomoe' && playerHit === true && newTurn === false) {
+            drawCards(1)
+        }
+    }, [playerHit])
 
 
     useEffect(() => {
@@ -974,7 +981,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (playersData[indexOfPlayer].character.name === "Ieyasu") {
                         setIeyasuModule(true)
                     } else {
-                        drawCards()
+                        drawCards(2)
                     }
 
                     setPlayersData(data)
@@ -983,7 +990,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setIeyasuModule(true)
             }
             else {
-                drawCards()
+                drawCards(2)
             }
 
         }
@@ -1220,7 +1227,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
             setIeyasuModule(true)
         } else {
-            drawCards()
+            drawCards(2)
         }
     }
 
