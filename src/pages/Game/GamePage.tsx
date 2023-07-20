@@ -716,7 +716,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             // const dealtPlayer1Character = {
-            //     name: 'Hideyoshi',
+            //     name: 'Musashi',
             //     health: 5,
             // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -1420,7 +1420,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoWeapon(undefined)
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
-                    setWounds(selectedCard.damage as number)
+
+                    if (playersData[indexOfPlayer].character.name === 'Musashi') {
+                        setWounds(selectedCard.damage as number + 1)
+                    } else {
+                        setWounds(selectedCard.damage as number)
+                    }
+
                     setCardPlayed(selectedCard)
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setPlayersData(data)
