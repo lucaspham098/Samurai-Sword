@@ -963,6 +963,13 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     useEffect(() => {
         if (turn === socket.id && newTurn) {
+
+            if (playersData[indexOfPlayer].health === 0) {
+                const data = [...playersData]
+                data[indexOfPlayer].health = data[indexOfPlayer].character.health
+                setPlayersData(data)
+            }
+
             if (playersData[indexOfPlayer]?.bushido === true) {
                 const drawnCard = drawDeck.pop() as PlayableCard
 
