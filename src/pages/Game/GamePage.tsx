@@ -566,7 +566,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             health: 5,
         },
         {
-            name: 'Ginchyo',
+            name: 'Ginchiyo',
             health: 5,
         },
     ]
@@ -716,7 +716,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             // const dealtPlayer1Character = {
-            //     name: 'Musashi',
+            //     name: 'Ginchiyo',
             //     health: 5,
             // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -1421,7 +1421,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
 
-                    if (playersData[indexOfPlayer].character.name === 'Musashi') {
+                    if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && selectedCard.damage as number > 1) {
+                        setWounds(selectedCard.damage as number - 1)
+                    } else if (playersData[indexOfPlayer].character.name === 'Musashi') {
                         setWounds(selectedCard.damage as number + 1)
                     } else {
                         setWounds(selectedCard.damage as number)
