@@ -740,9 +740,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                 data[0].hand = dealtPlayer1Hand
             }
 
+            if (dealtPlayer1Character.name === 'Goemon') {
+                data[0].attacks = 2
+            }
 
 
-            const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
+
+            // const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer2Character = {
+                name: 'Goemon',
+                health: 5,
+            } as Character
             const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
             data[1].character = dealtPlayer2Character
             data[1].health = dealtPlayer2Character.health
@@ -769,6 +777,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                 data[1].hand = dealtPlayer2Hand
             }
 
+            if (dealtPlayer2Character.name === 'Goemon') {
+                data[1].attacks = 2
+            }
+
+
 
             const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer3Role = shuffledRoleDeck.pop() as Role
@@ -794,8 +807,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
                 data[2].honourPoints = 3
                 data[2].hand = dealtPlayer3Hand
-
             }
+
+            if (dealtPlayer3Character.name === 'Goemon') {
+                data[2].attacks = 2
+            }
+
+
 
             setDrawDeck(shuffledMainDeck as PlayableCard[])
 
