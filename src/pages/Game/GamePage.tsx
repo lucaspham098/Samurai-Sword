@@ -23,7 +23,8 @@ interface PlayersData {
     focus: number,
     armor: number,
     fastDraw: number,
-    bushido: boolean
+    bushido: boolean,
+    harmless: boolean
 }
 
 interface PlayableCard {
@@ -964,6 +965,12 @@ const GamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         if (turn === socket.id && newTurn) {
 
+            if (playersData[indexOfPlayer].harmless === true) {
+                const data = [...playersData]
+                data[indexOfPlayer].harmless = false
+                setPlayersData(data)
+            }
+
             if (playersData[indexOfPlayer].health === 0) {
                 const data = [...playersData]
                 data[indexOfPlayer].health = data[indexOfPlayer].character.health
@@ -1086,6 +1093,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0 || data[indexOfPlayer].health - wounds < 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfPlayer].harmless = true
+
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
@@ -1122,6 +1131,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
 
+        if (data[indexOfPlayer].hand.length === 0) {
+            data[indexOfPlayer].harmless = true
+        }
+
         const newInfo = `${playersData[indexOfPlayer].character.name} discarded a parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
 
@@ -1150,6 +1163,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
@@ -1182,6 +1196,9 @@ const GamePage = ({ socket }: GamePageProp) => {
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(index, 1)
 
+        if (data[indexOfPlayer].hand.length === 0) {
+            data[indexOfPlayer].harmless = true
+        }
 
         const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
@@ -1211,6 +1228,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
@@ -1315,6 +1333,9 @@ const GamePage = ({ socket }: GamePageProp) => {
         const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
         data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
 
+        if (data[indexOfSelectedPlayer()].hand.length === 0) {
+            data[indexOfSelectedPlayer()].harmless = true
+        }
 
         setWeaponCardPlayed(false)
         setActionCardPlayed(false)
@@ -1535,6 +1556,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
                     data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
 
+                    if (data[indexOfSelectedPlayer()].hand.length === 0) {
+                        data[indexOfSelectedPlayer()].harmless = true
+                    }
+
                     data[indexOfPlayer].hand = [...data[indexOfPlayer].hand.filter(card => card !== selectedCard), cardTook]
 
 
@@ -1564,6 +1589,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                     data[indexOfPlayer].health = data[indexOfPlayer].character.health
                     const newCard = drawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
+
+                    if (data[indexOfSelectedPlayer()].harmless === true) {
+                        data[indexOfSelectedPlayer()].harmless = false
+                    }
 
 
                     setCardPlayed(selectedCard)
@@ -1600,6 +1629,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     for (let i = 0; i < data.length; i++) {
                         if (i !== indexOfPlayer) {
                             data[i].hand.push(drawDeck.pop() as PlayableCard)
+                            if (data[i].harmless === true) {
+                                data[i].harmless = false
+                            }
                         }
                     }
 
@@ -1776,6 +1808,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     const endTurn = () => {
+        if (playersData[indexOfPlayer].hand.length = 0) {
+            const data = [...playersData]
+            data[indexOfPlayer].harmless = true
+            setPlayersData(data)
+        }
+
         if (!!playersData[indexOfPlayer + 1]) {
             const newTurn = playersData[indexOfPlayer + 1]
             socket.emit('newTurn', newTurn, room)
@@ -1852,6 +1890,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[1].honourPoints}</p>
                             <p>Attacks:{playersData[1].attacks}</p>
                             <p>Card #:{playersData[1].hand.length} </p>
+                            {playersData[1].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[1].focus > 0 &&
                                 <p>Focus x {playersData[1].focus}</p>
                             }
@@ -1880,6 +1921,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[2].honourPoints}</p>
                             <p>Attacks:{playersData[2].attacks}</p>
                             <p>Card #:{playersData[2].hand.length} </p>
+                            {playersData[2].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[2].focus > 0 &&
                                 <p>Focus x {playersData[2].focus}</p>
                             }
@@ -1930,6 +1974,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         {playersData[0].bushido &&
                             <p>Bushido</p>
                         }
+                        {playersData[0].harmless &&
+                            <p>HARMLESS</p>
+                        }
                         <div className='game__user-hand'>
                             {playersData[0].hand.length > 0 && playersData[0].hand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
@@ -1959,6 +2006,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[2].honourPoints}</p>
                             <p>Attacks:{playersData[2].attacks}</p>
                             <p>Card #:{playersData[2].hand.length} </p>
+                            {playersData[2].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[2].focus > 0 &&
                                 <p>Focus x {playersData[2].focus}</p>
                             }
@@ -1987,6 +2037,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[0].honourPoints}</p>
                             <p>Attacks:{playersData[0].attacks}</p>
                             <p>Card #:{playersData[0].hand.length} </p>
+                            {playersData[0].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[0].focus > 0 &&
                                 <p>Focus x {playersData[0].focus}</p>
                             }
@@ -2037,6 +2090,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         {playersData[1].bushido &&
                             <p>Bushido</p>
                         }
+                        {playersData[1].harmless &&
+                            <p>HARMLESS</p>
+                        }
                         <div className='game__user-hand'>
                             {playersData[1].hand.length > 0 && playersData[1].hand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
@@ -2066,6 +2122,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[0].honourPoints}</p>
                             <p>Attacks:{playersData[0].attacks}</p>
                             <p>Card #:{playersData[0].hand.length} </p>
+                            {playersData[0].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[0].focus > 0 &&
                                 <p>Focus x {playersData[0].focus}</p>
                             }
@@ -2094,6 +2153,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Honour Points:{playersData[1].honourPoints}</p>
                             <p>Attacks:{playersData[1].attacks}</p>
                             <p>Card #:{playersData[1].hand.length} </p>
+                            {playersData[1].harmless &&
+                                <p>HARMLESS</p>
+                            }
                             {playersData[1].focus > 0 &&
                                 <p>Focus x {playersData[1].focus}</p>
                             }
@@ -2144,6 +2206,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         {playersData[2].bushido &&
                             <p>Bushido</p>
                         }
+                        {playersData[2].harmless &&
+                            <p>HARMLESS</p>
+                        }
                         <div className='game__user-hand'>
                             {playersData[2].hand.length > 0 && playersData[2].hand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
@@ -2163,7 +2228,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
 
-            <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button>
+            {/* <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button> */}
 
             {/* <button onClick={() => {
                 console.log(currentPlayer)
