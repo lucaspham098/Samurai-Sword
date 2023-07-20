@@ -716,7 +716,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             // const dealtPlayer1Character = {
-            //     name: 'Tomoe',
+            //     name: 'Nobunaga',
             //     health: 5,
             // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -932,6 +932,18 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (ieyasuModule === true) {
             setIeyasuModule(false)
         }
+    }
+
+
+    const handleNobunaga = () => {
+        const data = [...playersData]
+        if (data[indexOfPlayer].health > 1) {
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, drawDeck.pop() as PlayableCard]
+            data[indexOfPlayer].health = data[indexOfPlayer].health - 1
+
+            setPlayersData(data)
+        }
+
     }
 
 
@@ -2041,6 +2053,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
+            {playersData[indexOfPlayer]?.character.name === 'Nobunaga' &&
+                <>
+                    {turn === socket.id ? <button onClick={() => handleNobunaga()}>Use Ability</button> : <button disabled>Use Ability</button>}
+                </>
+            }
             {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
 
             {/* <button onClick={() => {
