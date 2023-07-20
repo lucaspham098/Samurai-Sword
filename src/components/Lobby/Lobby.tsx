@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useRef, useTransition } from 'react';
 import { Socket } from 'socket.io-client'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 type LobbyProps = {
-    handleStartGame: () => void,
     socket: Socket,
-    initGameState: () => void
-    handleSetPlayers: (player: object[]) => void
 }
 interface PlayersData {
     socketID: string,
@@ -30,9 +27,10 @@ interface PlayableCard {
     damage?: number;
 }
 
-const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: LobbyProps) => {
+const Lobby = ({ socket }: LobbyProps) => {
     const effectRan = useRef(false);
     const { room } = useParams();
+    const navigate = useNavigate()
 
     const [playersData, setPlayersData] = useState<PlayersData[]>([]);
     const [isLeader, setIsLeader] = useState<boolean>(false)
@@ -47,16 +45,14 @@ const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: Lob
                 socket.emit('askForPlayers', room);
             });
             socket.on('players', (playersData) => {
-                console.log(playersData)
                 setPlayersData(playersData);
-                handleSetPlayers(playersData)
                 if (socket.id === playersData[0].socketID) {
                     setIsLeader(true)
                 }
-            });
+            })
             socket.on('gameStarted', () => {
-                handleStartGame();
-            });
+                navigate(`/game/${room}`)
+            })
 
             effectRan.current = true;
         }
@@ -64,7 +60,6 @@ const Lobby = ({ handleStartGame, socket, initGameState, handleSetPlayers }: Lob
 
     const onStartGame = () => {
         socket.emit('startGame', room);
-        initGameState()
     };
 
 

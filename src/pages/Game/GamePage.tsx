@@ -2,12 +2,8 @@ import './GamePage.scss'
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
-import Lobby from '../../components/Lobby/Lobby';
-import { Link } from 'react-router-dom';
 import AnnouncementModule from '../../components/AnnouncementModule/AnnouncementModule';
 import ParryModule from '../../components/ParryModule/ParryModule';
-import { visitFunctionBody } from 'typescript';
-import { start } from 'repl';
 import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
 import IeyasuModule from '../../components/IeyasuModule/IeyasuModule';
 
@@ -54,6 +50,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const { room } = useParams()
 
+    const [initialPlayersdata, setInitialPlayersData] = useState<PlayersData[]>([])
+
     const [startGame, setStartGame] = useState(false)
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<string>('')
@@ -61,31 +59,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [usersHand, setUsersHand] = useState<PlayableCard[]>([])
     const [indexOfParry, setIndexOfParry] = useState<number>(-1)
 
-    // const [player1, setPlayer1] = useState<string>('')
-    const [player1Hand, setPlayer1Hand] = useState<PlayableCard[]>([])
-    const [player1Character, setPlayer1Character] = useState<Character>()
-    const [player1Role, setPlayer1Role] = useState<Role>()
-    const [player1Attacks, setPlayer1Attacks] = useState<number>(1)
-    const [player1Health, setPlayer1Health] = useState<number>(0)
-    const [player1HonourPoints, setPlayer1HonourPoints] = useState<number>(3)
-
-    // const [player2, setPlayer2] = useState<string>('')
-    const [player2Hand, setPlayer2Hand] = useState<PlayableCard[]>([])
-    const [player2Character, setPlayer2Character] = useState<Character>()
-    const [player2Role, setPlayer2Role] = useState<Role>()
-    const [player2Attacks, setPlayer2Attacks] = useState<number>(1)
-    const [player2Health, setPlayer2Health] = useState<number>(0)
-    const [player2HonourPoints, setPlayer2HonourPoints] = useState<number>(3)
-
-    // const [player3, setPlayer3] = useState<string>('')
-    const [player3Hand, setPlayer3Hand] = useState<PlayableCard[]>([])
-    const [player3Character, setPlayer3Character] = useState<Character>()
-    const [player3Role, setPlayer3Role] = useState<Role>()
-    const [player3Attacks, setPlayer3Attacks] = useState<number>(1)
-    const [player3Health, setPlayer3Health] = useState<number>(0)
-    const [player3HonourPoints, setPlayer3HonourPoints] = useState<number>(3)
-
-    // const [gameStateInitialized, setGameStateInitialized] = useState<boolean>(false)
     const [playersData, setPlayersData] = useState<PlayersData[]>([])
     const [indexOfPlayer, setIndexOfPlayer] = useState<number>(-1)
 
@@ -643,250 +616,200 @@ const GamePage = ({ socket }: GamePageProp) => {
         return arr
     }
 
+
+    useEffect(() => {
+
+        socket.emit('askForPlayers', room)
+
+        socket.on('players', playersData => {
+            console.log('receive players')
+            setInitialPlayersData(playersData)
+        })
+        socket.on('setTurn', shogun => {
+            setTimeout(() => {
+                setTurn(shogun.socketID)
+
+            }, 100);
+            setCurrentPlayer(shogun)
+        })
+
+        socket.on('attacked', () => {
+            setParryModule(true)
+        })
+
+        socket.on('switchTurn', victim => {
+            setTimeout(() => {
+                setTurn(victim)
+            }, 500);
+        })
+
+        socket.on('setTurnBack', currentPlayer => {
+            setTurn(currentPlayer.socketID)
+        })
+
+        socket.on('newTurn', (newTurn) => {
+            setTurn(newTurn.socketID)
+            setCurrentPlayer(newTurn)
+            setNewTurn(true)
+        })
+
+        socket.on('initGameState', (playersData: PlayersData[]) => {
+            console.log('receive initgamestate')
+            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+            setIndexOfPlayer(playerIndex)
+            setPlayersData(playersData)
+        })
+
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo }) => {
+            setPlayersData(playersData)
+            setDrawDeck(drawDeck)
+            setDiscardPile(discardPile)
+            setCurrentPlayer(currentPlayer)
+            setVictim(victim)
+            setWounds(wounds)
+            setCardPlayed(cardPlayed)
+            setNewTurn(newTurn)
+            setParryPlayed(parryPlayed)
+            setWeaponCardPlayed(weaponCardPlayed)
+            setActionCardPlayed(actionCardPlayed)
+            setPropertyCardPlayed(propertyCardPlayed)
+            setPlayerHit(playerHit)
+            setBattlecryInfo(battlecryInfo)
+            setJujitsuInfo(jujitsuInfo)
+            setBushidoWeapon(bushidoWeapon)
+            setBushidoInfo(bushidoInfo)
+            setGeishaInfo(geishaInfo)
+        })
+
+        socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
+            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+            // console.log(playersData[playerIndex])
+            if (playersData[playerIndex].character.name !== 'Chiyome') {
+                setParryModule(true)
+                setTurn(socket.id)
+            }
+        })
+
+        socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
+            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+            // console.log(playersData[playerIndex])
+            if (playersData[playerIndex].character.name !== 'Chiyome') {
+                setJujitsuInEffect(true)
+                setParryModule(true)
+                SetSelectedCard(undefined)
+                setTurn(socket.id)
+            }
+        })
+
+
+    }, [])
+
+
     useEffect(() => {
 
         const shuffledMainDeck = shuffle(mainDeck)
         const shuffledRoleDeck = shuffle(roleDeck)
         const shuffledCharacterDeck = shuffle(characterDeck)
+        const data = [...initialPlayersdata]
 
-        if (effectRan.current === false) {
-            const settingPlayer1States = async () => {
-                // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
-                const dealtPlayer1Character = {
-                    name: 'Hanzo',
-                    health: 4,
-                }
-                const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
-                await setPlayer1Character(dealtPlayer1Character)
-                await setPlayer1Health(dealtPlayer1Character.health)
-                await setPlayer1Role(dealtPlayer1Role)
+        if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-                if (dealtPlayer1Role.role === 'Shogun') {
-                    setPlayer1HonourPoints(5)
-                    setPlayer1Attacks(2)
-                    const dealtPlayer1Hand = []
-                    for (let i = 0; i < 4; i++) {
-                        dealtPlayer1Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer1Hand(dealtPlayer1Hand as PlayableCard[])
-                    if (dealtPlayer1Character.name === 'Goemon') {
-                        setPlayer1Attacks(3)
-                    }
-                } else {
-                    const dealtPlayer1Hand = []
-                    for (let i = 0; i < 5; i++) {
-                        dealtPlayer1Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer1Hand(dealtPlayer1Hand as PlayableCard[])
+            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
+            data[0].character = dealtPlayer1Character
+            data[0].health = dealtPlayer1Character.health
+            data[0].role = dealtPlayer1Role
+
+            if (dealtPlayer1Role.role === 'Shogun') {
+                data[0].honourPoints = 6
+                data[0].attacks = 2
+                const dealtPlayer1Hand: PlayableCard[] = []
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
+                data[0].hand = dealtPlayer1Hand
+                if (dealtPlayer1Character.name === 'Goemon') {
+                    data[0].attacks = 3
+                }
+            } else {
+                const dealtPlayer1Hand: PlayableCard[] = []
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[0].honourPoints = 3
+                data[0].hand = dealtPlayer1Hand
             }
-            settingPlayer1States()
 
-            const settingPlayer2States = async () => {
-                const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
-                const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
-                await setPlayer2Character(dealtPlayer2Character)
-                await setPlayer2Health(dealtPlayer2Character.health)
-                await setPlayer2Role(dealtPlayer2Role)
 
-                if (dealtPlayer2Role.role === 'Shogun') {
-                    setPlayer2HonourPoints(5)
-                    setPlayer2Attacks(2)
-                    const dealtPlayer2Hand = []
-                    for (let i = 0; i < 4; i++) {
-                        dealtPlayer2Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
-                    if (dealtPlayer2Character.name === 'Goemon') {
-                        setPlayer2Attacks(3)
-                    }
-                } else {
-                    const dealtPlayer2Hand = []
-                    for (let i = 0; i < 5; i++) {
-                        dealtPlayer2Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer2Hand(dealtPlayer2Hand as PlayableCard[])
+
+            const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
+            data[1].character = dealtPlayer2Character
+            data[1].health = dealtPlayer2Character.health
+            data[1].role = dealtPlayer2Role
+
+
+            if (dealtPlayer2Role.role === 'Shogun') {
+                data[1].honourPoints = 6
+                data[1].attacks = 2
+                const dealtPlayer2Hand: PlayableCard[] = []
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
+                data[1].hand = dealtPlayer2Hand
+                if (dealtPlayer2Character.name === 'Goemon') {
+                    data[1].attacks = 3
+                }
+            } else {
+                const dealtPlayer2Hand: PlayableCard[] = []
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[1].honourPoints = 3
+                data[1].hand = dealtPlayer2Hand
+            }
 
+
+            const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer3Role = shuffledRoleDeck.pop() as Role
+            data[2].character = dealtPlayer3Character
+            data[2].health = dealtPlayer3Character.health
+            data[2].role = dealtPlayer3Role
+
+            if (dealtPlayer3Role.role === 'Shogun') {
+                data[2].honourPoints = 6
+                data[2].attacks = 2
+                const dealtPlayer3Hand: PlayableCard[] = []
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[2].hand = dealtPlayer3Hand
+                if (dealtPlayer3Character.name === 'Goemon') {
+                    data[2].attacks = 3
+                }
+            } else {
+                const dealtPlayer3Hand: PlayableCard[] = []
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[2].honourPoints = 3
+                data[2].hand = dealtPlayer3Hand
 
             }
-            settingPlayer2States()
-
-            const settingPlayer3States = async () => {
-                const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
-                const dealtPlayer3Role = shuffledRoleDeck.pop() as Role
-                await setPlayer3Character(dealtPlayer3Character)
-                await setPlayer3Role(dealtPlayer3Role)
-                await setPlayer3Health(dealtPlayer3Character.health)
-
-                if (dealtPlayer3Role.role === 'Shogun') {
-                    setPlayer3HonourPoints(5)
-                    setPlayer3Attacks(2)
-                    const dealtPlayer3Hand = []
-                    for (let i = 0; i < 4; i++) {
-                        dealtPlayer3Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer3Hand(dealtPlayer3Hand as PlayableCard[])
-                    if (dealtPlayer3Character.name === 'Goemon') {
-                        setPlayer3Attacks(3)
-                    }
-                } else {
-                    const dealtPlayer3Hand = []
-                    for (let i = 0; i < 5; i++) {
-                        dealtPlayer3Hand.push(shuffledMainDeck.pop())
-                    }
-                    setPlayer3Hand(dealtPlayer3Hand as PlayableCard[])
-                }
-            }
-            settingPlayer3States()
 
             setDrawDeck(shuffledMainDeck as PlayableCard[])
 
-            socket.on('getHand', hand => {
-                setUsersHand([...hand])
-            })
+            if (data[0].socketID === socket.id) {
+                socket.emit('initGameState', data, room)
+            }
 
-            socket.on('setTurn', shogun => {
-                setTimeout(() => {
-                    setTurn(shogun.socketID)
-                }, 500);
-                setCurrentPlayer(shogun)
-            })
-
-            socket.on('attacked', () => {
-                setParryModule(true)
-            })
-
-            socket.on('switchTurn', victim => {
-                setTimeout(() => {
-                    setTurn(victim)
-                }, 500);
-            })
-
-            socket.on('setTurnBack', currentPlayer => {
-                setTurn(currentPlayer.socketID)
-            })
-
-            socket.on('newTurn', (newTurn) => {
-                setTurn(newTurn.socketID)
-                setCurrentPlayer(newTurn)
-                setNewTurn(true)
-            })
-
-            socket.on('alterVictimHand', (victimHand) => {
-                console.log(victimHand)
-                setUsersHand([...victimHand])
-            })
-
-            socket.on('teaCeremony', (data: PlayersData[]) => {
-                console.log('tea party')
-                const playersIndex = data.findIndex(player => player.socketID === socket.id)
-                const newHand = data[playersIndex].hand
-                setUsersHand([...newHand])
-            })
-
-            socket.on('initGameState', (playerData: PlayersData[]) => {
-                const playerIndex = playerData.findIndex(player => player.socketID === socket.id)
-                setIndexOfPlayer(playerIndex)
-                setPlayersData(playerData)
-                setPlayer1Hand(playerData[0].hand)
-                setPlayer1Character(playerData[0].character)
-                setPlayer1Role(playerData[0].role)
-                setPlayer1Health(playerData[0].health as number)
-                setPlayer1HonourPoints(playerData[0].honourPoints)
-                setPlayer1Attacks(playerData[0].attacks)
-                setPlayer2Hand(playerData[1].hand)
-                setPlayer2Character(playerData[1].character)
-                setPlayer2Role(playerData[1].role)
-                setPlayer2Health(playerData[1].health)
-                setPlayer2HonourPoints(playerData[1].honourPoints)
-                setPlayer2Attacks(playerData[1].attacks)
-                setPlayer3Hand(playerData[2].hand)
-                setPlayer3Character(playerData[2].character)
-                setPlayer3Role(playerData[2].role)
-                setPlayer3Health(playerData[2].health)
-                setPlayer3HonourPoints(playerData[2].honourPoints)
-                setPlayer3Attacks(playerData[2].attacks)
-                socket.emit('getHand', room)
-            })
-
-            socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo }) => {
-                setPlayersData(playersData)
-                setDrawDeck(drawDeck)
-                setDiscardPile(discardPile)
-                setCurrentPlayer(currentPlayer)
-                setVictim(victim)
-                setWounds(wounds)
-                setCardPlayed(cardPlayed)
-                setNewTurn(newTurn)
-                setParryPlayed(parryPlayed)
-                setWeaponCardPlayed(weaponCardPlayed)
-                setActionCardPlayed(actionCardPlayed)
-                setPropertyCardPlayed(propertyCardPlayed)
-                setPlayerHit(playerHit)
-                setBattlecryInfo(battlecryInfo)
-                setJujitsuInfo(jujitsuInfo)
-                setBushidoWeapon(bushidoWeapon)
-                setBushidoInfo(bushidoInfo)
-                setGeishaInfo(geishaInfo)
-            })
-
-            socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
-                const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-                // console.log(playersData[playerIndex])
-                if (playersData[playerIndex].character.name !== 'Chiyome') {
-                    setParryModule(true)
-                    setTurn(socket.id)
-                }
-            })
-
-            socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
-                const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-                // console.log(playersData[playerIndex])
-                if (playersData[playerIndex].character.name !== 'Chiyome') {
-                    setJujitsuInEffect(true)
-                    setParryModule(true)
-                    SetSelectedCard(undefined)
-                    setTurn(socket.id)
-                }
-            })
 
             effectRan.current = true
         }
 
 
-    }, [])
+    }, [initialPlayersdata])
 
-    const initGameState = () => {
-
-        socket.emit('initGameState', [
-            {
-                role: player1Role,
-                character: player1Character,
-                hand: player1Hand,
-                attacks: player1Attacks,
-                health: player1Health,
-                honourPoints: player1HonourPoints
-
-            },
-            {
-                role: player2Role,
-                character: player2Character,
-                hand: player2Hand,
-                attacks: player2Attacks,
-                health: player2Health,
-                honourPoints: player2HonourPoints
-            },
-            {
-                role: player3Role,
-                character: player3Character,
-                hand: player3Hand,
-                attacks: player3Attacks,
-                health: player3Health,
-                honourPoints: player3HonourPoints
-            },
-        ], room)
-    }
 
     const updateGameState = () => {
         console.log('update game')
@@ -913,32 +836,14 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     useEffect(() => {
-        if (playersData.length > 0 && startGame) {
+        if (playersData.length > 0) {
             console.log('player data change')
-            setPlayer1Hand(playersData[0].hand)
-            setPlayer1Attacks(playersData[0].attacks)
-            setPlayer1Health(playersData[0].health)
-            setPlayer1HonourPoints(playersData[0].honourPoints)
-            setPlayer2Hand(playersData[1].hand)
-            setPlayer2Attacks(playersData[1].attacks)
-            setPlayer2Health(playersData[1].health)
-            setPlayer2HonourPoints(playersData[1].honourPoints)
-            setPlayer3Hand(playersData[2].hand)
-            setPlayer3Attacks(playersData[2].attacks)
-            setPlayer3Health(playersData[2].health)
-            setPlayer3HonourPoints(playersData[2].honourPoints)
+            const index = playersData[indexOfPlayer].hand.findIndex(card => card.type === 'action' && card.name === 'Parry')
+            setIndexOfParry(index)
         }
 
     }, [playersData])
 
-
-    const handleSetPlayers: (players: object[]) => void = (players: object[]) => {
-        setPlayersData(players as PlayersData[])
-    }
-
-    const handleStartGame = () => {
-        setStartGame(true)
-    }
 
     const handleSelectedPlayer = (target: HTMLDivElement) => {
         setSelectedPlayer(target.id)
@@ -970,7 +875,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const indexOfSelectedCard: () => number = () => {
         if (selectedCard) {
-            return usersHand.indexOf(selectedCard)
+            return playersData[indexOfPlayer].hand.indexOf(selectedCard)
         } else return -1
     }
 
@@ -979,34 +884,31 @@ const GamePage = ({ socket }: GamePageProp) => {
         return randomIndex
     }
 
-    useEffect(() => {
-        if (usersHand.length > 0) {
-            const index = usersHand.findIndex(card => card.type === 'action' && card.name === 'Parry')
-            setIndexOfParry(index)
-            const data = [...playersData]
-            data[indexOfPlayer].hand = usersHand
-            setPlayersData(data)
-        }
-    }, [usersHand])
-
-
     const drawCards = () => {
-        const newCards: PlayableCard[] = []
-        for (let i = 0; i < 2; i++) {
-            if (drawDeck.length > 0) {
-                newCards.push(drawDeck.pop() as PlayableCard);
+        if (playersData.length > 0) {
+            const data = [...playersData]
+
+            const newCards: PlayableCard[] = []
+            for (let i = 0; i < 2; i++) {
+                if (drawDeck.length > 0) {
+                    newCards.push(drawDeck.pop() as PlayableCard);
+                }
+            }
+
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
+            setPlayersData(data)
+            setNewTurn(false)
+            if (ieyasuModule === true) {
+                setIeyasuModule(false)
             }
         }
 
-        setUsersHand([...usersHand, ...newCards])
-        setNewTurn(false)
-        if (ieyasuModule === true) {
-            setIeyasuModule(false)
-        }
     }
 
     const drawCardFromDiscard = () => {
-        setUsersHand([...usersHand, discardPile.pop() as PlayableCard, drawDeck.pop() as PlayableCard])
+        const data = [...playersData]
+        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, drawDeck.pop() as PlayableCard]
+        setPlayersData(data)
 
         setNewTurn(false)
         if (ieyasuModule === true) {
@@ -1017,7 +919,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     useEffect(() => {
         if (turn === socket.id && newTurn) {
-            if (playersData[indexOfPlayer].bushido === true) {
+            if (playersData[indexOfPlayer]?.bushido === true) {
                 const drawnCard = drawDeck.pop() as PlayableCard
 
                 setDiscardPile([...discardPile, drawnCard])
@@ -1043,7 +945,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(false)
-                    drawCards()
                     const data = [...playersData]
                     data[indexOfPlayer].bushido = false
                     if (!!playersData[indexOfPlayer + 1]) {
@@ -1052,9 +953,15 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[0].bushido = true
                     }
 
+                    if (playersData[indexOfPlayer].character.name === "Ieyasu") {
+                        setIeyasuModule(true)
+                    } else {
+                        drawCards()
+                    }
+
                     setPlayersData(data)
                 }
-            } else if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
+            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && discardPile.length > 0) {
                 setIeyasuModule(true)
             }
             else {
@@ -1083,7 +990,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setDiscardPile([...discardPile, card])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(index, 1)
-        setUsersHand(data[indexOfPlayer].hand)
+        setPlayersData(data)
 
         setWeaponCardPlayed(false)
         setParryPlayed(true)
@@ -1100,7 +1007,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         } as PlayableCard])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
-        setUsersHand(data[indexOfPlayer].hand)
         setPlayersData(data)
         setParryModule(false)
         setWeaponCardPlayed(false)
@@ -1123,7 +1029,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     newCards.push(drawDeck.pop() as PlayableCard);
                 }
             }
-            setUsersHand([...usersHand, ...newCards])
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
         }
 
         setPlayersData(data)
@@ -1144,7 +1050,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         } as PlayableCard]
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
-        setUsersHand(data[indexOfPlayer].hand)
 
         const newInfo = `${playersData[indexOfPlayer].character.name} discarded a parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
@@ -1195,7 +1100,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newDiscardPile: PlayableCard[] = [...discardPile, card]
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(index, 1)
-        setUsersHand(data[indexOfPlayer].hand)
 
 
         const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon`
@@ -1252,7 +1156,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         data[indexOfPlayer].hand.splice(index, 1)
 
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
-            setUsersHand(data[indexOfPlayer].hand)
             setIeyasuModule(true)
         } else {
             const newCards: PlayableCard[] = []
@@ -1261,7 +1164,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     newCards.push(drawDeck.pop() as PlayableCard);
                 }
             }
-            setUsersHand([...data[indexOfPlayer].hand, ...newCards])
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
         }
 
         data[indexOfPlayer].bushido = false
@@ -1310,7 +1213,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(data[indexOfSelectedPlayer()].hand)]
         const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
         data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
-        socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
+
 
         setWeaponCardPlayed(false)
         setActionCardPlayed(false)
@@ -1427,6 +1330,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                 return
             }
 
+            const data = [...playersData]
+
             if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
                 const range = selectedCard.range
 
@@ -1459,15 +1364,15 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand(hand)
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     setWounds(selectedCard.damage as number)
                     setCardPlayed(selectedCard)
                     setVictim(playersData[indexOfSelectedPlayer()])
+                    setPlayersData(data)
                     socket.emit('attacked', selectedPlayer, room)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
+
                 }
             }
 
@@ -1475,8 +1380,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Daimyo') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
+
 
                     const newCards: PlayableCard[] = [];
                     for (let i = 0; i < 2; i++) {
@@ -1484,7 +1388,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             newCards.push(drawDeck.pop() as PlayableCard);
                         }
                     }
-                    setUsersHand([...hand, ...newCards])
+                    data[indexOfPlayer].hand = [...data[indexOfPlayer].hand.filter(card => card !== selectedCard), ...newCards]
 
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
@@ -1496,21 +1400,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
+                    setPlayersData(data)
                 }
 
                 if (selectedCard.name === 'Divertion' && selectedPlayer !== '') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
 
-                    const data = [...playersData]
+
                     const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(data[indexOfSelectedPlayer()].hand)]
                     const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
                     data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
-                    socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
 
-                    setUsersHand([...hand, cardTook])
-                    setPlayersData(data)
+                    data[indexOfPlayer].hand = [...data[indexOfPlayer].hand.filter(card => card !== selectedCard), cardTook]
+
 
                     setCardPlayed(selectedCard)
                     setVictim(playersData[indexOfSelectedPlayer()])
@@ -1524,21 +1427,19 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoWeapon(undefined)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
+                    setPlayersData(data)
+
                 }
 
                 if (selectedCard.name === 'Breathing' && selectedPlayer !== '') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
 
-                    const data: PlayersData[] = [...playersData]
-                    console.log(data[indexOfPlayer].character)
+
                     data[indexOfPlayer].health = data[indexOfPlayer].character.health
                     const newCard = drawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
-                    socket.emit('alterVictimHand', selectedPlayer, data[indexOfSelectedPlayer()].hand)
-                    setPlayersData(data)
+
 
                     setCardPlayed(selectedCard)
                     setVictim(playersData[indexOfSelectedPlayer()])
@@ -1552,12 +1453,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoWeapon(undefined)
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
+                    setPlayersData(data)
+
                 }
 
                 if (selectedCard.name === 'Tea Ceremony') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
+
                     const newCards: PlayableCard[] = [];
                     for (let i = 0; i < 3; i++) {
                         if (drawDeck.length > 0) {
@@ -1565,15 +1467,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                         }
                     }
 
-                    setUsersHand([...hand, ...newCards])
-                    const data = [...playersData]
+                    data[indexOfPlayer].hand = [...data[indexOfPlayer].hand.filter(card => card !== selectedCard), ...newCards]
+
+
                     for (let i = 0; i < data.length; i++) {
                         if (i !== indexOfPlayer) {
                             data[i].hand.push(drawDeck.pop() as PlayableCard)
                         }
                     }
-                    setPlayersData(data)
-                    socket.emit('teaCeremony', data, room)
 
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
@@ -1585,13 +1486,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
+                    setPlayersData(data)
                 }
 
                 if (selectedCard.name === 'Battlecry') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+
                     setCardPlayed(selectedCard)
                     setWounds(1)
                     setWeaponCardPlayed(false)
@@ -1605,6 +1506,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
+                    setPlayersData(data)
                     setTimeout(() => {
                         setTurn('')
                     }, 250);
@@ -1615,9 +1517,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Jujitsu') {
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+
                     setCardPlayed(selectedCard)
                     setWounds(1)
                     setWeaponCardPlayed(false)
@@ -1631,6 +1532,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     SetSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
+                    setPlayersData(data)
                     setTimeout(() => {
                         setTurn('')
                     }, 250);
@@ -1640,10 +1542,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
 
                 if (selectedCard.name === 'Geisha' && selectedPlayer !== '') {
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     setDiscardPile([...discardPile, selectedCard])
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setCardPlayed(selectedCard)
                     SetSelectedCard(undefined)
@@ -1654,9 +1555,9 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (!!selectedCard && selectedCard.type === 'property') {
 
                 if (selectedCard.name === 'Focus') {
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    data[indexOfPlayer].focus = data[indexOfPlayer].focus + 1
+
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(false)
@@ -1667,16 +1568,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
-
-                    const data = [...playersData]
-                    data[indexOfPlayer].focus = data[indexOfPlayer].focus + 1
                     setPlayersData(data)
                 }
 
                 if (selectedCard.name === 'Armor') {
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    data[indexOfPlayer].armor = data[indexOfPlayer].armor + 1
+
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(false)
@@ -1688,15 +1586,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
 
-                    const data = [...playersData]
-                    data[indexOfPlayer].armor = data[indexOfPlayer].armor + 1
                     setPlayersData(data)
                 }
 
                 if (selectedCard.name === 'Fast Draw') {
-                    const hand = [...usersHand]
-                    hand.splice(indexOfSelectedCard(), 1)
-                    setUsersHand([...hand])
+                    data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    data[indexOfPlayer].fastDraw = data[indexOfPlayer].fastDraw + 1
+
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(false)
@@ -1708,8 +1604,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoWeapon(undefined)
                     SetSelectedCard(undefined)
 
-                    const data = [...playersData]
-                    data[indexOfPlayer].fastDraw = data[indexOfPlayer].fastDraw + 1
                     setPlayersData(data)
                 }
 
@@ -1718,9 +1612,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         alert('Only 1 Bushido can be in play at a time')
                         return
                     } else {
-                        const hand = [...usersHand]
-                        hand.splice(indexOfSelectedCard(), 1)
-                        setUsersHand([...hand])
+                        data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                        data[indexOfSelectedPlayer()].bushido = true
+
                         setCardPlayed(selectedCard)
                         setVictim(playersData[indexOfSelectedPlayer()])
                         setWeaponCardPlayed(false)
@@ -1732,8 +1626,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setBushidoInfo(undefined)
                         SetSelectedCard(undefined)
 
-                        const data = [...playersData]
-                        data[indexOfSelectedPlayer()].bushido = true
                         setPlayersData(data)
                     }
                 }
@@ -1759,8 +1651,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
-
-            {!startGame && <Lobby handleStartGame={handleStartGame} initGameState={initGameState} socket={socket} handleSetPlayers={handleSetPlayers} />}
 
             <AnnouncementModule
                 currentPlayer={currentPlayer}
@@ -1804,68 +1694,66 @@ const GamePage = ({ socket }: GamePageProp) => {
                 drawCards={drawCards}
             />}
 
-            {startGame &&
-                player1Role && player2Role && player3Role && player1Character && player2Character && player3Character &&
-                playersData[0].socketID === socket.id &&
+            {playersData.length > 0 && playersData[0].socketID === socket.id &&
                 <>
-                    {player2Role && player3Role && player2Character && player3Character &&
-                        <div className="game__flex-container">
-                            <div className='game__player-container'>
-                                <h1 className='game__player-name'>Player 2</h1>
-                                <div className='game__player-character' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    <p>{player2Character.name}</p>
-                                </div>
-                                {player2Role.role === 'Shogun' &&
-                                    <div className='game__player-role'>
-                                        <p>{player2Role.role}</p>
-                                    </div>
-                                }
-                                <p>Health: {player2Health}</p>
-                                <p>Honour Points:{player2HonourPoints}</p>
-                                <p>Attacks:{player2Attacks}</p>
-                                <p>Card #:{player2Hand.length} </p>
-                                {playersData[1].focus > 0 &&
-                                    <p>Focus x {playersData[1].focus}</p>
-                                }
-                                {playersData[1].armor > 0 &&
-                                    <p>Armor x {playersData[1].armor}</p>
-                                }
-                                {playersData[1].fastDraw > 0 &&
-                                    <p>Fast Draw x {playersData[1].fastDraw}</p>
-                                }
-                                {playersData[1].bushido &&
-                                    <p>Bushido</p>
-                                }
-                            </div>
 
-                            <div className='game__player-container'>
-                                <h1 className='game__player-name'>Player 3</h1>
-                                <div className='game__player-character' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    <p>{player3Character.name}</p>
-                                </div>
-                                {player3Role.role === 'Shogun' &&
-                                    <div className='game__player-role'>
-                                        <p>{player3Role.role}</p>
-                                    </div>
-                                }
-                                <p>Health: {player3Health}</p>
-                                <p>Honour Points:{player3HonourPoints}</p>
-                                <p>Attacks:{player3Attacks}</p>
-                                <p>Card #:{player3Hand.length} </p>
-                                {playersData[2].focus > 0 &&
-                                    <p>Focus x {playersData[2].focus}</p>
-                                }
-                                {playersData[2].armor > 0 &&
-                                    <p>Armor x {playersData[2].armor}</p>
-                                }
-                                {playersData[2].fastDraw > 0 &&
-                                    <p>Fast Draw x {playersData[2].fastDraw}</p>
-                                }
-                                {playersData[2].bushido &&
-                                    <p>Bushido</p>
-                                }
+                    <div className="game__flex-container">
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 2</h1>
+                            <div className='game__player-character' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{playersData[1].character.name}</p>
                             </div>
-                        </div>}
+                            {playersData[1].role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{playersData[1].role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {playersData[1].health}</p>
+                            <p>Honour Points:{playersData[1].honourPoints}</p>
+                            <p>Attacks:{playersData[1].attacks}</p>
+                            <p>Card #:{playersData[1].hand.length} </p>
+                            {playersData[1].focus > 0 &&
+                                <p>Focus x {playersData[1].focus}</p>
+                            }
+                            {playersData[1].armor > 0 &&
+                                <p>Armor x {playersData[1].armor}</p>
+                            }
+                            {playersData[1].fastDraw > 0 &&
+                                <p>Fast Draw x {playersData[1].fastDraw}</p>
+                            }
+                            {playersData[1].bushido &&
+                                <p>Bushido</p>
+                            }
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>Player 3</h1>
+                            <div className='game__player-character' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <p>{playersData[2].character.name}</p>
+                            </div>
+                            {playersData[2].role.role === 'Shogun' &&
+                                <div className='game__player-role'>
+                                    <p>{playersData[2].role.role}</p>
+                                </div>
+                            }
+                            <p>Health: {playersData[2].health}</p>
+                            <p>Honour Points:{playersData[2].honourPoints}</p>
+                            <p>Attacks:{playersData[2].attacks}</p>
+                            <p>Card #:{playersData[2].hand.length} </p>
+                            {playersData[2].focus > 0 &&
+                                <p>Focus x {playersData[2].focus}</p>
+                            }
+                            {playersData[2].armor > 0 &&
+                                <p>Armor x {playersData[2].armor}</p>
+                            }
+                            {playersData[2].fastDraw > 0 &&
+                                <p>Fast Draw x {playersData[2].fastDraw}</p>
+                            }
+                            {playersData[2].bushido &&
+                                <p>Bushido</p>
+                            }
+                        </div>
+                    </div>
 
 
                     <div className='game__deck-container'>
@@ -1878,60 +1766,59 @@ const GamePage = ({ socket }: GamePageProp) => {
                     </div>
 
 
-                    {player1Role && player1Character &&
-                        <div className='game__user-container'>
-                            <div className='game__player-character' id={socket.id}>
-                                <p>{player1Character.name}</p>
+                    <div className='game__user-container'>
+                        <div className='game__player-character' id={socket.id}>
+                            <p>{playersData[0].character.name}</p>
+                        </div>
+                        {playersData[0].role.role === 'Shogun' &&
+                            <div className='game__user-role'>
+                                <p>{playersData[0].role.role}</p>
                             </div>
-                            {player1Role.role === 'Shogun' &&
-                                <div className='game__user-role'>
-                                    <p>{player1Role.role}</p>
-                                </div>
-                            }
-                            <p>Health: {player1Health}</p>
-                            <p>Honour Points:{player1HonourPoints}</p>
-                            <p>Attacks:{player1Attacks}</p>
-                            {playersData[0].focus > 0 &&
-                                <p>Focus x {playersData[0].focus}</p>
-                            }
-                            {playersData[0].armor > 0 &&
-                                <p>Armor x {playersData[0].armor}</p>
-                            }
-                            {playersData[0].fastDraw > 0 &&
-                                <p>Fast Draw x {playersData[0].fastDraw}</p>
-                            }
-                            {playersData[0].bushido &&
-                                <p>Bushido</p>
-                            }
-                            <div className='game__user-hand'>
-                                {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
-                                    return <p className='card' key={index}
-                                        onClick={() => {
-                                            handleSelectedCard(card, index)
-                                        }}>{card.name}</p>
-                                })}
-                            </div>
-                        </div>}
+                        }
+                        <p>Health: {playersData[0].health}</p>
+                        <p>Honour Points:{playersData[0].honourPoints}</p>
+                        <p>Attacks:{playersData[0].attacks}</p>
+                        {playersData[0].focus > 0 &&
+                            <p>Focus x {playersData[0].focus}</p>
+                        }
+                        {playersData[0].armor > 0 &&
+                            <p>Armor x {playersData[0].armor}</p>
+                        }
+                        {playersData[0].fastDraw > 0 &&
+                            <p>Fast Draw x {playersData[0].fastDraw}</p>
+                        }
+                        {playersData[0].bushido &&
+                            <p>Bushido</p>
+                        }
+                        <div className='game__user-hand'>
+                            {playersData[0].hand.length > 0 && playersData[0].hand.map((card: PlayableCard, index) => {
+                                return <p className='card' key={index}
+                                    onClick={() => {
+                                        handleSelectedCard(card, index)
+                                    }}>{card.name}</p>
+                            })}
+                        </div>
+                    </div>
                 </>
             }
 
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === playersData[1].socketID &&
+            {playersData.length > 0 && socket.id === playersData[1].socketID &&
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 3</h1>
                             <div className='game__player-character' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                <p>{player3Character.name}</p>
+                                <p>{playersData[2].character.name}</p>
                             </div>
-                            {player3Role.role === 'Shogun' &&
+                            {playersData[2].role.role === 'Shogun' &&
                                 <div className='game__player-role'>
-                                    <p>{player3Role.role}</p>
+                                    <p>{playersData[2].role.role}</p>
                                 </div>
                             }
-                            <p>Health: {player3Health}</p>
-                            <p>Honour Points:{player3HonourPoints}</p>
-                            <p>Attacks:{player3Attacks}</p>
-                            <p>Card #:{player3Hand.length} </p>
+                            <p>Health: {playersData[2].health}</p>
+                            <p>Honour Points:{playersData[2].honourPoints}</p>
+                            <p>Attacks:{playersData[2].attacks}</p>
+                            <p>Card #:{playersData[2].hand.length} </p>
                             {playersData[2].focus > 0 &&
                                 <p>Focus x {playersData[2].focus}</p>
                             }
@@ -1949,17 +1836,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 1</h1>
                             <div className='game__player-character' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                <p>{player1Character.name}</p>
+                                <p>{playersData[0].character.name}</p>
                             </div>
-                            {player1Role.role === 'Shogun' &&
+                            {playersData[0].role.role === 'Shogun' &&
                                 <div className='game__player-role'>
-                                    <p>{player1Role.role}</p>
+                                    <p>{playersData[0].role.role}</p>
                                 </div>
                             }
-                            <p>Health: {player1Health}</p>
-                            <p>Honour Points:{player1HonourPoints}</p>
-                            <p>Attacks:{player1Attacks}</p>
-                            <p>Card #:{player1Hand.length} </p>
+                            <p>Health: {playersData[0].health}</p>
+                            <p>Honour Points:{playersData[0].honourPoints}</p>
+                            <p>Attacks:{playersData[0].attacks}</p>
+                            <p>Card #:{playersData[0].hand.length} </p>
                             {playersData[0].focus > 0 &&
                                 <p>Focus x {playersData[0].focus}</p>
                             }
@@ -1988,16 +1875,16 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     <div className='game__user-container'>
                         <div className='game__player-character' id={socket.id}>
-                            <p>{player2Character.name}</p>
+                            <p>{playersData[1].character.name}</p>
                         </div>
-                        {player2Role.role === 'Shogun' &&
+                        {playersData[1].role.role === 'Shogun' &&
                             <div className='game__user-role'>
-                                <p>{player2Role.role}</p>
+                                <p>{playersData[1].role.role}</p>
                             </div>
                         }
-                        <p>Health: {player2Health}</p>
-                        <p>Honour Points:{player2HonourPoints}</p>
-                        <p>Attacks:{player2Attacks}</p>
+                        <p>Health: {playersData[1].health}</p>
+                        <p>Honour Points:{playersData[1].honourPoints}</p>
+                        <p>Attacks:{playersData[1].attacks}</p>
                         {playersData[1].focus > 0 &&
                             <p>Focus x {playersData[1].focus}</p>
                         }
@@ -2011,7 +1898,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Bushido</p>
                         }
                         <div className='game__user-hand'>
-                            {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
+                            {playersData[1].hand.length > 0 && playersData[1].hand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
                                     onClick={() => {
                                         handleSelectedCard(card, index)
@@ -2022,23 +1909,23 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
-            {startGame && player1Role && player2Role && player3Role && player1Character && player2Character && player3Character && socket.id === playersData[2].socketID &&
+            {playersData.length > 0 && socket.id === playersData[2].socketID &&
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 1</h1>
                             <div className='game__player-character' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                <p>{player1Character.name}</p>
+                                <p>{playersData[0].character.name}</p>
                             </div>
-                            {player1Role.role === 'Shogun' &&
+                            {playersData[0].role.role === 'Shogun' &&
                                 <div className='game__player-role'>
-                                    <p>{player1Role.role}</p>
+                                    <p>{playersData[0].role.role}</p>
                                 </div>
                             }
-                            <p>Health: {player1Health}</p>
-                            <p>Honour Points:{player1HonourPoints}</p>
-                            <p>Attacks:{player1Attacks}</p>
-                            <p>Card #:{player1Hand.length} </p>
+                            <p>Health: {playersData[0].health}</p>
+                            <p>Honour Points:{playersData[0].honourPoints}</p>
+                            <p>Attacks:{playersData[0].attacks}</p>
+                            <p>Card #:{playersData[0].hand.length} </p>
                             {playersData[0].focus > 0 &&
                                 <p>Focus x {playersData[0].focus}</p>
                             }
@@ -2056,17 +1943,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>Player 2</h1>
                             <div className='game__player-character' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                <p>{player2Character.name}</p>
+                                <p>{playersData[1].character.name}</p>
                             </div>
-                            {player2Role.role === 'Shogun' &&
+                            {playersData[1].role.role === 'Shogun' &&
                                 <div className='game__player-role'>
-                                    <p>{player2Role.role}</p>
+                                    <p>{playersData[1].role.role}</p>
                                 </div>
                             }
-                            <p>Health: {player2Health}</p>
-                            <p>Honour Points:{player2HonourPoints}</p>
-                            <p>Attacks:{player2Attacks}</p>
-                            <p>Card #:{player2Hand.length} </p>
+                            <p>Health: {playersData[1].health}</p>
+                            <p>Honour Points:{playersData[1].honourPoints}</p>
+                            <p>Attacks:{playersData[1].attacks}</p>
+                            <p>Card #:{playersData[1].hand.length} </p>
                             {playersData[1].focus > 0 &&
                                 <p>Focus x {playersData[1].focus}</p>
                             }
@@ -2095,16 +1982,16 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     <div className='game__user-container'>
                         <div className='game__player-character' id={socket.id}>
-                            <p>{player3Character.name}</p>
+                            <p>{playersData[2].character.name}</p>
                         </div>
-                        {player3Role.role === 'Shogun' &&
+                        {playersData[2].role.role === 'Shogun' &&
                             <div className='game__player-role'>
-                                <p>{player3Role.role}</p>
+                                <p>{playersData[2].role.role}</p>
                             </div>
                         }
-                        <p>Health: {player3Health}</p>
-                        <p>Honour Points:{player3HonourPoints}</p>
-                        <p>Attacks:{player3Attacks}</p>
+                        <p>Health: {playersData[2].health}</p>
+                        <p>Honour Points:{playersData[2].honourPoints}</p>
+                        <p>Attacks:{playersData[2].attacks}</p>
                         {playersData[2].focus > 0 &&
                             <p>Focus x {playersData[2].focus}</p>
                         }
@@ -2118,7 +2005,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <p>Bushido</p>
                         }
                         <div className='game__user-hand'>
-                            {usersHand.length > 0 && usersHand.map((card: PlayableCard, index) => {
+                            {playersData[2].hand.length > 0 && playersData[2].hand.map((card: PlayableCard, index) => {
                                 return <p className='card' key={index}
                                     onClick={() => {
                                         handleSelectedCard(card, index)
@@ -2129,7 +2016,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
-            {startGame && turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
+            {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
 
             {/* <button onClick={() => {
                 console.log(currentPlayer)

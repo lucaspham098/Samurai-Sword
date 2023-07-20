@@ -19,7 +19,7 @@ const Home = ({ socket }: HomeProp) => {
         if (findRoom) {
             socket.emit('findRoom', findRoom)
             socket.on('navToLobby', () => {
-                navigate(`/game/${findRoom}`)
+                navigate(`/lobby/${findRoom}`)
             })
             socket.on('errorMessage', message => {
                 setJoinRoomError(message);
@@ -43,7 +43,7 @@ const Home = ({ socket }: HomeProp) => {
 
     useEffect(() => {
         if (room) {
-            navigate(`/game/${room}`)
+            navigate(`lobby/${room}`)
         }
     }, [room])
 
