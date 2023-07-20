@@ -716,7 +716,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             // const dealtPlayer1Character = {
-            //     name: 'Nobunaga',
+            //     name: 'Hideyoshi',
             //     health: 5,
             // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -993,7 +993,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (playersData[indexOfPlayer].character.name === "Ieyasu") {
                         setIeyasuModule(true)
                     } else {
-                        drawCards(2)
+                        if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
+                            drawCards(3)
+                        } else {
+                            drawCards(2)
+                        }
                     }
 
                     setPlayersData(data)
@@ -1002,7 +1006,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setIeyasuModule(true)
             }
             else {
-                drawCards(2)
+                if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
+                    drawCards(3)
+                } else {
+                    drawCards(2)
+                }
             }
 
         }
@@ -1195,13 +1203,23 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
             setIeyasuModule(true)
         } else {
-            const newCards: PlayableCard[] = []
-            for (let i = 0; i < 2; i++) {
-                if (drawDeck.length > 0) {
-                    newCards.push(drawDeck.pop() as PlayableCard);
+            if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
+                const newCards: PlayableCard[] = []
+                for (let i = 0; i < 3; i++) {
+                    if (drawDeck.length > 0) {
+                        newCards.push(drawDeck.pop() as PlayableCard);
+                    }
                 }
+                data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
+            } else {
+                const newCards: PlayableCard[] = []
+                for (let i = 0; i < 2; i++) {
+                    if (drawDeck.length > 0) {
+                        newCards.push(drawDeck.pop() as PlayableCard);
+                    }
+                }
+                data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
             }
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
         }
 
         data[indexOfPlayer].bushido = false
