@@ -96,6 +96,8 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [playerHit, setPlayerHit] = useState<boolean>(false)
     const [death, setDeath] = useState<boolean>(false)
 
+    const [attacksPlayed, setAttacksPlayed] = useState<number>(0)
+
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
 
     const mainDeck: PlayableCard[] = [
@@ -491,57 +493,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Armor'
         },
-
-
-
-
-
-
-
-
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-        {
-            type: 'property',
-            name: 'Armor'
-        },
-
-
-
-
-
-
-
         {
             type: 'property',
             name: 'Focus'
@@ -1427,7 +1378,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
 
         const data = [...playersData]
-        data[indexOfSelectedPlayer()].focus = data[indexOfSelectedPlayer()].focus - 1
+        data[indexOfSelectedPlayer()].attacks = data[indexOfSelectedPlayer()].attacks - 1
 
         setDiscardPile([...discardPile, {
             type: 'property',
@@ -1567,12 +1518,17 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
                 }
 
+                if (attacksPlayed === playersData[indexOfPlayer].attacks) {
+                    setSelectedPlayer('')
+                    alert('Max amount of weapon cards already played this turn')
+                    return
+                }
                 if (range !== undefined && range < difficulty() && playersData[indexOfPlayer].character.name !== 'Kojiro') {
-                    console.log(difficulty())
                     setSelectedPlayer('')
                     alert('Cannot reach target')
                 } else {
-                    console.log(difficulty())
+                    console.log(attacksPlayed)
+                    setAttacksPlayed(attacksPlayed + 1)
                     setWeaponCardPlayed(true)
                     setActionCardPlayed(false)
                     setPropertyCardPlayed(false)
@@ -1863,7 +1819,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Focus') {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
-                    data[indexOfPlayer].focus = data[indexOfPlayer].focus + 1
+                    data[indexOfPlayer].attacks = data[indexOfPlayer].attacks + 1
 
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
@@ -1950,6 +1906,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     const endTurn = () => {
+
+        setAttacksPlayed(0)
+
         if (playersData[indexOfPlayer].hand.length = 0) {
             const data = [...playersData]
             data[indexOfPlayer].harmless = true
