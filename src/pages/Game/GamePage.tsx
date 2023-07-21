@@ -303,61 +303,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Jujitsu'
         },
-
-
-
-
-
-
-
-
-
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
-
-
-
-
-
-
-
-
-
-
         {
             type: 'action',
             name: 'Tea Ceremony'
@@ -390,89 +335,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Battlecry'
         },
-
-
-
-
-
-
-
-
-
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
-
-
-
-
-
-
-
-
-
-
         {
             type: 'action',
             name: 'Geisha'
@@ -629,6 +491,57 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Armor'
         },
+
+
+
+
+
+
+
+
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+        {
+            type: 'property',
+            name: 'Armor'
+        },
+
+
+
+
+
+
+
         {
             type: 'property',
             name: 'Focus'
@@ -1631,7 +1544,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 const range = selectedCard.range
 
-                const excludedHarmlessData = data.filter(player => player.harmless === false)
+                const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
                 const playerIndex = excludedHarmlessData.findIndex(player => player.socketID === socket.id)
                 const selectedPlayerIndex = excludedHarmlessData.findIndex(player => player.socketID === selectedPlayer)
@@ -1641,23 +1554,25 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const difficulty2 = excludedHarmlessData.length - difficulty1
                     if (difficulty1 > difficulty2) {
                         if (playersData[indexOfSelectedPlayer()].character.name === 'Benkai') {
-                            return difficulty2 + 1
+                            return difficulty2 + 1 + playersData[indexOfSelectedPlayer()].armor
                         } else {
-                            return difficulty2
+                            return difficulty2 + playersData[indexOfSelectedPlayer()].armor
                         }
                     } else {
                         if (playersData[indexOfSelectedPlayer()].character.name === 'Benkai') {
-                            return difficulty1 + 1
+                            return difficulty1 + 1 + playersData[indexOfSelectedPlayer()].armor
                         } else {
-                            return difficulty1
+                            return difficulty1 + playersData[indexOfSelectedPlayer()].armor
                         }
                     }
                 }
 
                 if (range !== undefined && range < difficulty() && playersData[indexOfPlayer].character.name !== 'Kojiro') {
+                    console.log(difficulty())
                     setSelectedPlayer('')
                     alert('Cannot reach target')
                 } else {
+                    console.log(difficulty())
                     setWeaponCardPlayed(true)
                     setActionCardPlayed(false)
                     setPropertyCardPlayed(false)
@@ -1672,11 +1587,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
 
                     if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && selectedCard.damage as number > 1) {
-                        setWounds(selectedCard.damage as number - 1)
+                        setWounds(selectedCard.damage as number - 1 + playersData[indexOfPlayer].fastDraw)
                     } else if (playersData[indexOfPlayer].character.name === 'Musashi') {
-                        setWounds(selectedCard.damage as number + 1)
+                        setWounds(selectedCard.damage as number + 1 + playersData[indexOfPlayer].fastDraw)
                     } else {
-                        setWounds(selectedCard.damage as number)
+                        setWounds(selectedCard.damage as number + playersData[indexOfPlayer].fastDraw)
                     }
 
                     setCardPlayed(selectedCard)
