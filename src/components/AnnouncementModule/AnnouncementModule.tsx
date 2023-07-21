@@ -19,6 +19,7 @@ type AnnouncementModuleProps = {
     bushidoInfo: string | undefined
     geishaInfo: string | undefined
     death: boolean
+    lengthForJujitsuBattlecry: number
 }
 
 interface PlayableCard {
@@ -53,7 +54,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo, geishaInfo, death }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, playersData, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
 
     const parry: PlayableCard =
     {
@@ -85,28 +86,42 @@ const AnnouncementModule = ({ currentPlayer, victim, wounds, cardPlayed, weaponC
 
 
 
-            {cardPlayed?.name === 'Battlecry' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
-            {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+            {/* {cardPlayed?.name === 'Battlecry' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && battlecryInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>}
+
+            {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>} */}
+
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== lengthForJujitsuBattlecry &&
+                <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
+            }
 
 
-            {cardPlayed?.name === 'Jujitsu' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
-            {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+
+            {/* {cardPlayed?.name === 'Jujitsu' && ((playersData.findIndex(player => player.character.name === 'Chiyome')) === -1 || (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name === 'Chiyome') && jujitsuInfo.length !== playersData.length - 1 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>}
+
+            {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length !== playersData.length - 2 && <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>} */}
+
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== lengthForJujitsuBattlecry &&
+                <p>{currentPlayer?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
+            }
 
 
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>}
 
-            {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length === playersData.length - 2 &&
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === lengthForJujitsuBattlecry && <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>}
+
+            {/* {cardPlayed?.name === 'Battlecry' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && battlecryInfo.length === playersData.length - 2 &&
                 <p>All players have resolved {currentPlayer?.character.name}'s battlecry</p>
-            }
+            } */}
 
 
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === playersData.length - 1 && <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>}
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === lengthForJujitsuBattlecry && <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length === playersData.length - 2 &&
+            {/* {cardPlayed?.name === 'Jujitsu' && (playersData.findIndex(player => player.character.name === 'Chiyome')) !== -1 && currentPlayer?.character.name !== 'Chiyome' && jujitsuInfo.length === playersData.length - 2 &&
                 <p>All players have resolved {currentPlayer?.character.name}'s jujitsu</p>
-            }
+            } */}
 
 
 
