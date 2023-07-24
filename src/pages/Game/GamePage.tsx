@@ -71,6 +71,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [cardPlayed, setCardPlayed] = useState<PlayableCard>()
     const [currentPlayer, setCurrentPlayer] = useState<PlayersData>()
+    const [cardPlayedBy, setCardPlayedBy] = useState<PlayersData>()
     const [victim, setVictim] = useState<PlayersData>()
     const [wounds, setWounds] = useState<number>(0)
 
@@ -831,11 +832,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             setPlayersData(playersData)
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }) => {
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
             setDiscardPile(discardPile)
             setCurrentPlayer(currentPlayer)
+            setCardPlayedBy(cardPlayedBy)
             setVictim(victim)
             setWounds(wounds)
             setCardPlayed(cardPlayed)
@@ -1012,6 +1014,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             discardPile: discardPile,
             currentPlayer: currentPlayer,
             victim: victim,
+            cardPlayedBy: cardPlayedBy,
             wounds: wounds,
             newTurn: newTurn,
             cardPlayed: cardPlayed,
@@ -1669,8 +1672,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
 
             const data = [...playersData]
-
-            // setCurrentPlayer(data[indexOfPlayer])
+            setCardPlayedBy(playersData[indexOfPlayer])
 
             if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
 
@@ -1737,6 +1739,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
 
                     setCardPlayed(selectedCard)
+                    setCardPlayedBy(playersData[indexOfPlayer])
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setPlayersData(data)
                     socket.emit('attacked', selectedPlayer, room)
@@ -1792,6 +1795,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
                     setCardPlayed(selectedCard)
+                    setCardPlayedBy(playersData[indexOfPlayer])
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(true)
@@ -1824,6 +1828,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
                     setCardPlayed(selectedCard)
+                    setCardPlayedBy(playersData[indexOfPlayer])
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(true)
@@ -1994,6 +1999,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     setDiscardPile([...discardPile, selectedCard])
 
+                    setCardPlayedBy(playersData[indexOfPlayer])
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setCardPlayed(selectedCard)
                     SetSelectedCard(undefined)
@@ -2071,6 +2077,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[indexOfSelectedPlayer()].bushido = true
 
                         setCardPlayed(selectedCard)
+                        setCardPlayedBy(playersData[indexOfPlayer])
                         setVictim(playersData[indexOfSelectedPlayer()])
                         setWeaponCardPlayed(false)
                         setActionCardPlayed(false)
@@ -2125,6 +2132,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             <AnnouncementModule
                 currentPlayer={currentPlayer}
+                cardPlayedBy={cardPlayedBy}
                 victim={victim}
                 wounds={wounds}
                 cardPlayed={cardPlayed}
