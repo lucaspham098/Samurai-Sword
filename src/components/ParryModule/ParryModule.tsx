@@ -17,6 +17,7 @@ type ParryModuleProps = {
     handleRemoveArmor: () => void
     handleRemoveFastDraw: () => void
     handleRemoveBushido: () => void
+    discardCards: boolean
 }
 
 interface PlayableCard {
@@ -51,10 +52,10 @@ interface Role {
     stars?: number
 }
 
-const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus }: ParryModuleProps) => {
+const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus, discardCards }: ParryModuleProps) => {
     return (
         <div>
-            {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' &&
+            {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' && !discardCards &&
                 <>
                     <p>Parry the attack or take {wounds} wound(s)</p>
                     {indexOfParry !== -1 ? <button onClick={() => handleParry()}>Parry</button> : <button disabled>Parry</button>}
@@ -62,7 +63,7 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                 </>
             }
 
-            {cardPlayed?.type === 'weapon' && victim?.character.name === 'Hanzo' &&
+            {cardPlayed?.type === 'weapon' && victim?.character.name === 'Hanzo' && !discardCards &&
                 <>
                     <p>Parry the attack with a parry card, select a weapon in hand to use as parry (unless it is your last card), or take {wounds} wound(s)</p>
                     {indexOfParry !== -1 ? <button onClick={() => handleParry()}>Parry</button> : <button disabled>Parry</button>}
@@ -70,7 +71,7 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                 </>
             }
 
-            {cardPlayed?.name === 'Battlecry' &&
+            {cardPlayed?.name === 'Battlecry' && !discardCards &&
                 <>
                     <p>Discard a parry or suffer 1 wound</p>
                     {indexOfParry !== -1 ? <button onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button disabled>Parry</button>}
@@ -78,14 +79,14 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                 </>
             }
 
-            {cardPlayed?.name === 'Jujitsu' &&
+            {cardPlayed?.name === 'Jujitsu' && !discardCards &&
                 <>
                     <p>Select a weapon fromm hand to discard or suffer 1 wound</p>
                     <button onClick={() => handleJujitsuWound()}>Suffer 1 wound</button>
                 </>
             }
 
-            {cardPlayed?.name === 'Geisha' && !!victim &&
+            {cardPlayed?.name === 'Geisha' && !!victim && !discardCards &&
                 <>
                     <p>Choose form the options below</p>
                     <button onClick={() => handleDiscardRandomCard()}>Discard random card form {victim.socketID}</button>
@@ -110,11 +111,15 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                     }
                 </>}
 
-            {bushidoWeapon === true &&
+            {bushidoWeapon === true && !discardCards &&
                 <>
                     <p>Select a weapon fromm hand to discard or lose 1 honour point</p>
                     <button onClick={() => handleLoseHonourPoint()}>Lose 1 Hounour Point</button>
                 </>
+            }
+
+            {discardCards === true &&
+                <p> Please select cards to discard until you have 7 cards in your hand</p>
             }
 
         </div>

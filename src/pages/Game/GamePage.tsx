@@ -98,6 +98,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [attacksPlayed, setAttacksPlayed] = useState<number>(0)
 
+    const [discardCards, setDiscardsCards] = useState<boolean>(false)
+
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
 
     const mainDeck: PlayableCard[] = [
@@ -305,6 +307,101 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Jujitsu'
         },
+
+
+
+
+
+
+
+
+
+
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+
         {
             type: 'action',
             name: 'Tea Ceremony'
@@ -321,6 +418,73 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Tea Ceremony'
         },
+
+
+
+
+
+
+
+
+
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony'
+        },
+
+
+
+
+
+
+
+
+
+
         {
             type: 'action',
             name: 'Battlecry'
@@ -704,6 +868,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
             // console.log(playersData[playerIndex])
             if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
+                console.log('receive jujitsu')
                 setJujitsuInEffect(true)
                 setParryModule(true)
                 SetSelectedCard(undefined)
@@ -724,11 +889,11 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
-            const dealtPlayer1Character = {
-                name: 'Chiyome',
-                health: 5,
-            }
+            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer1Character = {
+            //     name: 'Chiyome',
+            //     health: 5,
+            // }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             data[0].character = dealtPlayer1Character
             data[0].health = dealtPlayer1Character.health
@@ -866,6 +1031,13 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     useEffect(() => {
+        if (turn === socket.id) {
+            if (!parryModule || discardCards)
+                updateGameState()
+        }
+    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo])
+
+    useEffect(() => {
         if (playersData.length > 0) {
             console.log('player data change')
             const index = playersData[indexOfPlayer].hand.findIndex(card => card.type === 'action' && card.name === 'Parry')
@@ -884,14 +1056,32 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (turn === socket.id) {
             setSelectedPlayer('')
             SetSelectedCard(card)
+
+            if (discardCards) {
+                const data = [...playersData]
+                setDiscardPile([...discardPile, card])
+                data[indexOfPlayer].hand.splice(index, 1)
+                setPlayersData(data)
+                if (data[indexOfPlayer].hand.length === 7) {
+                    setParryModule(false)
+                    setDiscardsCards(false)
+                    setTimeout(() => {
+                        endTurn()
+                    }, 100);
+                }
+            }
+
             if (card.type === 'weapon' && turn === socket.id && jujitsuInEffect) {
+                console.log('jujitsu in effect')
                 handleJujitsuDiscard(card, index)
                 setJujitsuInEffect(false)
             }
+
             if (card.type === 'weapon' && turn === socket.id && bushidoWeapon) {
                 handleBushidoDiscard(card, index)
                 setBushidoWeapon(undefined)
             }
+
             if (card.type === 'weapon' && turn === socket.id && weaponCardPlayed && parryModule && playersData[indexOfPlayer].character.name === "Hanzo" && playersData[indexOfPlayer].hand.length > 1) {
                 handleHanzoWeaponParry(card, index)
             }
@@ -1048,12 +1238,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
     }, [turn]);
-
-    useEffect(() => {
-        if (turn === socket.id && !parryModule) {
-            updateGameState()
-        }
-    }, [playersData, discardPile, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo])
 
 
 
@@ -1480,11 +1664,13 @@ const GamePage = ({ socket }: GamePageProp) => {
                 console.log(selectedCard)
             }
 
-            if (turn !== socket.id || !selectedCard || parryModule || ieyasuModule) {
+            if (turn !== socket.id || !selectedCard || parryModule || ieyasuModule || discardCards) {
                 return
             }
 
             const data = [...playersData]
+
+            // setCurrentPlayer(data[indexOfPlayer])
 
             if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
 
@@ -1783,7 +1969,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 setTurn('')
                             }, 250);
 
-                            socket.emit('battlecryPlayed', room, playersData)
+                            socket.emit('jujistsuPlayed', room, playersData)
                         }
                     } else {
                         if (excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1 > 0) {
@@ -1791,7 +1977,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 setTurn('')
                             }, 250);
 
-                            socket.emit('battlecryPlayed', room, playersData)
+                            socket.emit('jujitsuPlayed', room, playersData)
                         }
                         setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
                     }
@@ -1909,6 +2095,13 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         setAttacksPlayed(0)
 
+        if (playersData[indexOfPlayer].hand.length > 7) {
+            console.log('to many cards')
+            setDiscardsCards(true)
+            setParryModule(true)
+            return
+        }
+
         if (playersData[indexOfPlayer].hand.length = 0) {
             const data = [...playersData]
             data[indexOfPlayer].harmless = true
@@ -1917,12 +2110,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (!!playersData[indexOfPlayer + 1]) {
             const newTurn = playersData[indexOfPlayer + 1]
-            socket.emit('newTurn', newTurn, room)
             setTurn('')
+            socket.emit('newTurn', newTurn, room)
         } else {
             const newTurn = playersData[0]
-            socket.emit('newTurn', newTurn, room)
             setTurn('')
+            socket.emit('newTurn', newTurn, room)
         }
     }
 
@@ -1967,6 +2160,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 handleRemoveArmor={handleRemoveArmor}
                 handleRemoveFastDraw={handleRemoveFastDraw}
                 handleRemoveBushido={handleRemoveBushido}
+                discardCards={discardCards}
             />}
 
             {ieyasuModule && <IeyasuModule
