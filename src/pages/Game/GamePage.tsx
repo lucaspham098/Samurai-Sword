@@ -79,8 +79,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
-    const [shuffleDrawDeck, setShuffleDrawDeck] = useState<boolean>(false)
-    const [forLoopDone, setForLoopDone] = useState<boolean>(false)
+    const [checkDrawDeckLength, setCheckDrawDeckLength] = useState<boolean>(false)
 
     const [parryModule, setParryModule] = useState<boolean>(false)
 
@@ -1003,10 +1002,15 @@ const GamePage = ({ socket }: GamePageProp) => {
     // }, [shuffleDrawDeck])
 
     useEffect(() => {
-        if (drawDeck.length === 0) {
-            setShuffleDrawDeck(true)
+        if (drawDeck.length === 0 && playersData.length > 0) {
+            console.log('checkdrawdecklength')
+            const data = [...playersData];
+            data.map(player => player.honourPoints = player.honourPoints - 1)
+            setDrawDeck(shuffle(discardPile) as PlayableCard[])
+            setDiscardPile([])
+            setPlayersData(data)
         }
-    }, [forLoopDone])
+    }, [drawDeck])
 
     const drawCards = (number: number) => {
         if (playersData.length > 0) {
@@ -1021,14 +1025,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                     newCards.push(newDrawDeck.pop() as PlayableCard)
                     data.map(player => player.honourPoints = player.honourPoints - 1)
                     setDiscardPile([])
-                    setShuffleDrawDeck(true)
                 } else {
                     console.log('working');
                     newCards.push(newDrawDeck.pop() as PlayableCard);
                 }
             }
 
-            // setForLoopDone(true)
             data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
             setDrawDeck(newDrawDeck)
             setPlayersData(data);
