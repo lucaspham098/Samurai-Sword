@@ -158,12 +158,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             range: 2,
             damage: 2,
         },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
-        // },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+        },
         // {
         //     type: 'weapon',
         //     name: 'Bo',
@@ -308,14 +308,14 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'action',
             name: 'Jujitsu'
         },
-        {
-            type: 'action',
-            name: 'Tea Ceremony'
-        },
-        {
-            type: 'action',
-            name: 'Tea Ceremony'
-        },
+        // {
+        //     type: 'action',
+        //     name: 'Tea Ceremony'
+        // },
+        // {
+        //     type: 'action',
+        //     name: 'Tea Ceremony'
+        // },
         // {
         //     type: 'action',
         //     name: 'Tea Ceremony'
@@ -396,26 +396,26 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'action',
         //     name: 'Divertion'
         // },
-        {
-            type: 'action',
-            name: 'Breathing'
-        },
-        {
-            type: 'action',
-            name: 'Breathing'
-        },
-        {
-            type: 'action',
-            name: 'Breathing'
-        },
-        {
-            type: 'action',
-            name: 'Parry'
-        },
-        {
-            type: 'action',
-            name: 'Parry'
-        },
+        // {
+        //     type: 'action',
+        //     name: 'Breathing'
+        // },
+        // {
+        //     type: 'action',
+        //     name: 'Breathing'
+        // },
+        // {
+        //     type: 'action',
+        //     name: 'Breathing'
+        // },
+        // {
+        //     type: 'action',
+        //     name: 'Parry'
+        // },
+        // {
+        //     type: 'action',
+        //     name: 'Parry'
+        // },
         // {
         //     type: 'action',
         //     name: 'Parry'
@@ -516,20 +516,49 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Focus'
         },
+
+
+
+
+
+
+
+
+
+
+
         {
             type: 'property',
             name: 'Focus'
         },
-
-
-
-
-
-
-
-
-
-
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
+        {
+            type: 'property',
+            name: 'Focus'
+        },
         {
             type: 'property',
             name: 'Focus'
@@ -693,12 +722,31 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('setTurnBack', currentPlayer => {
             setTurn(currentPlayer.socketID)
+            // if (!!playersData.findIndex(player => player.hand.length === 0)) {
+            //     const data = [...playersData]
+            //     data.map(player => {
+            //         if (player.hand.length === 0) {
+            //             player.harmless = true
+            //         }
+            //     })
+            //     setPlayersData(data)
+            // }
         })
 
         socket.on('newTurn', (newTurn) => {
             setTurn(newTurn.socketID)
             setCurrentPlayer(newTurn)
             setNewTurn(true)
+            // if (!!playersData.findIndex(player => player.hand.length === 0)) {
+            //     const data = [...playersData]
+            //     data.map(player => {
+            //         if (player.hand.length === 0) {
+            //             player.harmless = true
+            //         }
+            //     })
+            //     setPlayersData(data)
+            // }
+
         })
 
         socket.on('initGameState', (playersData: PlayersData[]) => {
@@ -1650,6 +1698,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
 
                     if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && selectedCard.damage as number > 1) {
                         setWounds(selectedCard.damage as number - 1 + playersData[indexOfPlayer].fastDraw)
@@ -1702,6 +1753,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 if (selectedCard.name === 'Divertion' && selectedPlayer !== '') {
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
 
 
                     const cardTook = data[indexOfSelectedPlayer()].hand[randomCard(data[indexOfSelectedPlayer()].hand)]
@@ -1737,6 +1791,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 if (selectedCard.name === 'Breathing' && selectedPlayer !== '') {
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
                     data[indexOfPlayer].health = data[indexOfPlayer].character.health
                     const newDrawDeck = [...drawDeck]
                     const newCard = newDrawDeck.pop()
@@ -1836,6 +1893,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
 
                     setCardPlayed(selectedCard)
                     setWounds(1)
@@ -1890,6 +1950,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
 
                     setCardPlayed(selectedCard)
                     setWounds(1)
@@ -1938,6 +2001,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Geisha' && selectedPlayer !== '') {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
                     setDiscardPile([...discardPile, selectedCard])
 
                     setCardPlayedBy(playersData[indexOfPlayer])
@@ -1952,6 +2018,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Focus') {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
                     data[indexOfPlayer].focus = data[indexOfPlayer].focus + 1
                     data[indexOfPlayer].attacks = data[indexOfPlayer].attacks + 1
 
@@ -1972,6 +2041,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Armor') {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
                     data[indexOfPlayer].armor = data[indexOfPlayer].armor + 1
 
                     setCardPlayed(selectedCard)
@@ -1992,6 +2064,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Fast Draw') {
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                    if (data[indexOfPlayer].hand.length === 0) {
+                        data[indexOfPlayer].harmless = true
+                    }
                     data[indexOfPlayer].fastDraw = data[indexOfPlayer].fastDraw + 1
 
                     setCardPlayed(selectedCard)
@@ -2016,6 +2091,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         return
                     } else {
                         data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
+                        if (data[indexOfPlayer].hand.length === 0) {
+                            data[indexOfPlayer].harmless = true
+                        }
                         data[indexOfSelectedPlayer()].bushido = true
 
                         setCardPlayed(selectedCard)
@@ -2042,19 +2120,11 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const endTurn = () => {
 
-        setAttacksPlayed(0)
-
         if (playersData[indexOfPlayer].hand.length > 7) {
             console.log('to many cards')
             setDiscardsCards(true)
             setParryModule(true)
             return
-        }
-
-        if (playersData[indexOfPlayer].hand.length = 0) {
-            const data = [...playersData]
-            data[indexOfPlayer].harmless = true
-            setPlayersData(data)
         }
 
         if (!!playersData[indexOfPlayer + 1]) {
@@ -2066,6 +2136,9 @@ const GamePage = ({ socket }: GamePageProp) => {
             setTurn('')
             socket.emit('newTurn', newTurn, room)
         }
+
+        setAttacksPlayed(0)
+
     }
 
 
@@ -2473,8 +2546,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
             {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
-            <button onClick={() => { console.log(drawDeck) }}>drawDeck</button>
+            {/* <button onClick={() => { console.log(drawDeck) }}>drawDeck</button>
             <button onClick={() => { console.log(discardPile) }}>discardDeck</button>
+             <button onClick={() => { console.log(playersData[indexOfPlayer].hand) }}>Hand</button> */}
+            <button onClick={() => console.log(turn)}>turn</button>
 
             {/* <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button> */}
 
