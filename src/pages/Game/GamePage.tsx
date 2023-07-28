@@ -104,24 +104,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
 
     const mainDeck: PlayableCard[] = [
-        {
-            type: 'weapon',
-            name: 'Bokken',
-            range: 1,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'Bokken',
-            range: 1,
-            damage: 1,
-        },
-        {
-            type: 'weapon',
-            name: 'Bokken',
-            range: 1,
-            damage: 1,
-        },
         // {
         //     type: 'weapon',
         //     name: 'Bokken',
@@ -142,22 +124,40 @@ const GamePage = ({ socket }: GamePageProp) => {
         // },
         // {
         //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
+        //     name: 'Bokken',
+        //     range: 1,
+        //     damage: 1,
         // },
         // {
         //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
+        //     name: 'Bokken',
+        //     range: 1,
+        //     damage: 1,
         // },
         // {
         //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
+        //     name: 'Bokken',
+        //     range: 1,
+        //     damage: 1,
         // },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+        },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+        },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+        },
         // {
         //     type: 'weapon',
         //     name: 'Kusarigama',
@@ -296,10 +296,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     range: 2,
         //     damage: 3,
         // },
-        {
-            type: 'action',
-            name: 'Jujitsu'
-        },
+        // {
+        //     type: 'action',
+        //     name: 'Jujitsu'
+        // },
         {
             type: 'action',
             name: 'Jujitsu'
@@ -324,10 +324,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'action',
         //     name: 'Tea Ceremony'
         // },
-        {
-            type: 'action',
-            name: 'Battlecry'
-        },
+        // {
+        //     type: 'action',
+        //     name: 'Battlecry'
+        // },
         {
             type: 'action',
             name: 'Battlecry'
@@ -396,18 +396,18 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'action',
         //     name: 'Divertion'
         // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing'
-        // },
+        {
+            type: 'action',
+            name: 'Breathing'
+        },
+        {
+            type: 'action',
+            name: 'Breathing'
+        },
+        {
+            type: 'action',
+            name: 'Breathing'
+        },
         {
             type: 'action',
             name: 'Parry'
@@ -807,7 +807,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             // const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer2Character = {
                 name: 'Nobunaga',
-                health: 5,
+                health: 8,
             }
             const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
             data[1].character = dealtPlayer2Character
@@ -841,7 +841,11 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
 
-            const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer3Character = {
+                name: 'Ushiwaka',
+                health: 5,
+            }
             const dealtPlayer3Role = shuffledRoleDeck.pop() as Role
             data[2].character = dealtPlayer3Character
             data[2].health = dealtPlayer3Character.health
@@ -992,14 +996,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         return randomIndex
     }
 
-    // useEffect(() => {
-    //     if (shuffleDrawDeck === true) {
-    //         console.log('use effect')
-    //         const data = [...playersData];
-    //         data.map(player => player.honourPoints = player.honourPoints - 1)
-    //         setPlayersData(data)
-    //     }
-    // }, [shuffleDrawDeck])
 
     useEffect(() => {
         if (drawDeck.length === 0 && playersData.length > 0) {
@@ -1044,8 +1040,11 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     const drawCardFromDiscard = () => {
+        const newDrawDeck = [...drawDeck]
         const data = [...playersData]
-        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, drawDeck.pop() as PlayableCard]
+        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, newDrawDeck.pop() as PlayableCard]
+
+        setDrawDeck(newDrawDeck)
         setPlayersData(data)
 
         setNewTurn(false)
@@ -1090,9 +1089,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
 
             if (playersData[indexOfPlayer]?.bushido === true) {
-                const drawnCard = drawDeck.pop() as PlayableCard
+                const newDrawDeck = [...drawDeck]
+                const drawnCard = newDrawDeck.pop() as PlayableCard
 
                 setDiscardPile([...discardPile, drawnCard])
+                setDrawDeck(newDrawDeck)
 
                 if (drawnCard.type === 'weapon') {
                     setWeaponCardPlayed(false)
@@ -1210,12 +1211,22 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (playersData[indexOfPlayer].character.name === "Ushiwaka") {
             const newCards: PlayableCard[] = []
+            let newDrawDeck = [...drawDeck]
+
             for (let i = 0; i < wounds; i++) {
-                if (drawDeck.length > 0) {
-                    newCards.push(drawDeck.pop() as PlayableCard);
+                if (newDrawDeck.length === 0) {
+                    console.log('shuffling')
+                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                    newCards.push(newDrawDeck.pop() as PlayableCard)
+                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                    setDiscardPile([])
+                } else {
+                    console.log('working');
+                    newCards.push(newDrawDeck.pop() as PlayableCard);
                 }
             }
             data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
+            setDrawDeck(newDrawDeck)
         }
 
         setPlayersData(data)
@@ -1226,7 +1237,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setTurn('')
             setTurnBack()
         }, 250);
-
     }
 
     const handleBattlecryDiscard = () => {
@@ -1727,10 +1737,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 if (selectedCard.name === 'Breathing' && selectedPlayer !== '') {
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
-
-
                     data[indexOfPlayer].health = data[indexOfPlayer].character.health
-                    const newCard = drawDeck.pop()
+                    const newDrawDeck = [...drawDeck]
+                    const newCard = newDrawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
 
                     if (data[indexOfSelectedPlayer()].harmless === true) {
@@ -1753,17 +1762,26 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setSelectedPlayer('')
                     SetSelectedCard(undefined)
+                    setDrawDeck(newDrawDeck)
                     setPlayersData(data)
 
                 }
 
                 if (selectedCard.name === 'Tea Ceremony') {
-                    setDiscardPile([...discardPile, selectedCard])
+                    let newDiscardPile = [...discardPile, selectedCard]
 
                     const newCards: PlayableCard[] = [];
+                    let newDrawDeck = [...drawDeck]
                     for (let i = 0; i < 3; i++) {
-                        if (drawDeck.length > 0) {
-                            newCards.push(drawDeck.pop() as PlayableCard);
+                        if (newDrawDeck.length === 0) {
+                            console.log('shuffling')
+                            newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
+                            newCards.push(newDrawDeck.pop() as PlayableCard)
+                            data.map(player => player.honourPoints = player.honourPoints - 1)
+                            newDiscardPile = []
+                        } else {
+                            console.log('working');
+                            newCards.push(newDrawDeck.pop() as PlayableCard);
                         }
                     }
 
@@ -1772,9 +1790,20 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     for (let i = 0; i < data.length; i++) {
                         if (i !== indexOfPlayer) {
-                            data[i].hand.push(drawDeck.pop() as PlayableCard)
-                            if (data[i].harmless === true) {
-                                data[i].harmless = false
+                            if (newDrawDeck.length === 0) {
+                                console.log('shuffling')
+                                newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
+                                data[i].hand.push(newDrawDeck.pop() as PlayableCard)
+                                data.map(player => player.honourPoints = player.honourPoints - 1)
+                                if (data[i].harmless === true && data[i].health !== 0) {
+                                    data[i].harmless = false
+                                }
+                                newDiscardPile = []
+                            } else {
+                                data[i].hand.push(newDrawDeck.pop() as PlayableCard)
+                                if (data[i].harmless === true && data[i].health !== 0) {
+                                    data[i].harmless = false
+                                }
                             }
                         }
                     }
@@ -1789,7 +1818,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
+                    // setDiscardPile(newDiscardPile)
+                    setDrawDeck(newDrawDeck)
                     SetSelectedCard(undefined)
                     setPlayersData(data)
                 }
@@ -2444,6 +2474,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
             <button onClick={() => { console.log(drawDeck) }}>drawDeck</button>
+            <button onClick={() => { console.log(discardPile) }}>discardDeck</button>
 
             {/* <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button> */}
 
