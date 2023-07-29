@@ -296,10 +296,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     range: 2,
         //     damage: 3,
         // },
-        // {
-        //     type: 'action',
-        //     name: 'Jujitsu'
-        // },
+        {
+            type: 'action',
+            name: 'Jujitsu'
+        },
         {
             type: 'action',
             name: 'Jujitsu'
@@ -376,26 +376,61 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'action',
         //     name: 'Daimyo'
         // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion'
-        // },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+
+
+
+
+
+
+
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+        {
+            type: 'action',
+            name: 'Divertion'
+        },
+
+
+
+
+
+
+
+
         // {
         //     type: 'action',
         //     name: 'Breathing'
@@ -456,22 +491,18 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'action',
         //     name: 'Parry'
         // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry'
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry'
-        // },
-        // {
-        //     type: 'property',
-        //     name: 'Fast Draw'
-        // },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
+        {
+            type: 'action',
+            name: 'Parry'
+        },
         // {
         //     type: 'property',
         //     name: 'Fast Draw'
@@ -482,7 +513,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         // },
         // {
         //     type: 'property',
-        //     name: 'Armor'
+        //     name: 'Fast Draw'
         // },
         // {
         //     type: 'property',
@@ -496,6 +527,10 @@ const GamePage = ({ socket }: GamePageProp) => {
         //     type: 'property',
         //     name: 'Armor'
         // },
+        // {
+        //     type: 'property',
+        //     name: 'Armor'
+        // },
         {
             type: 'property',
             name: 'Focus'
@@ -508,85 +543,14 @@ const GamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Focus'
         },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-
-
-
-
-
-
-
-
-
-
-
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-        {
-            type: 'property',
-            name: 'Focus'
-        },
-
-
-
-
-
-
-
-
-
-
-
-
+        // {
+        //     type: 'property',
+        //     name: 'Focus'
+        // },
+        // {
+        //     type: 'property',
+        //     name: 'Focus'
+        // },
         // {
         //     type: 'property',
         //     name: 'Bushido'
@@ -818,7 +782,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer1Character = {
-                name: 'Hideyoshi',
+                name: 'Chiyome',
                 health: 4,
             }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
@@ -1646,6 +1610,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
 
                 if (playersData[indexOfSelectedPlayer()].harmless === true) {
+                    setSelectedPlayer('')
                     alert('Cannot attack harmless opponents')
                     return
                 }
@@ -1751,6 +1716,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
 
                 if (selectedCard.name === 'Divertion' && selectedPlayer !== '') {
+                    if (playersData[indexOfSelectedPlayer()].hand.length === 0) {
+                        setSelectedPlayer('')
+                        alert('Selected Player has no cards')
+                        return
+                    }
+
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     if (data[indexOfPlayer].hand.length === 0) {
@@ -1978,7 +1949,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 setTurn('')
                             }, 250);
 
-                            socket.emit('jujistsuPlayed', room, playersData)
+                            socket.emit('jujitsuPlayed', room, playersData)
                         }
                     } else {
                         if (excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1 > 0) {
@@ -2087,6 +2058,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Bushido' && selectedPlayer !== '') {
                     if (playersData.findIndex(player => player.bushido === true) !== -1) {
+                        setSelectedPlayer('')
                         alert('Only 1 Bushido can be in play at a time')
                         return
                     } else {
@@ -2545,7 +2517,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     {turn === socket.id ? <button onClick={() => handleNobunaga()}>Use Ability</button> : <button disabled>Use Ability</button>}
                 </>
             }
-            {turn === socket.id ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
+            {turn === socket.id && !parryModule && !ieyasuModule ? <button onClick={() => endTurn()}>End Turn</button> : <button disabled>End Turn</button>}
             {/* <button onClick={() => { console.log(drawDeck) }}>drawDeck</button>
             <button onClick={() => { console.log(discardPile) }}>discardDeck</button>
              <button onClick={() => { console.log(playersData[indexOfPlayer].hand) }}>Hand</button> */}
