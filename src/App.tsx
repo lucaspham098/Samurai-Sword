@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.scss'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import GamePage from './pages/Game/GamePage';
 import Lobby from './components/Lobby/Lobby';

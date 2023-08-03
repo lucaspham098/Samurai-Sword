@@ -1,7 +1,7 @@
-body {
-    background-color: grey;
-    color: whitesmoke;
+* {
+    // outline: 1px solid greenyellow;
 }
+
 
 .game {
     &__flex-container {
@@ -9,27 +9,248 @@ body {
         justify-content: space-between;
     }
 
-    &__player-character {
-        border: 1px black solid;
+    &__player {
+
+        &-flex-container {
+            display: flex;
+            gap: .75rem;
+
+            &--icon {
+                justify-content: space-evenly;
+            }
+        }
+
+        &-turn-indicator {
+            width: 20rem;
+            height: 20rem;
+            position: absolute;
+            z-index: -1;
+            transform: translate(-5rem, -2.5rem);
+            border-radius: 25%;
+            background: radial-gradient(circle closest-side at center,
+                    rgba(255, 0, 0, 1),
+                    rgba(216, 216, 216, 0.3));
+        }
+
+        &-shogun-spacing {
+            height: 3rem;
+        }
+
+        &-character-container {
+            // width: 3rem;
+            z-index: 10;
+        }
+
+        &-character {
+            width: 10rem;
+            z-index: 10;
+        }
+
+        &-role-container {
+            position: absolute;
+        }
+
+        &-role {
+            width: 10rem;
+            position: relative;
+            bottom: 3rem;
+        }
+
+        &-property {
+            width: 3rem;
+            z-index: 10;
+        }
     }
 
-    &__deck-container {
-        width: 25%;
-        margin: auto;
+    &__icon {
+        width: 3rem;
+
+        &--card {
+            border: 4px black solid;
+            aspect-ratio: 2.5/3.5;
+            border-radius: 1.1em;
+        }
     }
 
-    &__user-container {
-        position: relative;
-        margin: auto;
-        width: 30%;
-        margin-top: 15%;
-    }
-
-    &__user-hand {
+    &__icon-container {
         display: flex;
+        justify-content: center;
+        margin-bottom: .5rem;
+        gap: .5rem;
     }
+
+    &__icon-text {
+        font-size: 1.25rem;
+    }
+
+    &__middle-container {
+        position: absolute;
+        top: 45%;
+        left: 40%;
+        display: flex;
+        justify-content: center;
+        gap: 10rem;
+    }
+
+    &__deck {
+        width: 5rem;
+        border-radius: 1.1em;
+        aspect-ratio: 2.5/3.5;
+        border: 4px black solid;
+
+        &--hover {
+            &:hover {
+                width: 20rem;
+            }
+        }
+    }
+
+    &__user {
+
+        &-container {
+            margin-top: 10rem;
+            display: flex;
+            gap: .75rem;
+        }
+
+        &--heading {
+            position: absolute;
+            transform: translate(3rem, -6rem);
+
+        }
+
+        &-flex-container {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        &-turn-indicator {
+            width: 35rem;
+            height: 35rem;
+            position: absolute;
+            z-index: -100;
+            transform: translate(-8.5rem, -8.5rem);
+            border-radius: 25%;
+            background: radial-gradient(circle closest-side at center,
+                    rgba(255, 0, 0, 1),
+                    rgba(216, 216, 216, 0.3));
+        }
+
+        &-character-container {
+            z-index: 10;
+        }
+
+        &-character {
+            width: 15rem;
+            z-index: 10;
+        }
+
+        &-role-container {
+            position: absolute;
+            z-index: -1;
+        }
+
+        &-role {
+            width: 15rem;
+            position: relative;
+            bottom: 3rem;
+            // z-index: -1;
+        }
+
+        &-hand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &-card {
+            width: 10rem;
+
+            &:nth-child(1) {
+                margin-left: 10rem;
+            }
+
+            &:nth-child(2) {
+                position: relative;
+                transform: translateX(-5rem);
+            }
+
+            &:nth-child(3) {
+                position: relative;
+                transform: translateX(-10rem);
+            }
+
+            &:nth-child(4) {
+                position: relative;
+                transform: translateX(-15rem);
+            }
+
+            &:nth-child(5) {
+                position: relative;
+                transform: translateX(-20rem);
+            }
+
+            &:nth-child(6) {
+                position: relative;
+                transform: translateX(-25rem);
+            }
+
+            &:nth-child(7) {
+                position: relative;
+                transform: translateX(-30rem);
+            }
+
+            &:nth-child(8) {
+                position: relative;
+                transform: translateX(-35rem);
+            }
+
+            &:nth-child(9) {
+                position: relative;
+                transform: translateX(-40rem);
+            }
+
+            &:nth-child(10) {
+                position: relative;
+                transform: translateX(-45rem);
+            }
+
+            &:nth-child(11) {
+                position: relative;
+                transform: translateX(-50rem);
+            }
+
+            &:nth-child(12) {
+                position: relative;
+                transform: translateX(-55rem);
+            }
+
+            &:nth-child(13) {
+                position: relative;
+                transform: translateX(-60rem);
+            }
+
+            &:nth-child(14) {
+                position: relative;
+                transform: translateX(-65rem);
+            }
+
+            &:nth-child(15) {
+                position: relative;
+                transform: translateX(-70rem);
+            }
+        }
+    }
+
 }
 
 .card {
-    border: 1px black solid;
+    border: 4px black solid;
+    aspect-ratio: 2.5/3.5;
+    border-radius: 1.1em;
+
+    &:hover {
+        width: 20rem;
+        z-index: 1000;
+    }
 }

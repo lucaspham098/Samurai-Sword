@@ -1,0 +1,25 @@
+body {
+    background-color: rgb(216, 216, 216);
+}
+
+.button {
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    border: 3px solid black;
+
+    &--end {
+        position: absolute;
+        right: 2rem;
+        bottom: 5rem;
+    }
+
+    &--ability {
+        position: absolute;
+        right: 2rem;
+        bottom: 2.5rem;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}
