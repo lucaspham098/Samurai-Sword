@@ -1,0 +1,13 @@
+@use '../../styles/partials/colours' as *;
+
+.game-over-module {
+    border: 10px double black;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    background-color: $primary-background;
+    height: 50%;
+    width: 50%;
+}

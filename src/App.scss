@@ -1,11 +1,27 @@
+@use './styles/partials/colours' as *;
+
 body {
-    background-color: rgb(216, 216, 216);
+    background-color: $primary-background
 }
 
 .button {
     padding: 1rem 2rem;
     border-radius: 1rem;
     border: 3px solid black;
+    background-color: $button;
+    z-index: 999;
+
+    &--small {
+        padding: .5rem 1rem;
+        border-radius: 1rem;
+        border: 3px solid black;
+        background-color: $button;
+        z-index: 999;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
 
     &--end {
         position: absolute;
@@ -16,7 +32,11 @@ body {
     &--ability {
         position: absolute;
         right: 2rem;
-        bottom: 2.5rem;
+        bottom: 10rem;
+    }
+
+    &--disabled {
+        background-color: $disabled;
     }
 
     &:hover {

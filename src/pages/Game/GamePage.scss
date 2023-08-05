@@ -1,5 +1,5 @@
 * {
-    // outline: 1px solid greenyellow;
+    // outline: 1px solid rgb(200, 47, 255);
 }
 
 
@@ -39,6 +39,10 @@
         &-character-container {
             // width: 3rem;
             z-index: 10;
+
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         &-character {
@@ -85,11 +89,13 @@
 
     &__middle-container {
         position: absolute;
-        top: 45%;
-        left: 40%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         display: flex;
         justify-content: center;
-        gap: 10rem;
+        gap: 7rem;
     }
 
     &__deck {
@@ -108,7 +114,9 @@
     &__user {
 
         &-container {
+            width: fit-content;
             margin-top: 10rem;
+            margin-left: 10rem;
             display: flex;
             gap: .75rem;
         }
@@ -129,7 +137,7 @@
             height: 35rem;
             position: absolute;
             z-index: -100;
-            transform: translate(-8.5rem, -8.5rem);
+            transform: translate(-9rem, -8.5rem);
             border-radius: 25%;
             background: radial-gradient(circle closest-side at center,
                     rgba(255, 0, 0, 1),
@@ -159,15 +167,26 @@
 
         &-hand {
             display: flex;
-            align-items: center;
+            align-items: end;
             justify-content: center;
+
         }
 
         &-card {
             width: 10rem;
+            z-index: 10;
+
+            &--active {
+                width: 20rem;
+                z-index: 100;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
 
             &:nth-child(1) {
-                margin-left: 10rem;
+                margin-left: 5rem;
             }
 
             &:nth-child(2) {
@@ -251,6 +270,6 @@
 
     &:hover {
         width: 20rem;
-        z-index: 1000;
+        z-index: 99;
     }
 }
