@@ -1333,7 +1333,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setIeyasuModule(true)
             }
             else {
-                if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
+                if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
                     drawCards(3)
                 } else {
                     drawCards(2)
@@ -1648,10 +1648,13 @@ const GamePage = ({ socket }: GamePageProp) => {
         } as PlayableCard]
         const data = [...playersData]
         data[indexOfPlayer].bushido = false
-        data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-        if (data[indexOfPlayer].honourPoints <= 0) {
-            setGameOver(true)
-            console.log('7')
+
+        if (data[indexOfPlayer].role.role !== 'Shogun') {
+            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
+            if (data[indexOfPlayer].honourPoints <= 0) {
+                setGameOver(true)
+                console.log('7')
+            }
         }
 
         const newInfo = `${playersData[indexOfPlayer].character.name} lost a honour point. Bushido is discarded`
