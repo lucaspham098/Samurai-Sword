@@ -29,6 +29,7 @@ interface PlayableCard {
 }
 
 interface PlayersData {
+    name: string,
     socketID: string,
     role: Role,
     character: Character,
@@ -59,33 +60,33 @@ const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardP
         <div className='announcement-module'>
             {weaponCardPlayed &&
                 <>
-                    <p className='announcement-module__text'>{cardPlayedBy?.character.name} attacked {victim?.character.name} with {cardPlayed?.name} causing {wounds} wound(s)</p>
-                    <p className='announcement-module__text'>Waiting to see if {victim?.character.name} will Parry</p>
+                    <p className='announcement-module__text'>{cardPlayedBy?.name} attacked {victim?.name} with {cardPlayed?.name} causing {wounds} wound(s)</p>
+                    <p className='announcement-module__text'>Waiting to see if {victim?.name} will Parry</p>
                 </>
             }
 
             {parryPlayed &&
-                <p className='announcement-module__text'>{victim?.character.name} parried the attack from {cardPlayedBy?.character.name}</p>
+                <p className='announcement-module__text'>{victim?.name} parried the attack from {cardPlayedBy?.name}</p>
 
             }
 
-            {playerHit && <p className='announcement-module__text'>{victim?.character.name} took {wounds} wound(s) from {cardPlayedBy?.character.name}</p>}
+            {playerHit && <p className='announcement-module__text'>{victim?.name} took {wounds} wound(s) from {cardPlayedBy?.name}</p>}
 
-            {cardPlayed?.name === "Divertion" && <p className='announcement-module__text'>{cardPlayedBy?.character.name} used {cardPlayed.name} against {victim?.character.name}</p>}
+            {cardPlayed?.name === "Divertion" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} against {victim?.name}</p>}
 
-            {cardPlayed?.name === "Breathing" && <p className='announcement-module__text'>{cardPlayedBy?.character.name} used {cardPlayed.name} and healed to full health and chose {victim?.character.name} to draw a card</p>}
+            {cardPlayed?.name === "Breathing" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} and healed to full health and chose {victim?.name} to draw a card</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== lengthForJujitsuBattlecry &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
             }
 
             {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== lengthForJujitsuBattlecry &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
             }
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.character.name}'s battlecry</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s battlecry</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.character.name}'s jujitsu</p>}
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s jujitsu</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
@@ -96,25 +97,25 @@ const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardP
             })}
 
             {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} played {cardPlayed?.name}</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>
             }
 
             {geishaInfo &&
                 <p className='announcement-module__text'>{geishaInfo}</p>
             }
 
-            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p className='announcement-module__text'>{cardPlayedBy?.character.name} played {cardPlayed?.name}</p>}
+            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>}
 
             {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} gave Bushido to {victim?.character.name}</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} gave Bushido to {victim?.name}</p>
             }
 
             {bushidoWeapon === true &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} flipped a weapon card for bushido. Waiting to see if {cardPlayedBy?.character.name} will discard a weapon or lose a honour point</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} flipped a weapon card for bushido. Waiting to see if {cardPlayedBy?.name} will discard a weapon or lose a honour point</p>
             }
 
             {bushidoWeapon === false &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} did not flip  weapon card for bushido. Bushido is passed.</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} did not flip  weapon card for bushido. Bushido is passed.</p>
             }
 
             {bushidoInfo &&
@@ -122,7 +123,7 @@ const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardP
             }
 
             {death &&
-                <p className='announcement-module__text'>{cardPlayedBy?.character.name} defeated {victim?.character.name} and gained an honour point</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} defeated {victim?.name} and gained an honour point</p>
             }
 
         </div>

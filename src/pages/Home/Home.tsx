@@ -11,6 +11,7 @@ const Home = ({ socket }: HomeProp) => {
     const navigate = useNavigate()
     const [room, setRoom] = useState<string>('')
     const [findRoom, setFindRoom] = useState<string>()
+    const [name, setName] = useState<string | null>(null)
     const [joinRoomModal, setJoinRoomModal] = useState<boolean>(false)
     const [joinRoomError, setJoinRoomError] = useState('')
 
@@ -19,7 +20,7 @@ const Home = ({ socket }: HomeProp) => {
         if (findRoom) {
             socket.emit('findRoom', findRoom)
             socket.on('navToLobby', () => {
-                navigate(`/lobby/${findRoom}`)
+                navigate(`/lobby/${findRoom}/${name}`)
             })
             socket.on('errorMessage', message => {
                 setJoinRoomError(message);
@@ -43,7 +44,7 @@ const Home = ({ socket }: HomeProp) => {
 
     useEffect(() => {
         if (room) {
-            navigate(`lobby/${room}`)
+            navigate(`lobby/${room}/${name}`)
         }
     }, [room])
 
@@ -52,8 +53,11 @@ const Home = ({ socket }: HomeProp) => {
         setFindRoom(event.currentTarget.room.value)
     }
 
+
     return (
         <div>
+            <label htmlFor="room">Name</label>
+            <input type="text" name='playerName' onChange={(event) => { setName(event.target.value) }} />
             <button className='home__button' onClick={() => {
                 roomGenerator()
             }}>Create Room</button>

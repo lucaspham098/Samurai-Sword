@@ -12,6 +12,7 @@ const JoinRoomModal = ({ handleSubmit, errorMessage }: JoinRoomModalProps) => {
         <div>
             {!errorMessage ? (
                 <form className='joinroom__form' onSubmit={handleSubmit}>
+                    <label htmlFor="room">Room Code</label>
                     <input type="text" name='room' />
                     <button>Join</button>
                 </form>

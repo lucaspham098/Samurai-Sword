@@ -29,6 +29,7 @@ interface PlayableCard {
 }
 
 interface PlayersData {
+    name: string,
     socketID: string,
     role: Role,
     character: Character,
@@ -91,26 +92,26 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                 <>
                     <p>Choose from the options below</p>
                     <div className="choice-module__button-container">
-                        <button className='button--small' onClick={() => handleDiscardRandomCard()}>Discard random card form {victim.character.name}</button>
+                        <button className='button--small' onClick={() => handleDiscardRandomCard()}>Discard random card form {victim.name}</button>
                         {victim.focus > 0 &&
-                            <button className='button--small' onClick={() => handleRemoveFocus()}>Remove 1 Focus from {victim.character.name}</button>
+                            <button className='button--small' onClick={() => handleRemoveFocus()}>Remove 1 Focus from {victim.name}</button>
                             // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Focus from {victim.character.name}</button>
+                            // <button className='button--small button--disabled' disabled>Remove 1 Focus from {victim.name}</button>
                         }
                         {victim.armor > 0 &&
-                            <button className='button--small' onClick={() => handleRemoveArmor()}>Remove 1 Armor from {victim.character.name}</button>
+                            <button className='button--small' onClick={() => handleRemoveArmor()}>Remove 1 Armor from {victim.name}</button>
                             // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Armor from {victim.character.name}</button>
+                            // <button className='button--small button--disabled' disabled>Remove 1 Armor from {victim.name}</button>
                         }
                         {victim.fastDraw > 0 &&
-                            <button className='button--small' onClick={() => handleRemoveFastDraw()}>Remove 1 Fast Draw from {victim.character.name}</button>
+                            <button className='button--small' onClick={() => handleRemoveFastDraw()}>Remove 1 Fast Draw from {victim.name}</button>
                             // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Fast Draw from {victim.character.name}</button>
+                            // <button className='button--small button--disabled' disabled>Remove 1 Fast Draw from {victim.name}</button>
                         }
                         {victim.bushido === true &&
-                            <button className='button--small' onClick={() => handleRemoveBushido()}>Remove Bushido from {victim.character.name}</button>
+                            <button className='button--small' onClick={() => handleRemoveBushido()}>Remove Bushido from {victim.name}</button>
                             // :
-                            // <button className='button--small button--disabled' disabled>Remove Bushido from {victim.character.name}</button>
+                            // <button className='button--small button--disabled' disabled>Remove Bushido from {victim.name}</button>
                         }
                     </div>
 

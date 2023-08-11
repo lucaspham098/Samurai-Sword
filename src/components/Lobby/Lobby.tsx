@@ -7,6 +7,7 @@ type LobbyProps = {
     socket: Socket,
 }
 interface PlayersData {
+    name: string,
     socketID: string,
     role: string,
     character: string,
@@ -30,6 +31,7 @@ interface PlayableCard {
 const Lobby = ({ socket }: LobbyProps) => {
     const effectRan = useRef(false);
     const { room } = useParams();
+    const { name } = useParams()
     const navigate = useNavigate()
 
     const [playersData, setPlayersData] = useState<PlayersData[]>([]);
@@ -37,9 +39,9 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     useEffect(() => {
         if (!effectRan.current) {
-            socket.emit('createRoom', room);
+            socket.emit('createRoom', room, name);
             socket.on('joinCreatedRoom', () => {
-                socket.emit('joinRoom', room);
+                socket.emit('joinRoom', room, name);
             });
             socket.on('joinedRoom', () => {
                 socket.emit('askForPlayers', room);
@@ -69,7 +71,7 @@ const Lobby = ({ socket }: LobbyProps) => {
             <p>Players</p>
             {playersData &&
                 playersData.map((player, index) => {
-                    return <p key={index}>{player.socketID}</p>;
+                    return <p key={index}>{player.name}</p>;
                 })}
             {isLeader && <button onClick={onStartGame}>Start Game</button>}
         </div>

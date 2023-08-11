@@ -67,6 +67,7 @@ type GamePageProp = {
 }
 
 interface PlayersData {
+    name: string,
     socketID: string,
     role: Role,
     character: Character,
@@ -1449,7 +1450,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].harmless = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a parry`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1496,7 +1497,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         setPlayersData(data)
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
+        const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
         setBattlecryInfo(newBattlecryInfo)
         // 
@@ -1526,7 +1527,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].harmless = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1572,7 +1573,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         setPlayersData(data)
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
+        const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
         setJujitsuInfo(newJujitsuInfo)
 
@@ -1631,7 +1632,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[0].bushido = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon.Bushido is passed on`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon.Bushido is passed on`
         setBushidoInfo(newInfo)
         setActiveCard(null)
         setDiscardPile(newDiscardPile)
@@ -1657,7 +1658,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
         }
 
-        const newInfo = `${playersData[indexOfPlayer].character.name} lost a honour point. Bushido is discarded`
+        const newInfo = `${playersData[indexOfPlayer].name} lost a honour point. Bushido is discarded`
 
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
@@ -1693,7 +1694,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setBushidoWeapon(undefined)
         setDeath(false)
 
-        setGeishaInfo(`${currentPlayer?.character.name} removed a random card from ${victim?.character.name}'s hand`)
+        setGeishaInfo(`${currentPlayer?.name} removed a random card from ${victim?.name}'s hand`)
         setDiscardPile([...discardPile, cardTook])
         setPlayersData(data)
     }
@@ -2443,7 +2444,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[1].name}</h1>
                             {playersData[1].harmless &&
                                 <h2>HARMLESS</h2>
                             }
@@ -2508,7 +2509,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         </div>
 
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[2].name}</h1>
                             {playersData[2].harmless &&
                                 <h2>HARMLESS</h2>
                             }
@@ -2660,7 +2661,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[2].name}</h1>
                             {playersData[2].harmless &&
                                 <h2>HARMLESS</h2>
                             }
@@ -2725,7 +2726,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         </div>
 
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[0].name}</h1>
                             {playersData[0].harmless &&
                                 <h2>HARMLESS</h2>
                             }
@@ -2877,7 +2878,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                 <>
                     <div className="game__flex-container">
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[0].name}</h1>
                             {playersData[0].harmless &&
                                 <h2>HARMLESS</h2>
                             }
@@ -2942,7 +2943,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         </div>
 
                         <div className='game__player-container'>
-                            <h1 className='game__player-name'>Player 2</h1>
+                            <h1 className='game__player-name'>{playersData[1].name}</h1>
                             {playersData[1].harmless &&
                                 <h2>HARMLESS</h2>
                             }
