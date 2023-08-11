@@ -797,7 +797,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         socket.emit('askForPlayers', room)
 
         socket.on('players', playersData => {
-            console.log('receive players')
             setInitialPlayersData(playersData)
         })
         socket.on('setTurn', shogun => {
@@ -849,7 +848,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
         socket.on('initGameState', (playersData: PlayersData[]) => {
-            console.log('receive initgamestate')
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
             setIndexOfPlayer(playerIndex)
             setPlayersData(playersData)
@@ -892,11 +890,9 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
         socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
-            console.log('receive jujitsu')
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
             // console.log(playersData[playerIndex])
             if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
-                console.log('receive jujitsu')
                 setJujitsuInEffect(true)
                 setParryModule(true)
                 setSelectedCard(undefined)
@@ -1029,7 +1025,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     const updateGameState = () => {
-        console.log('update game')
         socket.emit('updateGameState', {
             playersData: playersData,
             drawDeck: drawDeck,
@@ -1157,7 +1152,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             data.map(player => player.honourPoints = player.honourPoints - 1)
             if (data.filter(player => player.honourPoints <= 0).length > 0) {
                 setGameOver(true)
-                console.log('1')
             }
             setDrawDeck(shuffle(discardPile) as PlayableCard[])
             setDiscardPile([])
@@ -1180,12 +1174,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                         console.log('2')
                         break
                     }
-                    console.log('shuffling')
                     newDrawDeck = shuffle(discardPile) as PlayableCard[]
                     newCards.push(newDrawDeck.pop() as PlayableCard)
 
                 } else {
-                    console.log('working');
                     newCards.push(newDrawDeck.pop() as PlayableCard);
                 }
             }
@@ -1252,13 +1244,14 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
 
             if (playersData[indexOfPlayer]?.bushido === true) {
-                const newDrawDeck = [...drawDeck]
+                let newDrawDeck = [...drawDeck]
                 const drawnCard = newDrawDeck.pop() as PlayableCard
 
                 setDiscardPile([...discardPile, drawnCard])
-                setDrawDeck(newDrawDeck)
+
 
                 if (drawnCard.type === 'weapon') {
+                    setDrawDeck(newDrawDeck)
                     setWeaponCardPlayed(false)
                     setActionCardPlayed(false)
                     setPropertyCardPlayed(false)
@@ -1293,13 +1286,47 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (playersData[indexOfPlayer].character.name === "Ieyasu") {
                         setIeyasuModule(true)
                     } else {
+                        const newCards: PlayableCard[] = [];
                         if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
-                            drawCards(3)
-                        } else {
-                            drawCards(2)
-                        }
-                    }
+                            // drawCards(3)
+                            for (let i = 0; i < 3; i++) {
+                                if (newDrawDeck.length === 0) {
+                                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                                    setDiscardPile([])
+                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                                        setGameOver(true)
+                                        console.log('2')
+                                        break
+                                    }
+                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                                    newCards.push(newDrawDeck.pop() as PlayableCard)
 
+                                } else {
+                                    newCards.push(newDrawDeck.pop() as PlayableCard);
+                                }
+                            }
+                        } else {
+                            // drawCards(2)
+                            for (let i = 0; i < 2; i++) {
+                                if (newDrawDeck.length === 0) {
+                                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                                    setDiscardPile([])
+                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                                        setGameOver(true)
+                                        console.log('2')
+                                        break
+                                    }
+                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                                    newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                                } else {
+                                    newCards.push(newDrawDeck.pop() as PlayableCard);
+                                }
+                            }
+                        }
+                        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
+                    }
+                    setDrawDeck(newDrawDeck)
                     setPlayersData(data)
                 }
             } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && discardPile.length > 0) {
@@ -1388,13 +1415,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                         console.log('4')
                         break
                     }
-                    console.log('shuffling')
                     newDrawDeck = shuffle(discardPile) as PlayableCard[]
                     newCards.push(newDrawDeck.pop() as PlayableCard)
                     setDiscardPile([])
 
                 } else {
-                    console.log('working');
                     newCards.push(newDrawDeck.pop() as PlayableCard);
                 }
             }
@@ -1474,7 +1499,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newInfo = `${playersData[indexOfPlayer].character.name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
         setBattlecryInfo(newBattlecryInfo)
-
+        // 
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
@@ -1606,7 +1631,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[0].bushido = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} discarded a weapon.Bushido is passed on`
+        const newInfo = `${playersData[indexOfPlayer].character.name} discarded a weapon.Bushido is passed on`
         setBushidoInfo(newInfo)
         setActiveCard(null)
         setDiscardPile(newDiscardPile)
@@ -1618,7 +1643,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newDiscardPile: PlayableCard[] = [...discardPile, {
             type: 'property',
-            name: 'Bushido'
+            name: 'Bushido',
+            img: bushido
         } as PlayableCard]
         const data = [...playersData]
         data[indexOfPlayer].bushido = false
@@ -1628,7 +1654,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             console.log('7')
         }
 
-        const newInfo = `${playersData[indexOfPlayer].socketID} lost a honour point. Bushido is discarded`
+        const newInfo = `${playersData[indexOfPlayer].character.name} lost a honour point. Bushido is discarded`
 
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
@@ -1785,7 +1811,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setCardPlayedBy(playersData[indexOfPlayer])
 
             if (!!selectedCard && selectedCard.type === 'weapon' && selectedPlayer !== '') {
-                console.log(`attacking ${selectedPlayer}`)
                 if (playersData[indexOfSelectedPlayer()].harmless === true) {
                     setSelectedPlayer('')
                     alert('Cannot attack harmless opponents')
@@ -1858,7 +1883,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setVictim(playersData[indexOfSelectedPlayer()])
                     setPlayersData(data)
                     socket.emit('attacked', selectedPlayer, room)
-                    console.log(selectedPlayer)
                     setSelectedCard(undefined)
                     setSelectedPlayer('')
 
@@ -1874,7 +1898,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const newCards: PlayableCard[] = [];
                     for (let i = 0; i < 2; i++) {
                         if (newDrawDeck.length === 0) {
-                            console.log('shuffling')
                             newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
                             newCards.push(newDrawDeck.pop() as PlayableCard)
                             data.map(player => player.honourPoints = player.honourPoints - 1)
@@ -1885,7 +1908,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 break
                             }
                         } else {
-                            console.log('working');
                             newCards.push(newDrawDeck.pop() as PlayableCard);
                         }
                     }
@@ -2001,13 +2023,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 console.log('8')
                                 break
                             }
-                            console.log('shuffling')
                             newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
                             newCards.push(newDrawDeck.pop() as PlayableCard)
                             newDiscardPile = []
 
                         } else {
-                            console.log('working');
                             newCards.push(newDrawDeck.pop() as PlayableCard);
                         }
                     }
@@ -2024,7 +2044,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     console.log('9')
                                     break
                                 }
-                                console.log('shuffling')
                                 newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
                                 data[i].hand.push(newDrawDeck.pop() as PlayableCard)
                                 if (data[i].harmless === true && data[i].health !== 0) {
@@ -2061,10 +2080,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {
-                        console.log(excludedHarmlessData)
                         setLengthForJujitsuBattlecry(excludedHarmlessData.length - 1)
                     } else {
-                        console.log(excludedHarmlessData)
                         setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
                     }
                     setDiscardPile([...discardPile, selectedCard])
@@ -2303,6 +2320,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const endTurn = () => {
 
         setSelectedPlayer('')
+        setActiveCard(null)
 
         if (playersData[indexOfPlayer].hand.length > 7) {
             console.log('to many cards')
