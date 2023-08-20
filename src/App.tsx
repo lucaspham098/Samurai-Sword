@@ -6,7 +6,8 @@ import Lobby from './components/Lobby/Lobby';
 import Home from './pages/Home/Home';
 import io from 'socket.io-client'
 
-const socket = io(`http://localhost:8080`);
+// const socket = io(`http://localhost:8080`);
+const socket = io(`https://samurai-sword-4c84a9f6080d.herokuapp.com`);
 
 function App() {
   return (
