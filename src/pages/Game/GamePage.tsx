@@ -215,185 +215,180 @@ const GamePage = ({ socket }: GamePageProp) => {
             damage: 2,
             img: kusarigama
         },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
-        //     img: kusarigama
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
-        //     img: kusarigama
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kusarigama',
-        //     range: 2,
-        //     damage: 2,
-        //     img: kusarigama
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Bo',
-        //     range: 2,
-        //     damage: 1,
-        //     img: bo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Bo',
-        //     range: 2,
-        //     damage: 1,
-        //     img: bo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Bo',
-        //     range: 2,
-        //     damage: 1,
-        //     img: bo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Bo',
-        //     range: 2,
-        //     damage: 1,
-        //     img: bo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Bo',
-        //     range: 2,
-        //     damage: 1,
-        //     img: bo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Daikyu',
-        //     range: 5,
-        //     damage: 2,
-        //     img: daikyu
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Nagayari',
-        //     range: 4,
-        //     damage: 2,
-        //     img: nagayari
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kiseri',
-        //     range: 1,
-        //     damage: 2,
-        //     img: kiseru
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kiseri',
-        //     range: 1,
-        //     damage: 2,
-        //     img: kiseru
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kiseri',
-        //     range: 1,
-        //     damage: 2,
-        //     img: kiseru
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kiseri',
-        //     range: 1,
-        //     damage: 2,
-        //     img: kiseru
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kiseri',
-        //     range: 1,
-        //     damage: 2,
-        //     img: kiseru
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Shuriken',
-        //     range: 3,
-        //     damage: 1,
-        //     img: shuriken
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Shuriken',
-        //     range: 3,
-        //     damage: 1,
-        //     img: shuriken
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Shuriken',
-        //     range: 3,
-        //     damage: 1,
-        //     img: shuriken
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Wakizashi',
-        //     range: 1,
-        //     damage: 3,
-        //     img: wakizashi
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Naginata',
-        //     range: 4,
-        //     damage: 1,
-        //     img: naginata
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Naginata',
-        //     range: 4,
-        //     damage: 1,
-        //     img: naginata
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Tanegashima',
-        //     range: 5,
-        //     damage: 1,
-        //     img: tanegashima
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Nodachi',
-        //     range: 3,
-        //     damage: 3,
-        //     img: nodachi
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Kanabo',
-        //     range: 3,
-        //     damage: 2,
-        //     img: kanabo
-        // },
-        // {
-        //     type: 'weapon',
-        //     name: 'Katana',
-        //     range: 2,
-        //     damage: 3,
-        //     img: katana
-        // },
         {
-            type: 'action',
-            name: 'Jujitsu',
-            img: jujitsu
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+            img: kusarigama
+        },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+            img: kusarigama
+        },
+        {
+            type: 'weapon',
+            name: 'Kusarigama',
+            range: 2,
+            damage: 2,
+            img: kusarigama
+        },
+        {
+            type: 'weapon',
+            name: 'Bo',
+            range: 2,
+            damage: 1,
+            img: bo
+        },
+        {
+            type: 'weapon',
+            name: 'Bo',
+            range: 2,
+            damage: 1,
+            img: bo
+        },
+        {
+            type: 'weapon',
+            name: 'Bo',
+            range: 2,
+            damage: 1,
+            img: bo
+        },
+        {
+            type: 'weapon',
+            name: 'Bo',
+            range: 2,
+            damage: 1,
+            img: bo
+        },
+        {
+            type: 'weapon',
+            name: 'Bo',
+            range: 2,
+            damage: 1,
+            img: bo
+        },
+        {
+            type: 'weapon',
+            name: 'Daikyu',
+            range: 5,
+            damage: 2,
+            img: daikyu
+        },
+        {
+            type: 'weapon',
+            name: 'Nagayari',
+            range: 4,
+            damage: 2,
+            img: nagayari
+        },
+        {
+            type: 'weapon',
+            name: 'Kiseri',
+            range: 1,
+            damage: 2,
+            img: kiseru
+        },
+        {
+            type: 'weapon',
+            name: 'Kiseri',
+            range: 1,
+            damage: 2,
+            img: kiseru
+        },
+        {
+            type: 'weapon',
+            name: 'Kiseri',
+            range: 1,
+            damage: 2,
+            img: kiseru
+        },
+        {
+            type: 'weapon',
+            name: 'Kiseri',
+            range: 1,
+            damage: 2,
+            img: kiseru
+        },
+        {
+            type: 'weapon',
+            name: 'Kiseri',
+            range: 1,
+            damage: 2,
+            img: kiseru
+        },
+        {
+            type: 'weapon',
+            name: 'Shuriken',
+            range: 3,
+            damage: 1,
+            img: shuriken
+        },
+        {
+            type: 'weapon',
+            name: 'Shuriken',
+            range: 3,
+            damage: 1,
+            img: shuriken
+        },
+        {
+            type: 'weapon',
+            name: 'Shuriken',
+            range: 3,
+            damage: 1,
+            img: shuriken
+        },
+        {
+            type: 'weapon',
+            name: 'Wakizashi',
+            range: 1,
+            damage: 3,
+            img: wakizashi
+        },
+        {
+            type: 'weapon',
+            name: 'Naginata',
+            range: 4,
+            damage: 1,
+            img: naginata
+        },
+        {
+            type: 'weapon',
+            name: 'Naginata',
+            range: 4,
+            damage: 1,
+            img: naginata
+        },
+        {
+            type: 'weapon',
+            name: 'Tanegashima',
+            range: 5,
+            damage: 1,
+            img: tanegashima
+        },
+        {
+            type: 'weapon',
+            name: 'Nodachi',
+            range: 3,
+            damage: 3,
+            img: nodachi
+        },
+        {
+            type: 'weapon',
+            name: 'Kanabo',
+            range: 3,
+            damage: 2,
+            img: kanabo
+        },
+        {
+            type: 'weapon',
+            name: 'Katana',
+            range: 2,
+            damage: 3,
+            img: katana
         },
         {
             type: 'action',
@@ -405,30 +400,30 @@ const GamePage = ({ socket }: GamePageProp) => {
             name: 'Jujitsu',
             img: jujitsu
         },
-        // {
-        //     type: 'action',
-        //     name: 'Tea Ceremony',
-        //     img: tea_ceremony
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Tea Ceremony',
-        //     img: tea_ceremony
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Tea Ceremony',
-        //     img: tea_ceremony
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Tea Ceremony',
-        //     img: tea_ceremony
-        // },
         {
             type: 'action',
-            name: 'Battlecry',
-            img: battlecry
+            name: 'Jujitsu',
+            img: jujitsu
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony',
+            img: tea_ceremony
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony',
+            img: tea_ceremony
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony',
+            img: tea_ceremony
+        },
+        {
+            type: 'action',
+            name: 'Tea Ceremony',
+            img: tea_ceremony
         },
         {
             type: 'action',
@@ -447,8 +442,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'action',
-            name: 'Geisha',
-            img: geisha
+            name: 'Battlecry',
+            img: battlecry
         },
         {
             type: 'action',
@@ -475,136 +470,141 @@ const GamePage = ({ socket }: GamePageProp) => {
             name: 'Geisha',
             img: geisha
         },
-        // {
-        //     type: 'action',
-        //     name: 'Daimyo',
-        //     img: daimyo
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Daimyo',
-        //     img: daimyo
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Daimyo',
-        //     img: daimyo
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion',
-        //     img: divertion
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion',
-        //     img: divertion
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion',
-        //     img: divertion
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion',
-        //     img: divertion
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Divertion',
-        //     img: divertion
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing',
-        //     img: breathing
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing',
-        //     img: breathing
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Breathing',
-        //     img: breathing
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
-        // {
-        //     type: 'action',
-        //     name: 'Parry',
-        //     img: parry
-        // },
+        {
+            type: 'action',
+            name: 'Geisha',
+            img: geisha
+        },
+        {
+            type: 'action',
+            name: 'Daimyo',
+            img: daimyo
+        },
+        {
+            type: 'action',
+            name: 'Daimyo',
+            img: daimyo
+        },
+        {
+            type: 'action',
+            name: 'Daimyo',
+            img: daimyo
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Breathing',
+            img: breathing
+        },
+        {
+            type: 'action',
+            name: 'Breathing',
+            img: breathing
+        },
+        {
+            type: 'action',
+            name: 'Breathing',
+            img: breathing
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
+        {
+            type: 'action',
+            name: 'Parry',
+            img: parry
+        },
         {
             type: 'property',
             name: 'Fast Draw',
@@ -820,15 +820,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('setTurnBack', currentPlayer => {
             setTurn(currentPlayer.socketID)
-            // if (!!playersData.findIndex(player => player.hand.length === 0)) {
-            //     const data = [...playersData]
-            //     data.map(player => {
-            //         if (player.hand.length === 0) {
-            //             player.harmless = true
-            //         }
-            //     })
-            //     setPlayersData(data)
-            // }
         })
 
         socket.on('newTurn', (newTurn) => {
@@ -836,16 +827,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setCurrentPlayer(newTurn)
             setSelectedPlayer('')
             setNewTurn(true)
-            // if (!!playersData.findIndex(player => player.hand.length === 0)) {
-            //     const data = [...playersData]
-            //     data.map(player => {
-            //         if (player.hand.length === 0) {
-            //             player.harmless = true
-            //         }
-            //     })
-            //     setPlayersData(data)
-            // }
-
         })
 
         socket.on('initGameState', (playersData: PlayersData[]) => {
@@ -1367,14 +1348,15 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryPlayed(true)
         setTimeout(() => {
             setTurn('')
+            setTurnBack()
         }, 250);
-        setTurnBack()
     }
 
     const handleParry = () => {
         setDiscardPile([...discardPile, {
             type: 'action',
-            name: 'Parry'
+            name: 'Parry',
+            img: parry
         } as PlayableCard])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
@@ -1384,8 +1366,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryPlayed(true)
         setTimeout(() => {
             setTurn('')
+            setTurnBack()
         }, 250);
-        setTurnBack()
 
     }
 
@@ -1445,7 +1427,8 @@ const GamePage = ({ socket }: GamePageProp) => {
     const handleBattlecryDiscard = () => {
         const newDiscardPile: PlayableCard[] = [...discardPile, {
             type: 'action',
-            name: 'Parry'
+            name: 'Parry',
+            img: parry
         } as PlayableCard]
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
@@ -1464,11 +1447,12 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
+            if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
+                setTurnBack()
+            }
         }, 250);
 
-        if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
-            setTurnBack()
-        }
+
 
     }
 
@@ -1495,15 +1479,15 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
         setBattlecryInfo(newBattlecryInfo)
-        // 
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
+            if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
+                setTurnBack()
+            }
         }, 250);
 
-        if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
-            setTurnBack()
-        }
+
     }
 
     const handleJujitsuDiscard = (card: PlayableCard, index: number) => {
@@ -1527,11 +1511,12 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
+            if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
+                setTurnBack()
+            }
         }, 200);
 
-        if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
-            setTurnBack()
-        }
+
     }
 
     const handleJujitsuWound = () => {
@@ -1561,11 +1546,12 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
+            if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
+                setTurnBack()
+            }
         }, 250);
 
-        if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
-            setTurnBack()
-        }
+
     }
 
     const handleBushidoDiscard = (card: PlayableCard, index: number) => {
