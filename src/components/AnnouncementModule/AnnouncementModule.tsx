@@ -115,7 +115,7 @@ const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardP
             }
 
             {bushidoWeapon === false &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} did not flip  weapon card for bushido. Bushido is passed.</p>
+                <p className='announcement-module__text'>{currentPlayer?.name} did not flip  weapon card for bushido. Bushido is passed.</p>
             }
 
             {bushidoInfo &&

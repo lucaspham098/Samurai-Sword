@@ -1178,23 +1178,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
     };
 
-
-
-    const drawCardFromDiscard = () => {
-        const newDrawDeck = [...drawDeck]
-        const data = [...playersData]
-        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, newDrawDeck.pop() as PlayableCard]
-
-        setDrawDeck(newDrawDeck)
-        setPlayersData(data)
-
-        setNewTurn(false)
-        if (ieyasuModule === true) {
-            setIeyasuModule(false)
-        }
-    }
-
-
     const handleNobunaga = () => {
         const data = [...playersData]
         if (data[indexOfPlayer].health > 1) {
@@ -1273,15 +1256,14 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setIeyasuModule(true)
                     } else {
                         const newCards: PlayableCard[] = [];
-                        if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
+                        if (playersData[indexOfPlayer].character.name === 'Hideyoshi' && playersData[indexOfPlayer].role.role === 'Shogun') {
                             // drawCards(3)
-                            for (let i = 0; i < 3; i++) {
+                            for (let i = 0; i < 4; i++) {
                                 if (newDrawDeck.length === 0) {
                                     data.map(player => player.honourPoints = player.honourPoints - 1)
                                     setDiscardPile([])
                                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
                                         setGameOver(true)
-                                        console.log('2')
                                         break
                                     }
                                     newDrawDeck = shuffle(discardPile) as PlayableCard[]
@@ -1291,6 +1273,25 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     newCards.push(newDrawDeck.pop() as PlayableCard);
                                 }
                             }
+
+                        } else if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
+
+                            for (let i = 0; i < 3; i++) {
+                                if (newDrawDeck.length === 0) {
+                                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                                    setDiscardPile([])
+                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                                        setGameOver(true)
+                                        break
+                                    }
+                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                                    newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                                } else {
+                                    newCards.push(newDrawDeck.pop() as PlayableCard);
+                                }
+                            }
+
                         } else {
                             // drawCards(2)
                             for (let i = 0; i < 2; i++) {
@@ -1299,7 +1300,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     setDiscardPile([])
                                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
                                         setGameOver(true)
-                                        console.log('2')
                                         break
                                     }
                                     newDrawDeck = shuffle(discardPile) as PlayableCard[]
@@ -1310,6 +1310,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 }
                             }
                         }
+
                         data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
                     }
                     setDrawDeck(newDrawDeck)
@@ -1319,7 +1320,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setIeyasuModule(true)
             }
             else {
-                if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
+                if (playersData[indexOfPlayer].character.name === 'Hideyoshi' && playersData[indexOfPlayer].role.role === 'Shogun') {
+                    drawCards(4)
+                } else if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
                     drawCards(3)
                 } else {
                     drawCards(2)
@@ -1330,7 +1333,40 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     }, [turn]);
 
+    const drawCardFromDiscard = () => {
+        let newDrawDeck = [...drawDeck]
+        const data = [...playersData]
+        const newCards: PlayableCard[] = [];
 
+        if (playersData[indexOfPlayer].role.role === 'Shogun') {
+            for (let i = 0; i < 2; i++) {
+                if (newDrawDeck.length === 0) {
+                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                    setDiscardPile([])
+                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                        setGameOver(true)
+                        break
+                    }
+                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                    newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                } else {
+                    newCards.push(newDrawDeck.pop() as PlayableCard);
+                }
+            }
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, ...newCards]
+        } else {
+            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, newDrawDeck.pop() as PlayableCard]
+        }
+
+        setDrawDeck(newDrawDeck)
+        setPlayersData(data)
+
+        setNewTurn(false)
+        if (ieyasuModule === true) {
+            setIeyasuModule(false)
+        }
+    }
 
     const setTurnBack = () => {
         socket.emit('setTurnBack', currentPlayer)
@@ -2385,6 +2421,8 @@ Ninja Team Points: ${ninjaPoints()}`)
             {ieyasuModule && <IeyasuModule
                 drawCardFromDiscard={drawCardFromDiscard}
                 drawCards={drawCards}
+                playersData={playersData}
+                currentPlayer={currentPlayer}
             />}
 
             {gameOver && <GameOverModule
