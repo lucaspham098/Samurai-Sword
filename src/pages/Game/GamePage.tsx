@@ -54,10 +54,10 @@ import tanegashima from '../../assets/images/weapons/tanegashima.jpeg'
 import wakizashi from '../../assets/images/weapons/wakizashi.jpeg'
 
 import ninja1 from '../../assets/images/roles/ninja1.jpeg'
-// import ninja2 from '../../assets/images/roles/ninja2.jpeg'
+import ninja2 from '../../assets/images/roles/ninja2.jpeg'
 import ninja3 from '../../assets/images/roles/ninja3.jpeg'
-// import ronin from '../../assets/images/roles/ronin.jpeg'
-// import samurai from '../../assets/images/roles/samurai.jpeg'
+import ronin from '../../assets/images/roles/ronin.jpeg'
+import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 
 
@@ -111,7 +111,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [initialPlayersdata, setInitialPlayersData] = useState<PlayersData[]>([])
 
+    const [startGame, setStartGame] = useState(false)
     const [gameOver, setGameOver] = useState<boolean>(false)
+    const [endGameinfo, setEndGameInfo] = useState<string>('')
     const [teamNinjaInfo, setTeamNinjaInfo] = useState<number>()
     const [teamShogunInfo, setTeamShogunInfo] = useState<number>()
     const [winner, setWinner] = useState<string>('')
@@ -138,6 +140,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
+    const [checkDrawDeckLength, setCheckDrawDeckLength] = useState<boolean>(false)
 
     const [parryModule, setParryModule] = useState<boolean>(false)
 
@@ -880,7 +883,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
 
-    }, [room, socket])
+    }, [])
 
 
     useEffect(() => {
@@ -1000,7 +1003,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
 
-    }, [initialPlayersdata, characterDeck, mainDeck, roleDeck, room, socket])
+    }, [initialPlayersdata])
 
 
     const updateGameState = () => {
@@ -1036,7 +1039,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (!parryModule || discardCards)
                 updateGameState()
         }
-    }, [playersData, discardPile, drawDeck, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo, turn, socket.id, parryModule, discardCards])
+    }, [playersData, discardPile, drawDeck, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo])
 
     useEffect(() => {
         if (playersData.length > 0) {
@@ -1045,7 +1048,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setIndexOfParry(index)
         }
 
-    }, [playersData, indexOfParry])
+    }, [playersData])
 
 
     const handleSelectedPlayer = (target: HTMLDivElement) => {
@@ -1113,7 +1116,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     const indexOfCurrentPlayer = () => {
-        return playersData.findIndex(player => player.socketID === currentPlayer?.socketID)
+        return playersData.findIndex(player => player.socketID == currentPlayer?.socketID)
     }
 
     const indexOfSelectedCard: () => number = () => {
@@ -1140,7 +1143,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setDiscardPile([])
             setPlayersData(data)
         }
-    }, [drawDeck, discardPile, playersData])
+    }, [drawDeck])
 
     const drawCards = (number: number) => {
         if (playersData.length > 0 && !gameOver) {
@@ -1208,7 +1211,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (turn === socket.id && playersData[indexOfPlayer].character.name === 'Tomoe' && playerHit === true && newTurn === false) {
             drawCards(1)
         }
-    }, [playerHit, drawCards, indexOfParry, newTurn, indexOfPlayer, socket.id, turn])
+    }, [playerHit])
 
 
     useEffect(() => {
@@ -1325,7 +1328,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         }
 
-    }, [turn, discardPile, drawCards, drawDeck, indexOfPlayer, newTurn, playersData, socket.id]);
+    }, [turn]);
 
 
 
@@ -2268,7 +2271,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         handleCardPlayer()
-    }, [selectedCard, selectedPlayer, announcementModule, attacksPlayed, discardCards, discardCards, drawDeck, gameOver, ieyasuModule, indexOfPlayer, indexOfSelectedCard, indexOfSelectedPlayer, parryModule, playersData, room, socket, turn])
+    }, [selectedCard, selectedPlayer])
 
 
     const endTurn = () => {
@@ -2326,9 +2329,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             setTeamNinjaInfo(ninjaPoints())
             setTeamShogunInfo(shogunPoints())
+            setEndGameInfo(`Shogun Team Points: ${shogunPoints()}
+Ninja Team Points: ${ninjaPoints()}`)
 
         }
-    }, [gameOver, playersData])
+    }, [gameOver])
 
 
     return (
@@ -2401,7 +2406,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[1].role.img} className='game__player-role card' />
+                                        <img src={playersData[1].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2410,21 +2415,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[1].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[1].character.img} className='game__player-character card ' />
+                                    <img src={playersData[1].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[1].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[1].hand.length} </p>
                                     </div>
                                 </div>
@@ -2432,24 +2437,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[1].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[1].focus}</p>
                                         </div>
                                     }
                                     {playersData[1].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[1].armor}</p>
                                         </div>
                                     }
                                     {playersData[1].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[1].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[1].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2466,7 +2471,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[2].role.img} className='game__player-role card' />
+                                        <img src={playersData[2].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2475,21 +2480,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[2].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[2].character.img} className='game__player-character card ' />
+                                    <img src={playersData[2].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[2].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[2].hand.length} </p>
                                     </div>
                                 </div>
@@ -2497,24 +2502,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[2].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[2].focus}</p>
                                         </div>
                                     }
                                     {playersData[2].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[2].armor}</p>
                                         </div>
                                     }
                                     {playersData[2].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[2].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[2].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2526,12 +2531,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     <div className='game__middle-container'>
                         <div className='game__deck-container'>
-                            <img alt='' src={cardBack} className='game__deck' />
+                            <img src={cardBack} className='game__deck' />
                             <p className='game__deck-text'>x {drawDeck.length}</p>
                         </div>
                         {discardPile.length > 0 &&
                             <div className='game__deck-container'>
-                                <img alt='' src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
+                                <img src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
                                 <p>x {discardPile.length}</p>
                             </div>
                         }
@@ -2549,20 +2554,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                             }
 
                             <div className="game__user-role-container">
-                                <img alt='' src={playersData[0].role.img} className='game__user-role card' />
+                                <img src={playersData[0].role.img} className='game__user-role card' />
                             </div>
 
                             <div className="game__user-character-container">
-                                <img alt='' src={playersData[0].character.img} className='game__user-character card' />
+                                <img src={playersData[0].character.img} className='game__user-character card' />
                             </div>
 
                             <div className="game__user-flex-container">
                                 <div className='game__icon-container'>
-                                    <img alt='' src={heart} className='game__icon' />
+                                    <img src={heart} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[0].health}</p>
                                 </div>
                                 <div className='game__icon-container'>
-                                    <img alt='' src={cherry_blossum} className='game__icon' />
+                                    <img src={cherry_blossum} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
                                 </div>
                             </div>
@@ -2572,30 +2577,30 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className="game__user-property-container">
                             {playersData[0].focus > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={focus} className='game__player-property card' />
+                                    <img src={focus} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[0].focus}</p>
                                 </div>
                             }
                             {playersData[0].armor > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={armor} className='game__player-property card' />
+                                    <img src={armor} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[0].armor}</p>
                                 </div >
                             }
                             {playersData[0].fastDraw > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={fast_draw} className='game__player-property card' />
+                                    <img src={fast_draw} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[0].fastDraw}</p>
                                 </div>
                             }
                             {playersData[0].bushido &&
-                                <img alt='' src={bushido} className='game__player-property card' />
+                                <img src={bushido} className='game__player-property card' />
                             }
                         </div>
 
                         <div className='game__user-hand'>
                             {playersData[0].hand.length > 0 && playersData[0].hand.map((card: PlayableCard, index) => {
-                                return <img alt='' src={card.img} key={index} onClick={() => {
+                                return <img src={card.img} key={index} onClick={() => {
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
@@ -2618,7 +2623,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[2].role.img} className='game__player-role card' />
+                                        <img src={playersData[2].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2627,21 +2632,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[2].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[2].character.img} className='game__player-character card ' />
+                                    <img src={playersData[2].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[2].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[2].hand.length} </p>
                                     </div>
                                 </div>
@@ -2649,24 +2654,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[2].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[2].focus}</p>
                                         </div>
                                     }
                                     {playersData[2].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[2].armor}</p>
                                         </div>
                                     }
                                     {playersData[2].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[2].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[2].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2683,7 +2688,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[0].role.img} className='game__player-role card' />
+                                        <img src={playersData[0].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2692,21 +2697,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[0].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[0].character.img} className='game__player-character card ' />
+                                    <img src={playersData[0].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[0].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[0].hand.length} </p>
                                     </div>
                                 </div>
@@ -2714,24 +2719,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[0].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[0].focus}</p>
                                         </div>
                                     }
                                     {playersData[0].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[0].armor}</p>
                                         </div>
                                     }
                                     {playersData[0].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[0].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[0].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2743,12 +2748,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     <div className='game__middle-container'>
                         <div className='game__deck-container'>
-                            <img alt='' src={cardBack} className='game__deck' />
+                            <img src={cardBack} className='game__deck' />
                             <p className='game__deck-text'>x {drawDeck.length}</p>
                         </div>
                         {discardPile.length > 0 &&
                             <div className='game__deck-container'>
-                                <img alt='' src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
+                                <img src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
                                 <p>x {discardPile.length}</p>
                             </div>
                         }
@@ -2766,20 +2771,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                             }
 
                             <div className="game__user-role-container">
-                                <img alt='' src={playersData[1].role.img} className='game__user-role card' />
+                                <img src={playersData[1].role.img} className='game__user-role card' />
                             </div>
 
                             <div className="game__user-character-container">
-                                <img alt='' src={playersData[1].character.img} className='game__user-character card' />
+                                <img src={playersData[1].character.img} className='game__user-character card' />
                             </div>
 
                             <div className="game__user-flex-container">
                                 <div className='game__icon-container'>
-                                    <img alt='' src={heart} className='game__icon' />
+                                    <img src={heart} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[1].health}</p>
                                 </div>
                                 <div className='game__icon-container'>
-                                    <img alt='' src={cherry_blossum} className='game__icon' />
+                                    <img src={cherry_blossum} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
                                 </div>
                             </div>
@@ -2789,30 +2794,30 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className="game__user-property-container">
                             {playersData[1].focus > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={focus} className='game__player-property card' />
+                                    <img src={focus} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[1].focus}</p>
                                 </div>
                             }
                             {playersData[1].armor > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={armor} className='game__player-property card' />
+                                    <img src={armor} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[1].armor}</p>
                                 </div >
                             }
                             {playersData[1].fastDraw > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={fast_draw} className='game__player-property card' />
+                                    <img src={fast_draw} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[1].fastDraw}</p>
                                 </div>
                             }
                             {playersData[1].bushido &&
-                                <img alt='' src={bushido} className='game__player-property card' />
+                                <img src={bushido} className='game__player-property card' />
                             }
                         </div>
 
                         <div className='game__user-hand'>
                             {playersData[1].hand.length > 0 && playersData[1].hand.map((card: PlayableCard, index) => {
-                                return <img alt='' src={card.img} key={index} onClick={() => {
+                                return <img src={card.img} key={index} onClick={() => {
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
@@ -2835,7 +2840,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[0].role.img} className='game__player-role card' />
+                                        <img src={playersData[0].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2844,21 +2849,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[0].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[0].character.img} className='game__player-character card ' />
+                                    <img src={playersData[0].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[0].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[0].hand.length} </p>
                                     </div>
                                 </div>
@@ -2866,24 +2871,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[0].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[0].focus}</p>
                                         </div>
                                     }
                                     {playersData[0].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[0].armor}</p>
                                         </div>
                                     }
                                     {playersData[0].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[0].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[0].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2900,7 +2905,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     <div className='game__player-shogun-spacing'>
                                     </div>
                                     <div className="game__player-role-container">
-                                        <img alt='' src={playersData[1].role.img} className='game__player-role card' />
+                                        <img src={playersData[1].role.img} className='game__player-role card' />
                                     </div>
                                 </>
                             }
@@ -2909,21 +2914,21 @@ const GamePage = ({ socket }: GamePageProp) => {
                                     {currentPlayer?.socketID === playersData[1].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
-                                    <img alt='' src={playersData[1].character.img} className='game__player-character card ' />
+                                    <img src={playersData[1].character.img} className='game__player-character card ' />
 
                                     <div className="game__player-flex-container game__player-flex-container--icon">
                                         <div className='game__icon-container'>
-                                            <img alt='' src={heart} className='game__icon' />
+                                            <img src={heart} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[1].health}</p>
                                         </div>
                                         <div className='game__icon-container'>
-                                            <img alt='' src={cherry_blossum} className='game__icon' />
+                                            <img src={cherry_blossum} className='game__icon' />
                                             <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
                                         </div>
                                     </div>
 
                                     <div className='game__icon-container '>
-                                        <img alt='' src={cardBack} className='game__icon--card game__icon' />
+                                        <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[1].hand.length} </p>
                                     </div>
                                 </div>
@@ -2931,24 +2936,24 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <div className="game__icon-parent-container">
                                     {playersData[1].focus > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={focus} className='game__player-property card' />
+                                            <img src={focus} className='game__player-property card' />
                                             <p>x {playersData[1].focus}</p>
                                         </div>
                                     }
                                     {playersData[1].armor > 0 &&
                                         <div className='game__icon-container '>
-                                            <img alt='' src={armor} className='game__player-property card' />
+                                            <img src={armor} className='game__player-property card' />
                                             <p>x {playersData[1].armor}</p>
                                         </div>
                                     }
                                     {playersData[1].fastDraw > 0 &&
                                         <div className='game__icon-container'>
-                                            <img alt='' src={fast_draw} className='game__player-property card' />
+                                            <img src={fast_draw} className='game__player-property card' />
                                             <p>x {playersData[1].fastDraw}</p>
                                         </div>
                                     }
                                     {playersData[1].bushido &&
-                                        <img alt='' src={bushido} className='game__player-property card' />
+                                        <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
                             </div>
@@ -2960,12 +2965,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     <div className='game__middle-container'>
                         <div className='game__deck-container'>
-                            <img alt='' src={cardBack} className='game__deck' />
+                            <img src={cardBack} className='game__deck' />
                             <p className='game__deck-text'>x {drawDeck.length}</p>
                         </div>
                         {discardPile.length > 0 &&
                             <div className='game__deck-container'>
-                                <img alt='' src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
+                                <img src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
                                 <p>x {discardPile.length}</p>
                             </div>
                         }
@@ -2983,20 +2988,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                             }
 
                             <div className="game__user-role-container">
-                                <img alt='' src={playersData[2].role.img} className='game__user-role card' />
+                                <img src={playersData[2].role.img} className='game__user-role card' />
                             </div>
 
                             <div className="game__user-character-container">
-                                <img alt='' src={playersData[2].character.img} className='game__user-character card' />
+                                <img src={playersData[2].character.img} className='game__user-character card' />
                             </div>
 
                             <div className="game__user-flex-container">
                                 <div className='game__icon-container'>
-                                    <img alt='' src={heart} className='game__icon' />
+                                    <img src={heart} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[2].health}</p>
                                 </div>
                                 <div className='game__icon-container'>
-                                    <img alt='' src={cherry_blossum} className='game__icon' />
+                                    <img src={cherry_blossum} className='game__icon' />
                                     <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
                                 </div>
                             </div>
@@ -3006,30 +3011,30 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className="game__user-property-container">
                             {playersData[2].focus > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={focus} className='game__player-property card' />
+                                    <img src={focus} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[2].focus}</p>
                                 </div>
                             }
                             {playersData[2].armor > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={armor} className='game__player-property card' />
+                                    <img src={armor} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[2].armor}</p>
                                 </div >
                             }
                             {playersData[2].fastDraw > 0 &&
                                 <div className='game__icon-container'>
-                                    <img alt='' src={fast_draw} className='game__player-property card' />
+                                    <img src={fast_draw} className='game__player-property card' />
                                     <p className='game__icon-text'>x {playersData[2].fastDraw}</p>
                                 </div>
                             }
                             {playersData[2].bushido &&
-                                <img alt='' src={bushido} className='game__player-property card' />
+                                <img src={bushido} className='game__player-property card' />
                             }
                         </div>
 
                         <div className='game__user-hand'>
                             {playersData[2].hand.length > 0 && playersData[2].hand.map((card: PlayableCard, index) => {
-                                return <img alt='' src={card.img} key={index} onClick={() => {
+                                return <img src={card.img} key={index} onClick={() => {
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />

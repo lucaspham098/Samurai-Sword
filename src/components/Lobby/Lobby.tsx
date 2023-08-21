@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useTransition } from 'react';
 import { Socket } from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -58,7 +58,7 @@ const Lobby = ({ socket }: LobbyProps) => {
 
             effectRan.current = true;
         }
-    }, [effectRan, name, navigate, room, socket]);
+    }, []);
 
     const onStartGame = () => {
         socket.emit('startGame', room);

@@ -1,5 +1,5 @@
-
-import React, { FormEvent } from 'react';
+import { error } from 'console';
+import React, { FC, FormEvent } from 'react';
 
 type JoinRoomModalProps = {
     handleSubmit: (event: FormEvent<HTMLFormElement>) => void
