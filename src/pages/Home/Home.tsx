@@ -1,5 +1,5 @@
-import React, { FormEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import JoinRoomModal from '../../components/JoinRoomModal';
 
@@ -27,7 +27,7 @@ const Home = ({ socket }: HomeProp) => {
             })
 
         }
-    }, [findRoom, name, navigate, socket]);
+    }, [findRoom]);
 
     const roomGenerator = () => {
         const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ123456789'
@@ -46,7 +46,7 @@ const Home = ({ socket }: HomeProp) => {
         if (room) {
             navigate(`lobby/${room}/${name}`)
         }
-    }, [room, name, navigate])
+    }, [room])
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
