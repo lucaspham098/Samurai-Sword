@@ -1212,7 +1212,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     const handleActiveCard = (cardIndex: number) => {
-        if (currentPlayer?.socketID === socket.id) {
+        if (currentPlayer?.socketID === socket.id && !bushidoWeapon) {
             setActiveCard(cardIndex === activeCard ? null : cardIndex)
         }
     }
@@ -1738,7 +1738,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon.Bushido is passed on`
         setBushidoWeapon(false)
         setBushidoInfo(newInfo)
-        setActiveCard(null)
         setDiscardPile(newDiscardPile)
         setPlayersData(data)
     }
