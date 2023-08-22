@@ -2,6 +2,7 @@ import React from 'react';
 import './ParryModule.scss'
 
 type ParryModuleProps = {
+    indexOfPlayer: number
     playersData: PlayersData[]
     currentPlayer: PlayersData | undefined
     wounds: number | undefined
@@ -56,7 +57,7 @@ interface Role {
     stars?: number
 }
 
-const ParryModule = ({ playersData, currentPlayer, wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus, discardCards }: ParryModuleProps) => {
+const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus, discardCards }: ParryModuleProps) => {
     return (
         <div className='choice-module'>
             {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' && !discardCards &&
@@ -75,9 +76,17 @@ const ParryModule = ({ playersData, currentPlayer, wounds, indexOfParry, handleP
                 </>
             }
 
-            {cardPlayed?.name === 'Battlecry' && !discardCards &&
+            {cardPlayed?.name === 'Battlecry' && !discardCards && playersData[indexOfPlayer].character.name !== 'Hanzo' &&
                 <>
                     <p>Discard a parry or suffer 1 wound</p>
+                    {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
+                    <button className='button--small' onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
+                </>
+            }
+
+            {cardPlayed?.name === 'Battlecry' && !discardCards && playersData[indexOfPlayer].character.name === 'Hanzo' &&
+                <>
+                    <p>Either discard a parry, discard a wepaon from your hand to use as a parry (unless it is your last card) or suffer 1 wound</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
                 </>

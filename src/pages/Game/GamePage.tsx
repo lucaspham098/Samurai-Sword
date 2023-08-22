@@ -674,112 +674,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             name: 'Bushido',
             img: bushido
         },
-
-
-
-
-
-
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
-        {
-            type: 'property',
-            name: 'Bushido',
-            img: bushido
-        },
     ]
 
     const characterDeck: Character[] = [
@@ -1001,7 +895,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer1Character = {
+                name: 'Hanzo',
+                health: 4,
+                img: hanzo
+            }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             data[0].character = dealtPlayer1Character
             data[0].health = dealtPlayer1Character.health
@@ -1201,12 +1100,14 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             }
 
-            if (card.type === 'weapon' && turn === socket.id && weaponCardPlayed && parryModule && playersData[indexOfPlayer].character.name === "Hanzo" && playersData[indexOfPlayer].hand.length > 1) {
+            if (card.type === 'weapon' && turn === socket.id && (weaponCardPlayed || cardPlayed?.name === 'Battlecry') && parryModule && playersData[indexOfPlayer].character.name === "Hanzo" && playersData[indexOfPlayer].hand.length > 1) {
                 handleHanzoWeaponParry(card, index)
                 setSelectedCard(undefined)
                 setActiveCard(null)
 
             }
+
+
         }
 
     }
@@ -1486,14 +1387,29 @@ const GamePage = ({ socket }: GamePageProp) => {
         setDiscardPile([...discardPile, card])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(index, 1)
+
+        if (cardPlayed?.name === 'Battlecry') {
+            const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon as a parry`
+            const newBattlecryInfo = [...battlecryInfo, newInfo]
+            setBattlecryInfo(newBattlecryInfo)
+
+            setTimeout(() => {
+                setTurn('')
+                if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
+                    setTurnBack()
+                }
+            }, 250);
+        } else {
+            setWeaponCardPlayed(false)
+            setParryPlayed(true)
+            setTimeout(() => {
+                setTurn('')
+                setTurnBack()
+            }, 250);
+        }
+
         setPlayersData(data)
 
-        setWeaponCardPlayed(false)
-        setParryPlayed(true)
-        setTimeout(() => {
-            setTurn('')
-            setTurnBack()
-        }, 250);
     }
 
     const handleParry = () => {
@@ -2504,6 +2420,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
 
             {parryModule && playersData.length > 0 && <ParryModule
+                indexOfPlayer={indexOfPlayer}
                 playersData={playersData}
                 currentPlayer={currentPlayer}
                 wounds={wounds}
