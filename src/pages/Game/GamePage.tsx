@@ -1059,7 +1059,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const handleSelectedCard = (card: PlayableCard, index: number) => {
         if (turn === socket.id) {
-            setSelectedPlayer('')
+            // setSelectedPlayer('')
             setSelectedCard(card)
             setActiveCard(null)
 
@@ -2641,6 +2641,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         <div className='game__user-hand'>
                             {playersData[0].hand.length > 0 && playersData[0].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
+                                    setSelectedPlayer('')
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
