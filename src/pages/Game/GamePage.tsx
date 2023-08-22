@@ -1329,6 +1329,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
             }
 
+            setNewTurn(false)
+
         }
 
     }, [turn]);
