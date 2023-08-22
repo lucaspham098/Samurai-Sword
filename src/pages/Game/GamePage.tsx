@@ -2859,6 +2859,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         <div className='game__user-hand'>
                             {playersData[1].hand.length > 0 && playersData[1].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
+                                    setSelectedPlayer('')
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
@@ -3076,6 +3077,7 @@ Ninja Team Points: ${ninjaPoints()}`)
                         <div className='game__user-hand'>
                             {playersData[2].hand.length > 0 && playersData[2].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
+                                    setSelectedPlayer('')
                                     handleSelectedCard(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
