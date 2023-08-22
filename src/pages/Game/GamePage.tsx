@@ -111,9 +111,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [initialPlayersdata, setInitialPlayersData] = useState<PlayersData[]>([])
 
-    const [startGame, setStartGame] = useState(false)
     const [gameOver, setGameOver] = useState<boolean>(false)
-    const [endGameinfo, setEndGameInfo] = useState<string>('')
+
     const [teamNinjaInfo, setTeamNinjaInfo] = useState<number>()
     const [teamShogunInfo, setTeamShogunInfo] = useState<number>()
     const [winner, setWinner] = useState<string>('')
@@ -147,7 +146,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [battlecryInfo, setBattlecryInfo] = useState<string[]>([])
     const [jujitsuInfo, setJujitsuInfo] = useState<string[]>([])
     const [jujitsuInEffect, setJujitsuInEffect] = useState<boolean>(false)
-    const [bushidoWeapon, setBushidoWeapon] = useState<boolean | undefined>()
+    const [bushidoWeapon, setBushidoWeapon] = useState<boolean | undefined>(undefined)
     const [bushidoInfo, setBushidoInfo] = useState<string>()
     const [geishaInfo, setGeishaInfo] = useState<string>()
 
@@ -160,7 +159,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [attacksPlayed, setAttacksPlayed] = useState<number>(0)
 
-    const [discardCards, setDiscardsCards] = useState<boolean>(false)
+    const [discardCards, setDiscardCards] = useState<boolean>(false)
 
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
     const [announcementModule, setAnnouncementModule] = useState<boolean>(false)
@@ -675,6 +674,112 @@ const GamePage = ({ socket }: GamePageProp) => {
             name: 'Bushido',
             img: bushido
         },
+
+
+
+
+
+
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
+        {
+            type: 'property',
+            name: 'Bushido',
+            img: bushido
+        },
     ]
 
     const characterDeck: Character[] = [
@@ -824,6 +929,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('newTurn', (newTurn) => {
             setTurn(newTurn.socketID)
+            setCardPlayed(undefined)
             setCurrentPlayer(newTurn)
             setSelectedPlayer('')
             setNewTurn(true)
@@ -1071,7 +1177,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setSelectedCard(undefined)
                 if (data[indexOfPlayer].hand.length === 7) {
                     setParryModule(false)
-                    setDiscardsCards(false)
+                    setDiscardCards(false)
                     setTimeout(() => {
                         endTurn()
                     }, 100);
@@ -1630,6 +1736,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon.Bushido is passed on`
+        setBushidoWeapon(false)
         setBushidoInfo(newInfo)
         setActiveCard(null)
         setDiscardPile(newDiscardPile)
@@ -1656,7 +1763,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         const newInfo = `${playersData[indexOfPlayer].name} lost a honour point. Bushido is discarded`
-
+        setBushidoWeapon(false)
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
         setPlayersData(data)
@@ -2319,7 +2426,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (playersData[indexOfPlayer].hand.length > 7) {
             console.log('to many cards')
-            setDiscardsCards(true)
+            setDiscardCards(true)
             setParryModule(true)
             return
         }
@@ -2367,9 +2474,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             setTeamNinjaInfo(ninjaPoints())
             setTeamShogunInfo(shogunPoints())
-            setEndGameInfo(`Shogun Team Points: ${shogunPoints()}
-Ninja Team Points: ${ninjaPoints()}`)
-
         }
     }, [gameOver])
 
@@ -2401,6 +2505,8 @@ Ninja Team Points: ${ninjaPoints()}`)
             }
 
             {parryModule && playersData.length > 0 && <ParryModule
+                playersData={playersData}
+                currentPlayer={currentPlayer}
                 wounds={wounds}
                 indexOfParry={indexOfParry}
                 handleParry={handleParry}

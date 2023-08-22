@@ -2,6 +2,8 @@ import React from 'react';
 import './ParryModule.scss'
 
 type ParryModuleProps = {
+    playersData: PlayersData[]
+    currentPlayer: PlayersData | undefined
     wounds: number | undefined
     indexOfParry: number
     handleParry: () => void
@@ -54,7 +56,7 @@ interface Role {
     stars?: number
 }
 
-const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus, discardCards }: ParryModuleProps) => {
+const ParryModule = ({ playersData, currentPlayer, wounds, indexOfParry, handleParry, handleGetAttacked, cardPlayed, handleBattlecryDiscard, handleBattlecryWound, handleJujitsuWound, bushidoWeapon, handleLoseHonourPoint, victim, handleDiscardRandomCard, handleRemoveArmor, handleRemoveBushido, handleRemoveFastDraw, handleRemoveFocus, discardCards }: ParryModuleProps) => {
     return (
         <div className='choice-module'>
             {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' && !discardCards &&
@@ -95,31 +97,30 @@ const ParryModule = ({ wounds, indexOfParry, handleParry, handleGetAttacked, car
                         <button className='button--small' onClick={() => handleDiscardRandomCard()}>Discard random card form {victim.name}</button>
                         {victim.focus > 0 &&
                             <button className='button--small' onClick={() => handleRemoveFocus()}>Remove 1 Focus from {victim.name}</button>
-                            // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Focus from {victim.name}</button>
                         }
                         {victim.armor > 0 &&
                             <button className='button--small' onClick={() => handleRemoveArmor()}>Remove 1 Armor from {victim.name}</button>
-                            // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Armor from {victim.name}</button>
                         }
                         {victim.fastDraw > 0 &&
                             <button className='button--small' onClick={() => handleRemoveFastDraw()}>Remove 1 Fast Draw from {victim.name}</button>
-                            // :
-                            // <button className='button--small button--disabled' disabled>Remove 1 Fast Draw from {victim.name}</button>
                         }
                         {victim.bushido === true &&
                             <button className='button--small' onClick={() => handleRemoveBushido()}>Remove Bushido from {victim.name}</button>
-                            // :
-                            // <button className='button--small button--disabled' disabled>Remove Bushido from {victim.name}</button>
                         }
                     </div>
 
                 </>}
 
-            {bushidoWeapon === true && !discardCards &&
+            {bushidoWeapon === true && !discardCards && playersData.length === 3 && currentPlayer?.role.role === 'Shogun' &&
                 <>
-                    <p>Select a weapon fromm hand to discard or lose 1 honour point</p>
+                    <p>Select a weapon from hand to discard to keep Bushido in play or discard Bushido</p>
+                    <button className='button--small' onClick={() => handleLoseHonourPoint()}>Discard Bushido</button>
+                </>
+            }
+
+            {bushidoWeapon === true && !discardCards && (playersData.length !== 3 || currentPlayer?.role.role !== 'Shogun') &&
+                <>
+                    <p>Select a weapon from hand to discard or lose 1 honour point</p>
                     <button className='button--small' onClick={() => handleLoseHonourPoint()}>Lose 1 Hounour Point</button>
                 </>
             }
