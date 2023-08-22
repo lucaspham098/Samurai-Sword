@@ -735,7 +735,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             name: 'Ginchiyo',
-            health: 5,
+            health: 4,
             img: ginchiyo
         },
     ]

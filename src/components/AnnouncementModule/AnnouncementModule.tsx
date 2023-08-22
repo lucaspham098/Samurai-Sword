@@ -111,7 +111,7 @@ const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardP
             }
 
             {bushidoWeapon === true &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} flipped a weapon card for bushido. Waiting to see if {cardPlayedBy?.name} will discard a weapon or lose a honour point</p>
+                <p className='announcement-module__text'>{currentPlayer?.name} flipped a weapon card for bushido. Waiting to see if {currentPlayer?.name} will discard a weapon or lose a honour point</p>
             }
 
             {bushidoWeapon === false &&
