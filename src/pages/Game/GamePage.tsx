@@ -163,7 +163,6 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [discardCards, setDiscardCards] = useState<boolean>(false)
 
     const [ieyasuModule, setIeyasuModule] = useState<boolean>(false)
-    const [announcementModule, setAnnouncementModule] = useState<boolean>(false)
 
     const mainDeck: PlayableCard[] = [
         {
@@ -824,15 +823,14 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('newTurn', (newTurn) => {
             setTurn(newTurn.socketID)
-
-            setCardPlayed(undefined)
+            setActionCardPlayed(false)
             setParryPlayed(false)
             setPlayerHit(false)
-
 
             setCurrentPlayer(newTurn)
             setSelectedPlayer('')
             setNewTurn(true)
+
         })
 
         socket.on('initGameState', (playersData: PlayersData[]) => {
@@ -864,7 +862,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setDeath(death)
             setLengthForJujitsuBattlecry(lengthForJujitsuBattlecry)
             setGameOver(gameOver)
-            setAnnouncementModule(announcementModule)
         })
 
         socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
@@ -901,12 +898,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
-            const dealtPlayer1Character = {
-                name: 'Hanzo',
-                health: 4,
-                img: hanzo
-            }
+            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             data[0].character = dealtPlayer1Character
             data[0].health = dealtPlayer1Character.health
@@ -1041,7 +1033,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             death: death,
             lengthForJujitsuBattlecry: lengthForJujitsuBattlecry,
             gameOver: gameOver,
-            announcementModule: announcementModule
         }, room)
     }
 
@@ -1050,7 +1041,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             if (!parryModule || discardCards)
                 updateGameState()
         }
-    }, [playersData, discardPile, drawDeck, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo])
+    }, [playersData, discardPile, drawDeck, cardPlayed, victim, currentPlayer, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, bushidoWeapon, geishaInfo, newTurn])
 
     useEffect(() => {
         if (playersData.length > 0) {
@@ -1184,7 +1175,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
             setDrawDeck(newDrawDeck)
             setPlayersData(data);
-            setNewTurn(false);
+
             if (ieyasuModule === true) {
                 setIeyasuModule(false);
             }
@@ -1375,7 +1366,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setDrawDeck(newDrawDeck)
         setPlayersData(data)
 
-        setNewTurn(false)
+
         if (ieyasuModule === true) {
             setIeyasuModule(false)
         }
@@ -1839,10 +1830,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                 return
             }
 
-            if (!announcementModule) {
-                setAnnouncementModule(true)
-            }
-
             const data = [...playersData]
             setCardPlayedBy(playersData[indexOfPlayer])
 
@@ -1916,6 +1903,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setActiveCard(null)
                     setCardPlayed(selectedCard)
                     setVictim(playersData[indexOfSelectedPlayer()])
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                     socket.emit('attacked', selectedPlayer, room)
                     setSelectedCard(undefined)
@@ -1962,6 +1952,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDiscardPile(newDiscardPile)
                     setDrawDeck(newDrawDeck)
                     setSelectedCard(undefined)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                 }
 
@@ -2004,6 +1997,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setSelectedPlayer('')
                     setSelectedCard(undefined)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
 
                 }
@@ -2039,6 +2035,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedPlayer('')
                     setSelectedCard(undefined)
                     setDrawDeck(newDrawDeck)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
 
                 }
@@ -2106,6 +2105,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDiscardPile(newDiscardPile)
                     setDrawDeck(newDrawDeck)
                     setSelectedCard(undefined)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                 }
 
@@ -2139,6 +2141,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {
@@ -2192,6 +2197,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
 
 
@@ -2227,6 +2235,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setCardPlayed(selectedCard)
                     setSelectedCard(undefined)
                     setParryModule(true)
+                    setNewTurn(false)
                 }
             }
 
@@ -2253,6 +2262,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDeath(false)
 
                     setSelectedCard(undefined)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                 }
 
@@ -2276,7 +2288,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDeath(false)
 
                     setSelectedCard(undefined)
-
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                 }
 
@@ -2298,9 +2312,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
                     setSelectedCard(undefined)
-
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                 }
 
@@ -2327,7 +2342,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setBushidoInfo(undefined)
                         setSelectedCard(undefined)
                         setSelectedPlayer('')
-
+                        if (newTurn) {
+                            setNewTurn(false)
+                        }
                         setPlayersData(data)
                     }
                 }
@@ -2335,7 +2352,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         handleCardPlayer()
-        setSelectedPlayer('')
     }, [selectedCard, selectedPlayer])
 
 
@@ -2400,30 +2416,28 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <AnnouncementModule
+                newTurn={newTurn}
+                currentPlayer={currentPlayer}
+                cardPlayedBy={cardPlayedBy}
+                victim={victim}
+                wounds={wounds}
+                cardPlayed={cardPlayed}
+                weaponCardPlayed={weaponCardPlayed}
+                actionCardPlayed={actionCardPlayed}
+                propertyCardPlayed={propertyCardPlayed}
+                playerHit={playerHit}
+                parryPlayed={parryPlayed}
+                battlecryInfo={battlecryInfo}
+                jujitsuInfo={jujitsuInfo}
+                playersData={playersData}
+                bushidoWeapon={bushidoWeapon}
+                bushidoInfo={bushidoInfo}
+                geishaInfo={geishaInfo}
+                death={death}
+                lengthForJujitsuBattlecry={lengthForJujitsuBattlecry}
+            />
 
-            {announcementModule &&
-                <AnnouncementModule
-                    newTurn={newTurn}
-                    currentPlayer={currentPlayer}
-                    cardPlayedBy={cardPlayedBy}
-                    victim={victim}
-                    wounds={wounds}
-                    cardPlayed={cardPlayed}
-                    weaponCardPlayed={weaponCardPlayed}
-                    actionCardPlayed={actionCardPlayed}
-                    propertyCardPlayed={propertyCardPlayed}
-                    playerHit={playerHit}
-                    parryPlayed={parryPlayed}
-                    battlecryInfo={battlecryInfo}
-                    jujitsuInfo={jujitsuInfo}
-                    playersData={playersData}
-                    bushidoWeapon={bushidoWeapon}
-                    bushidoInfo={bushidoInfo}
-                    geishaInfo={geishaInfo}
-                    death={death}
-                    lengthForJujitsuBattlecry={lengthForJujitsuBattlecry}
-                />
-            }
 
             {parryModule && playersData.length > 0 && <ParryModule
                 indexOfPlayer={indexOfPlayer}

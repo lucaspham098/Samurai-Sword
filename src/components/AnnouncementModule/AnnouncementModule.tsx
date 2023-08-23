@@ -103,7 +103,7 @@ const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, woun
                 return <p key={index}>{info}</p>
             })}
 
-            {actionCardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
+            {actionCardPlayed && !!cardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
                 <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>
             }
 
@@ -111,7 +111,7 @@ const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, woun
                 <p className='announcement-module__text'>{geishaInfo}</p>
             }
 
-            {propertyCardPlayed && cardPlayed?.name !== 'Bushido' && <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>}
+            {propertyCardPlayed && !!cardPlayed && cardPlayed?.name !== 'Bushido' && <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>}
 
             {propertyCardPlayed && cardPlayed?.name === 'Bushido' &&
                 <p className='announcement-module__text'>{cardPlayedBy?.name} gave Bushido to {victim?.name}</p>
