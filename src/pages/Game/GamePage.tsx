@@ -140,7 +140,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [drawDeck, setDrawDeck] = useState<PlayableCard[]>([])
     const [discardPile, setDiscardPile] = useState<PlayableCard[]>([])
-    const [checkDrawDeckLength, setCheckDrawDeckLength] = useState<boolean>(false)
+    const [emptyDrawDeck, setEmptyDrawDeck] = useState<boolean>(false)
 
     const [parryModule, setParryModule] = useState<boolean>(false)
 
@@ -822,8 +822,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
         socket.on('newTurn', (newTurn) => {
+            setEmptyDrawDeck(false)
             setTurn(newTurn.socketID)
-            setActionCardPlayed(false)
             setParryPlayed(false)
             setPlayerHit(false)
 
@@ -839,7 +839,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setPlayersData(playersData)
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, gameOver, announcementModule }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver }) => {
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
             setDiscardPile(discardPile)
@@ -861,6 +861,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setGeishaInfo(geishaInfo)
             setDeath(death)
             setLengthForJujitsuBattlecry(lengthForJujitsuBattlecry)
+            setEmptyDrawDeck(emptyDrawDeck)
             setGameOver(gameOver)
         })
 
@@ -1032,6 +1033,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             geishaInfo: geishaInfo,
             death: death,
             lengthForJujitsuBattlecry: lengthForJujitsuBattlecry,
+            emptyDrawDeck: emptyDrawDeck,
             gameOver: gameOver,
         }, room)
     }
@@ -1137,7 +1139,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     useEffect(() => {
         if (drawDeck.length === 0 && playersData.length > 0) {
-            console.log('checkdrawdecklength')
             const data = [...playersData];
             data.map(player => player.honourPoints = player.honourPoints - 1)
             if (data.filter(player => player.honourPoints <= 0).length > 0) {
@@ -1145,6 +1146,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
             setDrawDeck(shuffle(discardPile) as PlayableCard[])
             setDiscardPile([])
+            setEmptyDrawDeck(true)
             setPlayersData(data)
         }
     }, [drawDeck])
@@ -1157,11 +1159,11 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             for (let i = 0; i < number; i++) {
                 if (newDrawDeck.length === 0) {
+                    setEmptyDrawDeck(true)
                     data.map(player => player.honourPoints = player.honourPoints - 1)
                     setDiscardPile([])
                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
                         setGameOver(true)
-                        console.log('2')
                         break
                     }
                     newDrawDeck = shuffle(discardPile) as PlayableCard[]
@@ -1265,6 +1267,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             for (let i = 0; i < 4; i++) {
                                 if (newDrawDeck.length === 0) {
                                     data.map(player => player.honourPoints = player.honourPoints - 1)
+                                    setEmptyDrawDeck(true)
                                     setDiscardPile([])
                                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
                                         setGameOver(true)
@@ -1282,6 +1285,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                             for (let i = 0; i < 3; i++) {
                                 if (newDrawDeck.length === 0) {
+                                    setEmptyDrawDeck(true)
                                     data.map(player => player.honourPoints = player.honourPoints - 1)
                                     setDiscardPile([])
                                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
@@ -1297,9 +1301,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                             }
 
                         } else {
-                            // drawCards(2)
                             for (let i = 0; i < 2; i++) {
                                 if (newDrawDeck.length === 0) {
+                                    setEmptyDrawDeck(true)
                                     data.map(player => player.honourPoints = player.honourPoints - 1)
                                     setDiscardPile([])
                                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
@@ -1345,6 +1349,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (playersData[indexOfPlayer].role.role === 'Shogun') {
             for (let i = 0; i < 2; i++) {
                 if (newDrawDeck.length === 0) {
+                    setEmptyDrawDeck(true)
                     data.map(player => player.honourPoints = player.honourPoints - 1)
                     setDiscardPile([])
                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
@@ -1451,6 +1456,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             for (let i = 0; i < wounds; i++) {
                 if (newDrawDeck.length === 0) {
+                    setEmptyDrawDeck(true)
                     data.map(player => player.honourPoints = player.honourPoints - 1)
                     if (data.filter(player => player.honourPoints <= 0).length > 0) {
                         setGameOver(true)
@@ -1614,25 +1620,38 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newDiscardPile: PlayableCard[] = [...discardPile, card]
         const data = [...playersData]
+        let newDrawDeck = [...drawDeck]
+        const newCards: PlayableCard[] = []
+
         data[indexOfPlayer].hand.splice(index, 1)
 
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
             setIeyasuModule(true)
         } else {
             if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
-                const newCards: PlayableCard[] = []
                 for (let i = 0; i < 3; i++) {
-                    if (drawDeck.length > 0) {
-                        newCards.push(drawDeck.pop() as PlayableCard);
+                    setEmptyDrawDeck(true)
+                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                    setDiscardPile([])
+                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                        setGameOver(true)
+                        break
                     }
+                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                    newCards.push(newDrawDeck.pop() as PlayableCard)
                 }
                 data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
             } else {
-                const newCards: PlayableCard[] = []
                 for (let i = 0; i < 2; i++) {
-                    if (drawDeck.length > 0) {
-                        newCards.push(drawDeck.pop() as PlayableCard);
+                    setEmptyDrawDeck(true)
+                    data.map(player => player.honourPoints = player.honourPoints - 1)
+                    setDiscardPile([])
+                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                        setGameOver(true)
+                        break
                     }
+                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                    newCards.push(newDrawDeck.pop() as PlayableCard)
                 }
                 data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
             }
@@ -1830,6 +1849,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                 return
             }
 
+            if (emptyDrawDeck) {
+                setEmptyDrawDeck(false)
+            }
+
             const data = [...playersData]
             setCardPlayedBy(playersData[indexOfPlayer])
 
@@ -1923,6 +1946,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const newCards: PlayableCard[] = [];
                     for (let i = 0; i < 2; i++) {
                         if (newDrawDeck.length === 0) {
+                            setEmptyDrawDeck(true)
                             newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
                             newCards.push(newDrawDeck.pop() as PlayableCard)
                             data.map(player => player.honourPoints = player.honourPoints - 1)
@@ -2049,6 +2073,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     let newDrawDeck = [...drawDeck]
                     for (let i = 0; i < 3; i++) {
                         if (newDrawDeck.length === 0) {
+                            setEmptyDrawDeck(true)
                             data.map(player => player.honourPoints = player.honourPoints - 1)
                             if (data.filter(player => player.honourPoints <= 0).length > 0) {
                                 setGameOver(true)
@@ -2070,6 +2095,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     for (let i = 0; i < data.length; i++) {
                         if (i !== indexOfPlayer && !gameOver) {
                             if (newDrawDeck.length === 0) {
+                                setEmptyDrawDeck(true)
                                 data.map(player => player.honourPoints = player.honourPoints - 1)
                                 if (data.filter(player => player.honourPoints <= 0).length > 0) {
                                     setGameOver(true)
@@ -2418,6 +2444,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         <>
             <AnnouncementModule
                 newTurn={newTurn}
+                emptyDrawDeck={emptyDrawDeck}
                 currentPlayer={currentPlayer}
                 cardPlayedBy={cardPlayedBy}
                 victim={victim}

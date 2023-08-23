@@ -2,6 +2,7 @@ import './AnnouncementModule.scss'
 
 type AnnouncementModuleProps = {
     newTurn: boolean
+    emptyDrawDeck: boolean
     currentPlayer: PlayersData | undefined
     cardPlayedBy: PlayersData | undefined
     victim: PlayersData | undefined
@@ -55,13 +56,13 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
 
     return (
         <div className='announcement-module'>
             {newTurn === true &&
                 <>
-                    <p>It is {currentPlayer?.name}'s turn</p>
+                    <p className='announcement-module__text'>It is {currentPlayer?.name}'s turn</p>
                 </>
             }
 
@@ -84,7 +85,7 @@ const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, woun
             {cardPlayed?.name === "Breathing" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} and healed to full health and chose {victim?.name} to draw a card</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== lengthForJujitsuBattlecry &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a weapon or take a wound.</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a parry or take a wound.</p>
             }
 
             {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== lengthForJujitsuBattlecry &&
@@ -131,6 +132,10 @@ const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, woun
 
             {death &&
                 <p className='announcement-module__text'>{cardPlayedBy?.name} defeated {victim?.name} and gained an honour point</p>
+            }
+
+            {emptyDrawDeck &&
+                <p className='announcement-module__text'>The draw deck was emptied, everyone loss an honour point</p>
             }
 
         </div>
