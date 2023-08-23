@@ -823,9 +823,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('newTurn', (newTurn) => {
             setEmptyDrawDeck(false)
+            setGeishaInfo(undefined)
+            setDeath(false)
             setTurn(newTurn.socketID)
             setParryPlayed(false)
             setPlayerHit(false)
+            setCardPlayed(undefined)
 
             setCurrentPlayer(newTurn)
             setSelectedPlayer('')
@@ -1234,7 +1237,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(true)
-                    setDeath(false)
 
                     setTimeout(() => {
                         setParryModule(true)
@@ -1248,7 +1250,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setParryPlayed(false)
                     setBushidoInfo(undefined)
                     setBushidoWeapon(false)
-                    setDeath(false)
 
                     const data = [...playersData]
                     data[indexOfPlayer].bushido = false
@@ -1420,6 +1421,11 @@ const GamePage = ({ socket }: GamePageProp) => {
         } as PlayableCard])
         const data = [...playersData]
         data[indexOfPlayer].hand.splice(indexOfParry, 1)
+
+        if (data[indexOfPlayer].hand.length === 0) {
+            data[indexOfPlayer].harmless = true
+        }
+
         setPlayersData(data)
         setParryModule(false)
         setWeaponCardPlayed(false)
@@ -2251,17 +2257,25 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
 
                 if (selectedCard.name === 'Geisha' && selectedPlayer !== '') {
+                    setGeishaInfo(undefined)
+                    setVictim(playersData[indexOfSelectedPlayer()])
+
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     if (data[indexOfPlayer].hand.length === 0) {
                         data[indexOfPlayer].harmless = true
                     }
                     setDiscardPile([...discardPile, selectedCard])
                     setActiveCard(null)
-                    setVictim(playersData[indexOfSelectedPlayer()])
                     setCardPlayed(selectedCard)
                     setSelectedCard(undefined)
-                    setParryModule(true)
+                    setPropertyCardPlayed(false)
                     setNewTurn(false)
+                    setPlayersData(data)
+                    updateGameState()
+                    setTimeout(() => {
+                        setParryModule(true)
+                    }, 100);
+
                 }
             }
 
@@ -3156,7 +3170,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
 
-            {playersData[indexOfPlayer]?.character.name === 'Nobunaga' &&
+            {playersData[indexOfPlayer]?.character.name === 'Nobunaga' && !parryModule &&
                 <>
                     {turn === socket.id ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
                 </>

@@ -108,7 +108,11 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
                 <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>
             }
 
-            {geishaInfo &&
+            {cardPlayed?.name === 'Geisha' && !geishaInfo &&
+                <p className='announcement-module__text'> {cardPlayedBy?.name} used geisha on {victim?.name}. Waiting to see what {cardPlayedBy?.name} will discard.</p>
+            }
+
+            {!!geishaInfo && cardPlayed?.name === 'Geisha' &&
                 <p className='announcement-module__text'>{geishaInfo}</p>
             }
 
