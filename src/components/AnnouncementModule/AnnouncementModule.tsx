@@ -1,6 +1,7 @@
 import './AnnouncementModule.scss'
 
 type AnnouncementModuleProps = {
+    newTurn: boolean
     currentPlayer: PlayersData | undefined
     cardPlayedBy: PlayersData | undefined
     victim: PlayersData | undefined
@@ -54,10 +55,16 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ newTurn, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
 
     return (
         <div className='announcement-module'>
+            {newTurn === true &&
+                <>
+                    <p>It is {currentPlayer?.name}'s turn</p>
+                </>
+            }
+
             {weaponCardPlayed &&
                 <>
                     <p className='announcement-module__text'>{cardPlayedBy?.name} attacked {victim?.name} with {cardPlayed?.name} causing {wounds} wound(s)</p>

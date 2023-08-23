@@ -59,6 +59,7 @@ import ninja3 from '../../assets/images/roles/ninja3.jpeg'
 import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
+import { FALSE } from 'sass';
 
 
 
@@ -823,7 +824,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('newTurn', (newTurn) => {
             setTurn(newTurn.socketID)
+
             setCardPlayed(undefined)
+            setParryPlayed(false)
+            setPlayerHit(false)
+
+
             setCurrentPlayer(newTurn)
             setSelectedPlayer('')
             setNewTurn(true)
@@ -1335,8 +1341,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     drawCards(2)
                 }
             }
-
-            setNewTurn(false)
 
         }
 
@@ -2331,6 +2335,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         handleCardPlayer()
+        setSelectedPlayer('')
     }, [selectedCard, selectedPlayer])
 
 
@@ -2398,6 +2403,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             {announcementModule &&
                 <AnnouncementModule
+                    newTurn={newTurn}
                     currentPlayer={currentPlayer}
                     cardPlayedBy={cardPlayedBy}
                     victim={victim}
@@ -3115,17 +3121,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
             {turn === socket.id && !parryModule && !ieyasuModule ? <button className='button button--end' onClick={() => endTurn()}>End Turn</button> : <button className='button button--disabled  button--end' disabled>End Turn</button>}
-            {/* <button onClick={() => { console.log(drawDeck) }}>drawDeck</button>
-            <button onClick={() => { console.log(discardPile) }}>discardDeck</button>
-             <button onClick={() => { console.log(playersData[indexOfPlayer].hand) }}>Hand</button> */}
-            {/* <button onClick={() => console.log(turn)}>turn</button> */}
 
-            {/* <button onClick={() => console.log(indexOfCurrentPlayer())}>index of currentPlayer</button> */}
-
-            {/* <button onClick={() => {
-                console.log(currentPlayer)
-            }}>current player
-            </button> */}
         </>
     );
 };
