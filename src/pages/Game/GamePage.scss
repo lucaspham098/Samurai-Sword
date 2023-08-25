@@ -2,6 +2,20 @@
     // outline: 1px solid rgb(200, 47, 255);
 }
 
+// html {
+//     zoom: .9;
+// }
+
+.card {
+    border: 2px black solid;
+    aspect-ratio: 2.5/3.5;
+    border-radius: 1.1em;
+
+    &:hover {
+        width: 15rem;
+        z-index: 999;
+    }
+}
 
 .game {
     &__flex-container {
@@ -10,6 +24,12 @@
     }
 
     &__player {
+
+        &-name {
+            display: flex;
+            margin: 0;
+            margin-left: 1rem;
+        }
 
         &-flex-container {
             display: flex;
@@ -25,7 +45,7 @@
             height: 20rem;
             position: absolute;
             z-index: -1;
-            transform: translate(-5rem, -2.5rem);
+            transform: translate(-6rem, -4.5rem);
             border-radius: 25%;
             background: radial-gradient(circle closest-side at center,
                     rgba(255, 0, 0, 1),
@@ -46,7 +66,7 @@
         }
 
         &-character {
-            width: 10rem;
+            width: 7rem;
             z-index: 10;
         }
 
@@ -55,36 +75,41 @@
         }
 
         &-role {
-            width: 10rem;
+            width: 7rem;
             position: relative;
             bottom: 3rem;
         }
 
         &-property {
-            width: 3rem;
+            width: 2rem;
             z-index: 10;
+            border-width: 2px;
+            border-radius: .5rem;
         }
     }
 
     &__icon {
-        width: 3rem;
+        width: 2rem;
 
         &--card {
-            border: 4px black solid;
+            border: 1px black solid;
             aspect-ratio: 2.5/3.5;
-            border-radius: 1.1em;
+            border-radius: .5em;
+            height: 2.5rem;
         }
     }
 
     &__icon-container {
         display: flex;
         justify-content: center;
-        margin-bottom: .5rem;
+        align-items: center;
+        // margin-bottom: .5rem;
         gap: .5rem;
+
     }
 
     &__icon-text {
-        font-size: 1.25rem;
+        font-size: 1rem;
     }
 
     &__middle-container {
@@ -95,18 +120,21 @@
         transform: translate(-50%, -50%);
         display: flex;
         justify-content: center;
-        gap: 7rem;
+        gap: 5rem;
     }
 
     &__deck {
         width: 5rem;
         border-radius: 1.1em;
         aspect-ratio: 2.5/3.5;
-        border: 4px black solid;
+        border: 2px black solid;
 
         &--hover {
             &:hover {
+                position: absolute;
                 width: 20rem;
+                z-index: 999;
+                transform: translateY(-20rem);
             }
         }
     }
@@ -114,11 +142,14 @@
     &__user {
 
         &-container {
-            width: fit-content;
-            margin-top: 10rem;
-            margin-left: 10rem;
+            position: absolute;
+            width: 70vw;
             display: flex;
             gap: .75rem;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            margin: auto;
         }
 
         &--heading {
@@ -128,17 +159,19 @@
         }
 
         &-flex-container {
-            display: flex;
             justify-content: space-evenly;
+            z-index: 997;
+            width: fit-content;
+            min-width: 4rem;
         }
 
         &-turn-indicator {
-            width: 35rem;
-            height: 35rem;
+            width: 25rem;
+            height: 25rem;
             position: absolute;
             z-index: -100;
-            transform: translate(-9rem, -8.5rem);
             border-radius: 25%;
+            transform: translate(-7rem, -6.5rem);
             background: radial-gradient(circle closest-side at center,
                     rgba(255, 0, 0, 1),
                     rgba(216, 216, 216, 0.3));
@@ -149,7 +182,7 @@
         }
 
         &-character {
-            width: 15rem;
+            width: 10rem;
             z-index: 10;
         }
 
@@ -159,10 +192,19 @@
         }
 
         &-role {
-            width: 15rem;
+            width: 10rem;
             position: relative;
             bottom: 3rem;
-            // z-index: -1;
+
+            &:hover {
+                width: 12rem;
+            }
+        }
+
+        &-property {
+            width: 3rem;
+            z-index: 997;
+            border-radius: .75rem;
         }
 
         &-hand {
@@ -173,7 +215,7 @@
         }
 
         &-card {
-            width: 10rem;
+            width: 7rem;
             z-index: 10;
 
             &--active {
@@ -183,93 +225,84 @@
 
             &:hover {
                 cursor: pointer;
+                z-index: 999;
+                margin-right: 2rem;
             }
 
             &:nth-child(1) {
-                margin-left: 5rem;
+                margin-left: 1rem;
             }
 
             &:nth-child(2) {
                 position: relative;
-                transform: translateX(-5rem);
+                transform: translateX(-4rem);
             }
 
             &:nth-child(3) {
                 position: relative;
-                transform: translateX(-10rem);
+                transform: translateX(-8rem);
             }
 
             &:nth-child(4) {
                 position: relative;
-                transform: translateX(-15rem);
+                transform: translateX(-12rem);
             }
 
             &:nth-child(5) {
                 position: relative;
-                transform: translateX(-20rem);
+                transform: translateX(-16rem);
             }
 
             &:nth-child(6) {
                 position: relative;
-                transform: translateX(-25rem);
+                transform: translateX(-20rem);
             }
 
             &:nth-child(7) {
                 position: relative;
-                transform: translateX(-30rem);
+                transform: translateX(-24rem);
             }
 
             &:nth-child(8) {
                 position: relative;
-                transform: translateX(-35rem);
+                transform: translateX(-28rem);
             }
 
             &:nth-child(9) {
                 position: relative;
-                transform: translateX(-40rem);
+                transform: translateX(-32rem);
             }
 
             &:nth-child(10) {
                 position: relative;
-                transform: translateX(-45rem);
+                transform: translateX(-36rem);
             }
 
             &:nth-child(11) {
                 position: relative;
-                transform: translateX(-50rem);
+                transform: translateX(-40rem);
             }
 
             &:nth-child(12) {
                 position: relative;
-                transform: translateX(-55rem);
+                transform: translateX(-44rem);
             }
 
             &:nth-child(13) {
                 position: relative;
-                transform: translateX(-60rem);
+                transform: translateX(-48rem);
             }
 
             &:nth-child(14) {
                 position: relative;
-                transform: translateX(-65rem);
+                transform: translateX(-52rem);
             }
 
             &:nth-child(15) {
                 position: relative;
-                transform: translateX(-70rem);
+                transform: translateX(-54rem);
             }
         }
     }
 
-}
-
-.card {
-    border: 4px black solid;
-    aspect-ratio: 2.5/3.5;
-    border-radius: 1.1em;
-
-    &:hover {
-        width: 20rem;
-        z-index: 99;
-    }
 }

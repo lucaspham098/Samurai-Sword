@@ -1,13 +1,14 @@
 .announcement-module {
     border: 7px double black;
-    width: fit-content;
+    width: 20rem;
     position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 2rem;
+    bottom: 12rem;
+    right: 2rem;
+    padding: 1.5rem;
+    background-color: wheat;
+    z-index: 998;
 
     &__text {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 }
