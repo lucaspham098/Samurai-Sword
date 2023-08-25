@@ -1116,7 +1116,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
     const handleActiveCard = (cardIndex: number) => {
-        if (currentPlayer?.socketID === socket.id && !bushidoWeapon) {
+        if (currentPlayer?.socketID === socket.id && !bushidoWeapon && !discardCards) {
             setActiveCard(cardIndex === activeCard ? null : cardIndex)
         }
     }
@@ -1635,34 +1635,62 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
             setIeyasuModule(true)
         } else {
-            if (playersData[indexOfPlayer].character.name === 'Hideyoshi') {
-                for (let i = 0; i < 3; i++) {
-                    setEmptyDrawDeck(true)
-                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                    setDiscardPile([])
-                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                        setGameOver(true)
-                        break
+            if (playersData[indexOfPlayer].character.name === 'Hideyoshi' && playersData[indexOfPlayer].role.role === 'Shogun') {
+                for (let i = 0; i < 4; i++) {
+                    if (newDrawDeck.length === 0) {
+                        setEmptyDrawDeck(true)
+                        data.map(player => player.honourPoints = player.honourPoints - 1)
+                        setDiscardPile([])
+                        if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                            setGameOver(true)
+                            break
+                        }
+                        newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                        newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                    } else {
+                        newCards.push(newDrawDeck.pop() as PlayableCard);
                     }
-                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                    newCards.push(newDrawDeck.pop() as PlayableCard)
                 }
-                data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
+            }
+            if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
+                for (let i = 0; i < 3; i++) {
+                    if (newDrawDeck.length === 0) {
+                        setEmptyDrawDeck(true)
+                        data.map(player => player.honourPoints = player.honourPoints - 1)
+                        setDiscardPile([])
+                        if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                            setGameOver(true)
+                            break
+                        }
+                        newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                        newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                    } else {
+                        newCards.push(newDrawDeck.pop() as PlayableCard);
+                    }
+                }
             } else {
                 for (let i = 0; i < 2; i++) {
-                    setEmptyDrawDeck(true)
-                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                    setDiscardPile([])
-                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                        setGameOver(true)
-                        break
+                    if (newDrawDeck.length === 0) {
+                        setEmptyDrawDeck(true)
+                        data.map(player => player.honourPoints = player.honourPoints - 1)
+                        setDiscardPile([])
+                        if (data.filter(player => player.honourPoints <= 0).length > 0) {
+                            setGameOver(true)
+                            break
+                        }
+                        newDrawDeck = shuffle(discardPile) as PlayableCard[]
+                        newCards.push(newDrawDeck.pop() as PlayableCard)
+
+                    } else {
+                        newCards.push(newDrawDeck.pop() as PlayableCard);
                     }
-                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                    newCards.push(newDrawDeck.pop() as PlayableCard)
                 }
-                data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
             }
         }
+
+        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
 
         data[indexOfPlayer].bushido = false
 
@@ -1674,6 +1702,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon.Bushido is passed on`
         setBushidoWeapon(false)
+        setDrawDeck(newDrawDeck)
         setBushidoInfo(newInfo)
         setDiscardPile(newDiscardPile)
         setPlayersData(data)
