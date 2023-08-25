@@ -28,7 +28,7 @@
         &-name {
             display: flex;
             margin: 0;
-            margin-left: 1rem;
+            margin-left: .5rem;
         }
 
         &-heading {
@@ -155,6 +155,7 @@
             left: 0;
             right: 0;
             margin: auto;
+            max-height: 14.5rem;
         }
 
         &--heading {
@@ -224,8 +225,9 @@
             z-index: 10;
 
             &--active {
-                width: 20rem;
+                width: 15rem;
                 z-index: 100;
+                margin-right: 2rem;
             }
 
             &:hover {
