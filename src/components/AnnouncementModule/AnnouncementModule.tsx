@@ -135,7 +135,7 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
             }
 
             {death &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} defeated {victim?.name} and gained an honour point</p>
+                <p className='announcement-module__text'>{currentPlayer?.name} defeated {victim?.name} and gained an honour point</p>
             }
 
             {emptyDrawDeck &&

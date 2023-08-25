@@ -1746,7 +1746,13 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
         }
 
-        const newInfo = `${playersData[indexOfPlayer].name} lost a honour point. Bushido is discarded`
+        let newInfo = ''
+        if (playersData[indexOfPlayer].role.role === "Shogun") {
+            newInfo = `${playersData[indexOfPlayer].name} discarded Bushido. No honour point is lost`
+        } else {
+            newInfo = `${playersData[indexOfPlayer].name} lost a honour point. Bushido is discarded`
+        }
+
         setBushidoWeapon(false)
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
@@ -2571,7 +2577,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[1].name}</h1>
                             {playersData[1].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[1].role.role === 'Shogun' &&
                                 <>
@@ -2636,7 +2642,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[2].name}</h1>
                             {playersData[2].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[2].role.role === 'Shogun' &&
                                 <>
@@ -2790,7 +2796,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[2].name}</h1>
                             {playersData[2].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[2].role.role === 'Shogun' &&
                                 <>
@@ -2855,7 +2861,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[0].name}</h1>
                             {playersData[0].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[0].role.role === 'Shogun' &&
                                 <>
@@ -3009,7 +3015,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[0].name}</h1>
                             {playersData[0].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[0].role.role === 'Shogun' &&
                                 <>
@@ -3074,7 +3080,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[1].name}</h1>
                             {playersData[1].harmless &&
-                                <h2>HARMLESS</h2>
+                                <h2 className='game__player-heading'>HARMLESS</h2>
                             }
                             {playersData[1].role.role === 'Shogun' &&
                                 <>
