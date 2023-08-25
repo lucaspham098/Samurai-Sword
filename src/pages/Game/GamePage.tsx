@@ -904,23 +904,35 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
+            const dealtPlayer1Hand: PlayableCard[] = []
             data[0].character = dealtPlayer1Character
             data[0].health = dealtPlayer1Character.health
             data[0].role = dealtPlayer1Role
 
-            if (dealtPlayer1Role.role === 'Shogun') {
+            if (dealtPlayer1Role.role === 'Shogun' && dealtPlayer1Character.name === 'Goemon') {
                 data[0].honourPoints = 6
-                data[0].attacks = 2
-                const dealtPlayer1Hand: PlayableCard[] = []
+                data[0].attacks = 3
                 for (let i = 0; i < 4; i++) {
                     dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
                 data[0].hand = dealtPlayer1Hand
-                if (dealtPlayer1Character.name === 'Goemon') {
-                    data[0].attacks = 3
+
+            } else if (dealtPlayer1Role.role === 'Shogun' && dealtPlayer1Character.name !== 'Goemon') {
+                data[0].honourPoints = 6
+                data[0].attacks = 2
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
-            } else {
-                const dealtPlayer1Hand: PlayableCard[] = []
+                data[0].hand = dealtPlayer1Hand
+            } else if (dealtPlayer1Character.name === 'Goemon' && dealtPlayer1Role.role !== 'Shogun') {
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[0].attacks = 2
+                data[0].honourPoints = 3
+                data[0].hand = dealtPlayer1Hand
+            }
+            else {
                 for (let i = 0; i < 5; i++) {
                     dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
@@ -928,32 +940,38 @@ const GamePage = ({ socket }: GamePageProp) => {
                 data[0].hand = dealtPlayer1Hand
             }
 
-            if (dealtPlayer1Character.name === 'Goemon') {
-                data[0].attacks = 2
-            }
-
-
 
             const dealtPlayer2Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer2Role = shuffledRoleDeck.pop() as Role
+            const dealtPlayer2Hand: PlayableCard[] = []
             data[1].character = dealtPlayer2Character
             data[1].health = dealtPlayer2Character.health
             data[1].role = dealtPlayer2Role
 
 
-            if (dealtPlayer2Role.role === 'Shogun') {
+            if (dealtPlayer2Role.role === 'Shogun' && dealtPlayer2Character.name === 'Goemon') {
                 data[1].honourPoints = 6
-                data[1].attacks = 2
-                const dealtPlayer2Hand: PlayableCard[] = []
+                data[1].attacks = 3
                 for (let i = 0; i < 4; i++) {
                     dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
                 data[1].hand = dealtPlayer2Hand
-                if (dealtPlayer2Character.name === 'Goemon') {
-                    data[1].attacks = 3
+            } else if (dealtPlayer2Role.role === 'Shogun' && dealtPlayer2Character.name !== 'Goemon') {
+                data[1].honourPoints = 6
+                data[1].attacks = 2
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
-            } else {
-                const dealtPlayer2Hand: PlayableCard[] = []
+                data[1].hand = dealtPlayer2Hand
+            } else if (dealtPlayer2Role.role !== 'Shogun' && dealtPlayer2Character.name === 'Goemon') {
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[1].attacks = 2
+                data[1].honourPoints = 3
+                data[1].hand = dealtPlayer2Hand
+            }
+            else {
                 for (let i = 0; i < 5; i++) {
                     dealtPlayer2Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
@@ -961,42 +979,43 @@ const GamePage = ({ socket }: GamePageProp) => {
                 data[1].hand = dealtPlayer2Hand
             }
 
-            if (dealtPlayer2Character.name === 'Goemon') {
-                data[1].attacks = 2
-            }
-
-
 
             const dealtPlayer3Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer3Role = shuffledRoleDeck.pop() as Role
+            const dealtPlayer3Hand: PlayableCard[] = []
             data[2].character = dealtPlayer3Character
             data[2].health = dealtPlayer3Character.health
             data[2].role = dealtPlayer3Role
 
-            if (dealtPlayer3Role.role === 'Shogun') {
+            if (dealtPlayer3Role.role === 'Shogun' && dealtPlayer3Character.name === 'Goemon') {
                 data[2].honourPoints = 6
-                data[2].attacks = 2
-                const dealtPlayer3Hand: PlayableCard[] = []
+                data[2].attacks = 3
                 for (let i = 0; i < 4; i++) {
                     dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
                 data[2].hand = dealtPlayer3Hand
-                if (dealtPlayer3Character.name === 'Goemon') {
-                    data[2].attacks = 3
+            } else if (dealtPlayer3Role.role === 'Shogun' && dealtPlayer3Character.name !== 'Goemon') {
+                data[2].honourPoints = 6
+                data[2].attacks = 2
+                for (let i = 0; i < 4; i++) {
+                    dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
-            } else {
-                const dealtPlayer3Hand: PlayableCard[] = []
+                data[2].hand = dealtPlayer3Hand
+            } else if (dealtPlayer3Role.role !== 'Shogun' && dealtPlayer3Character.name === 'Goemon') {
+                for (let i = 0; i < 5; i++) {
+                    dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                }
+                data[2].attacks = 2
+                data[2].honourPoints = 3
+                data[2].hand = dealtPlayer3Hand
+            }
+            else {
                 for (let i = 0; i < 5; i++) {
                     dealtPlayer3Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
                 data[2].honourPoints = 3
                 data[2].hand = dealtPlayer3Hand
             }
-
-            if (dealtPlayer3Character.name === 'Goemon') {
-                data[2].attacks = 2
-            }
-
 
 
             setDrawDeck(shuffledMainDeck as PlayableCard[])
