@@ -288,35 +288,35 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'weapon',
-            name: 'Kiseri',
+            name: 'Kiseru',
             range: 1,
             damage: 2,
             img: kiseru
         },
         {
             type: 'weapon',
-            name: 'Kiseri',
+            name: 'Kiseru',
             range: 1,
             damage: 2,
             img: kiseru
         },
         {
             type: 'weapon',
-            name: 'Kiseri',
+            name: 'Kiseru',
             range: 1,
             damage: 2,
             img: kiseru
         },
         {
             type: 'weapon',
-            name: 'Kiseri',
+            name: 'Kiseru',
             range: 1,
             damage: 2,
             img: kiseru
         },
         {
             type: 'weapon',
-            name: 'Kiseri',
+            name: 'Kiseru',
             range: 1,
             damage: 2,
             img: kiseru
@@ -901,12 +901,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
-            const dealtPlayer1Character = {
-                name: 'Tomoe',
-                health: 5,
-                img: tomoe
-            }
+            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             const dealtPlayer1Hand: PlayableCard[] = []
             data[0].character = dealtPlayer1Character
@@ -1406,7 +1401,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         data[indexOfPlayer].hand.splice(index, 1)
 
         if (cardPlayed?.name === 'Battlecry') {
-            const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon as a parry`
+            const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon as a Parry`
             const newBattlecryInfo = [...battlecryInfo, newInfo]
             setBattlecryInfo(newBattlecryInfo)
 
@@ -1527,7 +1522,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].harmless = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].name} discarded a parry`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a Parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1560,6 +1555,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
+            setVictim(playersData[indexOfPlayer])
         } else {
             data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
         }
@@ -1591,7 +1587,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].harmless = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
@@ -1623,6 +1619,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
+            setVictim(playersData[indexOfPlayer])
+
         } else {
             data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
         }
@@ -1722,7 +1720,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[0].bushido = true
         }
 
-        const newInfo = `${playersData[indexOfPlayer].name} discarded a weapon.Bushido is passed on`
+        const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon. Bushido is passed on`
         setBushidoWeapon(false)
         setDrawDeck(newDrawDeck)
         setBushidoInfo(newInfo)
@@ -1751,9 +1749,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         let newInfo = ''
         if (playersData[indexOfPlayer].role.role === "Shogun") {
-            newInfo = `${playersData[indexOfPlayer].name} discarded Bushido. No honour point is lost`
+            newInfo = `${playersData[indexOfPlayer].name} discarded Bushido. No Honour Point is lost`
         } else {
-            newInfo = `${playersData[indexOfPlayer].name} lost a honour point. Bushido is discarded`
+            newInfo = `${playersData[indexOfPlayer].name} lost an Honour Point. Bushido is discarded`
         }
 
         setBushidoWeapon(false)
@@ -1988,9 +1986,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[indexOfPlayer].harmless = true
                     }
 
-                    if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && selectedCard.damage as number > 1) {
-                        setWounds(selectedCard.damage as number - 1 + playersData[indexOfPlayer].fastDraw)
-                    } else if (playersData[indexOfPlayer].character.name === 'Musashi') {
+                    if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && playersData[indexOfPlayer].character.name !== 'Musashi' && (selectedCard.damage as number + playersData[indexOfPlayer].fastDraw) > 1) {
+                        setWounds((selectedCard.damage as number + playersData[indexOfPlayer].fastDraw) - 1)
+                    } else if (playersData[indexOfSelectedPlayer()].character.name === 'Ginchiyo' && playersData[indexOfPlayer].character.name === 'Musashi') {
+                        setWounds(selectedCard.damage as number + playersData[indexOfPlayer].fastDraw)
+                    } else if (playersData[indexOfPlayer].character.name === 'Musashi' && playersData[indexOfSelectedPlayer()].character.name !== 'Ginchiyo') {
                         setWounds(selectedCard.damage as number + 1 + playersData[indexOfPlayer].fastDraw)
                     } else {
                         setWounds(selectedCard.damage as number + playersData[indexOfPlayer].fastDraw)
@@ -2474,7 +2474,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         setActiveCard(null)
 
         if (playersData[indexOfPlayer].hand.length > 7) {
-            console.log('to many cards')
             setDiscardCards(true)
             setParryModule(true)
             return
@@ -3261,7 +3260,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
             {playersData[indexOfPlayer]?.character.name === 'Nobunaga' && !parryModule &&
                 <>
-                    {turn === socket.id ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
+                    {turn === socket.id && playersData[indexOfPlayer].health > 1 ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
                 </>
             }
             {turn === socket.id && !parryModule && !ieyasuModule ? <button className='button button--end' onClick={() => endTurn()}>End Turn</button> : <button className='button button--disabled  button--end' disabled>End Turn</button>}

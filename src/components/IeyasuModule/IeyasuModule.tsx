@@ -51,10 +51,10 @@ const IeyasuModule = ({ drawCardFromDiscard, drawCards, playersData, currentPlay
     }
 
     return (
-        <div>
-            <p>Draw your first card from the top of the draw pile? </p>
-            <button onClick={() => drawCardFromDiscard()}>Yes</button>
-            <button onClick={() => handleDrawCards()}>No</button>
+        <div className='choice-module'>
+            <p className='choice-module__text'>Draw your first card from the top of the draw pile? </p>
+            <button className='button--small' onClick={() => drawCardFromDiscard()}>Yes</button>
+            <button className='button--small' onClick={() => handleDrawCards()}>No</button>
         </div>
     );
 };

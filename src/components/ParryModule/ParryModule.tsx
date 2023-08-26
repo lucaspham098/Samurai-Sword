@@ -70,7 +70,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {cardPlayed?.type === 'weapon' && victim?.character.name === 'Hanzo' && !discardCards &&
                 <>
-                    <p className='choice-module__text'>Parry the attack with a parry card, select a weapon in hand to use as parry (unless it is your last card), or suffer {wounds} wound(s)</p>
+                    <p className='choice-module__text'>Either discard a Parry, select a Weapon in your hand to use as Parry (unless it is your last card), or suffer {wounds} wound(s)</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleParry()}>Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleGetAttacked()}>Get Attacked</button>
                 </>
@@ -78,7 +78,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {cardPlayed?.name === 'Battlecry' && !discardCards && playersData[indexOfPlayer].character.name !== 'Hanzo' &&
                 <>
-                    <p className='choice-module__text'>Discard a parry or suffer 1 wound</p>
+                    <p className='choice-module__text'>Discard a Parry or suffer 1 wound</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
                 </>
@@ -86,7 +86,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {cardPlayed?.name === 'Battlecry' && !discardCards && playersData[indexOfPlayer].character.name === 'Hanzo' &&
                 <>
-                    <p className='choice-module__text'>Either discard a parry, discard a wepaon from your hand to use as a parry (unless it is your last card) or suffer 1 wound</p>
+                    <p className='choice-module__text'>Either discard a Parry, discard a wepaon from your hand to use as a parry (unless it is your last card) or suffer 1 wound</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleBattlecryDiscard()}>Discard Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleBattlecryWound()}>Suffer 1 wound</button>
                 </>
@@ -94,7 +94,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {cardPlayed?.name === 'Jujitsu' && !discardCards &&
                 <>
-                    <p className='choice-module__text'>Select a weapon fromm hand to discard or suffer 1 wound</p>
+                    <p className='choice-module__text'>Select a Weapon from your hand to discard or suffer 1 wound</p>
                     <button className='button--small' onClick={() => handleJujitsuWound()}>Suffer 1 wound</button>
                 </>
             }
@@ -122,14 +122,14 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {bushidoWeapon === true && !discardCards && playersData.length === 3 && currentPlayer?.role.role === 'Shogun' &&
                 <>
-                    <p className='choice-module__text'>Select a weapon from hand to discard to keep Bushido in play or discard Bushido</p>
+                    <p className='choice-module__text'>Select a Weapon from your hand to discard to keep Bushido in play or discard Bushido</p>
                     <button className='button--small' onClick={() => handleLoseHonourPoint()}>Discard Bushido</button>
                 </>
             }
 
             {bushidoWeapon === true && !discardCards && (playersData.length !== 3 || currentPlayer?.role.role !== 'Shogun') &&
                 <>
-                    <p className='choice-module__text'>Select a weapon from hand to discard or lose 1 honour point</p>
+                    <p className='choice-module__text'>Select a Weapon from your hand to discard or lose 1 honour point</p>
                     <button className='button--small' onClick={() => handleLoseHonourPoint()}>Lose 1 Hounour Point</button>
                 </>
             }
