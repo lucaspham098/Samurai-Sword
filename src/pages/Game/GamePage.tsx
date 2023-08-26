@@ -872,9 +872,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            // console.log(playersData[playerIndex])
             if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
-                // if (playersData[playerIndex].character.name !== 'Chiyome') {
                 setParryModule(true)
                 setTurn(socket.id)
             }
@@ -882,7 +880,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            // console.log(playersData[playerIndex])
             if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
                 setJujitsuInEffect(true)
                 setParryModule(true)
@@ -904,7 +901,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer1Character = {
+                name: 'Tomoe',
+                health: 5,
+                img: tomoe
+            }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             const dealtPlayer1Hand: PlayableCard[] = []
             data[0].character = dealtPlayer1Character
@@ -1221,13 +1223,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (turn === socket.id && playersData[indexOfPlayer].character.name === 'Tomoe' && playerHit === true && newTurn === false) {
-            drawCards(1)
-        }
-    }, [playerHit])
-
-
-    useEffect(() => {
         if (turn === socket.id && newTurn) {
 
             if (playersData[indexOfPlayer].harmless === true) {
@@ -1460,6 +1455,14 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const handleGetAttacked = () => {
         const data = [...playersData]
+        let newDrawDeck = [...drawDeck]
+
+
+        if (currentPlayer?.character.name === "Tomoe") {
+            const indexOfTomoe = playersData.findIndex(player => player.character.name === 'Tomoe')
+            data[indexOfTomoe].hand = [...data[indexOfTomoe].hand, newDrawDeck.pop() as PlayableCard]
+            setDrawDeck(newDrawDeck)
+        }
 
         if (data[indexOfPlayer].health - wounds === 0 || data[indexOfPlayer].health - wounds < 0) {
             data[indexOfPlayer].health = 0
@@ -1479,7 +1482,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (playersData[indexOfPlayer].character.name === "Ushiwaka") {
             const newCards: PlayableCard[] = []
-            let newDrawDeck = [...drawDeck]
 
             for (let i = 0; i < wounds; i++) {
                 if (newDrawDeck.length === 0) {
@@ -1509,7 +1511,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setTimeout(() => {
             setTurn('')
             setTurnBack()
-        }, 250);
+        }, 100);
     }
 
     const handleBattlecryDiscard = () => {
@@ -2751,6 +2753,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 <img src={cherry_blossum} className='game__icon' />
                                 <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
                             </div>
+                            <div className='game__icon-container '>
+                                <img src={cardBack} className='game__icon--card game__icon' />
+                                <p className='game__icon-text'>x {playersData[0].hand.length} </p>
+                            </div>
                         </div>
                         <div className='game__user-character-container' id={socket.id}>
                             {playersData[0].harmless &&
@@ -2908,7 +2914,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                                             <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
                                         </div>
                                     </div>
-
                                     <div className='game__icon-container '>
                                         <img src={cardBack} className='game__icon--card game__icon' />
                                         <p className='game__icon-text'>x {playersData[0].hand.length} </p>
@@ -2960,7 +2965,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
                     <div className='game__user-container'>
+
                         <div className="game__user-flex-container">
+
                             <div className='game__icon-container'>
                                 <img src={heart} className='game__icon' />
                                 <p className='game__icon-text'>x {playersData[1].health}</p>
@@ -2968,6 +2975,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <div className='game__icon-container'>
                                 <img src={cherry_blossum} className='game__icon' />
                                 <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
+                            </div>
+                            <div className='game__icon-container '>
+                                <img src={cardBack} className='game__icon--card game__icon' />
+                                <p className='game__icon-text'>x {playersData[1].hand.length} </p>
                             </div>
                         </div>
                         <div className='game__user-character-container' id={socket.id}>
@@ -3186,6 +3197,10 @@ const GamePage = ({ socket }: GamePageProp) => {
                             <div className='game__icon-container'>
                                 <img src={cherry_blossum} className='game__icon' />
                                 <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
+                            </div>
+                            <div className='game__icon-container '>
+                                <img src={cardBack} className='game__icon--card game__icon' />
+                                <p className='game__icon-text'>x {playersData[2].hand.length} </p>
                             </div>
                         </div>
                         <div className='game__user-character-container' id={socket.id}>
