@@ -1216,7 +1216,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (currentPlayer?.socketID === socket.id && newTurn) {
+        if (turn === socket.id && newTurn) {
 
             if (playersData[indexOfPlayer].harmless === true) {
                 const data = [...playersData]
@@ -1349,7 +1349,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         }
 
-    }, [currentPlayer]);
+    }, [turn]);
 
     const drawCardFromDiscard = () => {
         let newDrawDeck = [...drawDeck]
@@ -2211,6 +2211,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 }
 
                 if (selectedCard.name === 'Battlecry') {
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {
@@ -2240,9 +2243,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
-                    if (newTurn) {
-                        setNewTurn(false)
-                    }
+
                     setPlayersData(data)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {
@@ -2267,6 +2268,9 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
                 if (selectedCard.name === 'Jujitsu') {
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {
@@ -2296,9 +2300,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
-                    if (newTurn) {
-                        setNewTurn(false)
-                    }
+
                     setPlayersData(data)
 
 
