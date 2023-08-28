@@ -59,7 +59,6 @@ import ninja3 from '../../assets/images/roles/ninja3.jpeg'
 import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
-import { FALSE } from 'sass';
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
 
 
@@ -1104,7 +1103,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             }
 
             if (card.type === 'weapon' && turn === socket.id && jujitsuInEffect) {
-                console.log('jujitsu in effect')
                 handleJujitsuDiscard(card, index)
                 setJujitsuInEffect(false)
                 setSelectedCard(undefined)
@@ -1218,7 +1216,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (turn === socket.id && newTurn) {
+        if (currentPlayer?.socketID === socket.id && newTurn) {
 
             if (playersData[indexOfPlayer].harmless === true) {
                 const data = [...playersData]
@@ -1351,7 +1349,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         }
 
-    }, [turn]);
+    }, [currentPlayer]);
 
     const drawCardFromDiscard = () => {
         let newDrawDeck = [...drawDeck]
@@ -1630,7 +1628,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
         setJujitsuInfo(newJujitsuInfo)
-
+        setJujitsuInEffect(false)
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
@@ -2339,7 +2337,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setSelectingPlayer(false)
                     setSelectedCard(undefined)
                     setPropertyCardPlayed(false)
-                    setNewTurn(false)
+                    if (newTurn) {
+                        setNewTurn(false)
+                    }
                     setPlayersData(data)
                     updateGameState()
                     setTimeout(() => {
