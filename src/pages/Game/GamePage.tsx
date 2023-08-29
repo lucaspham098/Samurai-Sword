@@ -844,6 +844,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
         socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver }) => {
+            console.log('game state updated')
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
             setDiscardPile(discardPile)
@@ -1067,7 +1068,6 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     useEffect(() => {
         if (playersData.length > 0) {
-            console.log('player data change')
             const index = playersData[indexOfPlayer].hand.findIndex(card => card.type === 'action' && card.name === 'Parry')
             setIndexOfParry(index)
         }
@@ -1218,13 +1218,13 @@ const GamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         if (turn === socket.id && newTurn) {
 
-            if (playersData[indexOfPlayer].harmless === true) {
+            if (playersData[indexOfPlayer]?.harmless === true) {
                 const data = [...playersData]
                 data[indexOfPlayer].harmless = false
                 setPlayersData(data)
             }
 
-            if (playersData[indexOfPlayer].health === 0) {
+            if (playersData[indexOfPlayer]?.health === 0) {
                 const data = [...playersData]
                 data[indexOfPlayer].health = data[indexOfPlayer].character.health
                 setPlayersData(data)
@@ -1268,12 +1268,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[0].bushido = true
                     }
 
-                    if (playersData[indexOfPlayer].character.name === "Ieyasu") {
+                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu") {
                         setIeyasuModule(true)
                     } else {
                         const newCards: PlayableCard[] = [];
-                        if (playersData[indexOfPlayer].character.name === 'Hideyoshi' && playersData[indexOfPlayer].role.role === 'Shogun') {
-                            // drawCards(3)
+                        if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' && playersData[indexOfPlayer]?.role.role === 'Shogun') {
+
                             for (let i = 0; i < 4; i++) {
                                 if (newDrawDeck.length === 0) {
                                     data.map(player => player.honourPoints = player.honourPoints - 1)
@@ -1291,7 +1291,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 }
                             }
 
-                        } else if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
+                        } else if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' || playersData[indexOfPlayer]?.role.role === 'Shogun') {
 
                             for (let i = 0; i < 3; i++) {
                                 if (newDrawDeck.length === 0) {
@@ -1338,9 +1338,9 @@ const GamePage = ({ socket }: GamePageProp) => {
                 setIeyasuModule(true)
             }
             else {
-                if (playersData[indexOfPlayer].character.name === 'Hideyoshi' && playersData[indexOfPlayer].role.role === 'Shogun') {
+                if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' && playersData[indexOfPlayer]?.role.role === 'Shogun') {
                     drawCards(4)
-                } else if (playersData[indexOfPlayer].character.name === 'Hideyoshi' || playersData[indexOfPlayer].role.role === 'Shogun') {
+                } else if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' || playersData[indexOfPlayer]?.role.role === 'Shogun') {
                     drawCards(3)
                 } else {
                     drawCards(2)
@@ -1788,7 +1788,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setBushidoWeapon(undefined)
         setDeath(false)
         setSelectedCard(undefined)
-        setGeishaInfo(`${cardPlayedBy?.name} removed a random card from ${victim?.name}'s hand`)
+        setGeishaInfo(`${cardPlayedBy?.name} removed ${cardTook.name} from ${victim?.name}'s hand`)
         setDiscardPile([...discardPile, cardTook])
         setPlayersData(data)
     }
@@ -2214,6 +2214,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (newTurn) {
                         setNewTurn(false)
                     }
+
                     const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
                     if (playersData[indexOfPlayer].character.name === 'Chiyome') {

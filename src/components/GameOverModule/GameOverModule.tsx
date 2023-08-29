@@ -12,7 +12,7 @@ const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo }: GameOverModul
         <div className='game-over-module'>
             <h2>The Winning Team is {winner}</h2>
             <p>Team Shogun scored {teamShogunInfo}</p>
-            <p>Team Ninjs scored {teamNinjaInfo}</p>
+            <p>Team Ninjas scored {teamNinjaInfo}</p>
         </div>
     );
 };
