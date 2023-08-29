@@ -838,6 +838,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         })
 
         socket.on('initGameState', (playersData: PlayersData[]) => {
+            console.log('game state initalized')
             const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
             setIndexOfPlayer(playerIndex)
             setPlayersData(playersData)
