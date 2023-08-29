@@ -793,6 +793,13 @@ const GamePage = ({ socket }: GamePageProp) => {
     }
 
 
+    socket.on('initGameState', (playersData: PlayersData[]) => {
+        console.log('game state initalized')
+        const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
+        setIndexOfPlayer(playerIndex)
+        setPlayersData(playersData)
+    })
+
     useEffect(() => {
 
         socket.emit('askForPlayers', room)
@@ -835,13 +842,6 @@ const GamePage = ({ socket }: GamePageProp) => {
             setSelectedPlayer(undefined)
             setNewTurn(true)
 
-        })
-
-        socket.on('initGameState', (playersData: PlayersData[]) => {
-            console.log('game state initalized')
-            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            setIndexOfPlayer(playerIndex)
-            setPlayersData(playersData)
         })
 
         socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver }) => {
