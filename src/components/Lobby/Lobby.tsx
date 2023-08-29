@@ -68,6 +68,7 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     return (
         <div>
+            <h1>Room code is {room}</h1>
             <p>Players</p>
             {playersData &&
                 playersData.map((player, index) => {
