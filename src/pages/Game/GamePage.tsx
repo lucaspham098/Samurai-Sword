@@ -1069,7 +1069,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     useEffect(() => {
         if (playersData.length > 0) {
-            const index = playersData[indexOfPlayer].hand.findIndex(card => card.type === 'action' && card.name === 'Parry')
+            const index = playersData[indexOfPlayer]?.hand.findIndex(card => card.type === 'action' && card.name === 'Parry')
             setIndexOfParry(index)
         }
 
@@ -1909,7 +1909,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         } else {
             setSelectingPlayer(false)
         }
-        console.log(selectedCard)
     }, [selectedCard])
 
     useEffect(() => {
