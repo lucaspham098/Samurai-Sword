@@ -109,7 +109,7 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
             }
 
             {cardPlayed?.name === 'Geisha' && !geishaInfo &&
-                <p className='announcement-module__text'> {cardPlayedBy?.name} used geisha on {victim?.name}. Waiting to see what {cardPlayedBy?.name} will discard.</p>
+                <p className='announcement-module__text'> {cardPlayedBy?.name} used Geisha on {victim?.name}. Waiting to see what {cardPlayedBy?.name} will discard.</p>
             }
 
             {!!geishaInfo && cardPlayed?.name === 'Geisha' &&
@@ -123,11 +123,11 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
             }
 
             {bushidoWeapon === true &&
-                <p className='announcement-module__text'>{currentPlayer?.name} flipped a weapon card for bushido. Waiting to see if {currentPlayer?.name} will discard a weapon or lose a honour point</p>
+                <p className='announcement-module__text'>{currentPlayer?.name} flipped a weapon card for Bushido. Waiting to see if {currentPlayer?.name} will discard a weapon or lose an honour point</p>
             }
 
             {bushidoWeapon === false &&
-                <p className='announcement-module__text'>{currentPlayer?.name} did not flip  weapon card for bushido. Bushido is passed.</p>
+                <p className='announcement-module__text'>{currentPlayer?.name} did not flip  weapon card for Bushido. Bushido is passed.</p>
             }
 
             {bushidoInfo &&

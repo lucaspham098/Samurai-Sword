@@ -113,6 +113,7 @@ const GamePage = ({ socket }: GamePageProp) => {
     const [initialPlayersdata, setInitialPlayersData] = useState<PlayersData[]>([])
 
     const [gameOver, setGameOver] = useState<boolean>(false)
+    const [deadlyStrikeNinja, setDeadlyStrikeNinja] = useState<boolean>(false)
 
     const [teamNinjaInfo, setTeamNinjaInfo] = useState<number>()
     const [teamShogunInfo, setTeamShogunInfo] = useState<number>()
@@ -825,8 +826,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             }, 500);
         })
 
-        socket.on('setTurnBack', currentPlayer => {
+        socket.on('setTurnBack', (currentPlayer, data: PlayersData[]) => {
             setTurn(currentPlayer.socketID)
+            if (data.filter(player => player.honourPoints <= 0).length > 0 && !gameOver) {
+                setGameOver(true)
+            }
         })
 
         socket.on('newTurn', (newTurn) => {
@@ -844,7 +848,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver, deadlyStrikeNinja }) => {
             console.log('game state updated')
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
@@ -869,6 +873,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             setLengthForJujitsuBattlecry(lengthForJujitsuBattlecry)
             setEmptyDrawDeck(emptyDrawDeck)
             setGameOver(gameOver)
+            setDeadlyStrikeNinja(deadlyStrikeNinja)
         })
 
         socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
@@ -1057,6 +1062,7 @@ const GamePage = ({ socket }: GamePageProp) => {
             lengthForJujitsuBattlecry: lengthForJujitsuBattlecry,
             emptyDrawDeck: emptyDrawDeck,
             gameOver: gameOver,
+            deadlyStrikeNinja: deadlyStrikeNinja,
         }, room)
     }
 
@@ -1388,8 +1394,8 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
     }
 
-    const setTurnBack = () => {
-        socket.emit('setTurnBack', currentPlayer)
+    const setTurnBack = (data: PlayersData[] = []) => {
+        socket.emit('setTurnBack', currentPlayer, data)
     }
 
     const handleHanzoWeaponParry = (card: PlayableCard, index: number) => {
@@ -1462,6 +1468,9 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
             if (data[indexOfPlayer].honourPoints <= 0) {
+                if (currentPlayer?.role.team === 'Ninja' && data[indexOfPlayer].role.team === 'Ninja') {
+                    setDeadlyStrikeNinja(true)
+                }
                 setGameOver(true)
                 console.log('3')
             }
@@ -1546,12 +1555,15 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            if (data[indexOfPlayer].honourPoints <= 0) {
-                setGameOver(true)
-                console.log('5')
-            }
+            // if (data[indexOfPlayer].honourPoints <= 0) {
+            //     setGameOver(true)
+            // }
             data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
+
+            if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                setDeadlyStrikeNinja(true)
+            }
 
             setDeath(true)
             setVictim(playersData[indexOfPlayer])
@@ -1559,16 +1571,16 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
         }
 
-        setPlayersData(data)
-
         const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
         setBattlecryInfo(newBattlecryInfo)
         setParryModule(false)
+        setPlayersData(data)
+
         setTimeout(() => {
             setTurn('')
             if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
-                setTurnBack()
+                setTurnBack(data as PlayersData[])
             }
         }, 250);
 
@@ -1586,11 +1598,12 @@ const GamePage = ({ socket }: GamePageProp) => {
             data[indexOfPlayer].harmless = true
         }
 
+        setPlayersData(data)
+
         const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
 
         setDiscardPile(newDiscardPile)
-        setPlayersData(data)
         setJujitsuInfo(newJujitsuInfo)
 
         setParryModule(false)
@@ -1610,12 +1623,15 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            if (data[indexOfPlayer].honourPoints <= 0) {
-                setGameOver(true)
-                console.log('6')
-            }
+            // if (data[indexOfPlayer].honourPoints <= 0) {
+            //     setGameOver(true)
+            // }
             data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
+
+            if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                setDeadlyStrikeNinja(true)
+            }
 
             setDeath(true)
             setVictim(playersData[indexOfPlayer])
@@ -1634,7 +1650,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         setTimeout(() => {
             setTurn('')
             if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
-                setTurnBack()
+                setTurnBack(data as PlayersData[])
             }
         }, 250);
 
@@ -1720,7 +1736,7 @@ const GamePage = ({ socket }: GamePageProp) => {
         }
 
         const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon. Bushido is passed on`
-        setBushidoWeapon(false)
+        setBushidoWeapon(undefined)
         setDrawDeck(newDrawDeck)
         setBushidoInfo(newInfo)
         setDiscardPile(newDiscardPile)
@@ -1753,11 +1769,11 @@ const GamePage = ({ socket }: GamePageProp) => {
             newInfo = `${playersData[indexOfPlayer].name} lost an Honour Point. Bushido is discarded`
         }
 
-        setBushidoWeapon(false)
+        setBushidoWeapon(undefined)
         setDiscardPile(newDiscardPile)
         setBushidoInfo(newInfo)
         setPlayersData(data)
-        setBushidoWeapon(undefined)
+
 
         if (playersData[indexOfPlayer].character.name === 'Ieyasu' && discardPile.length > 0) {
             setIeyasuModule(true)
@@ -2336,6 +2352,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     }
                     setDiscardPile([...discardPile, selectedCard])
                     setActiveCard(null)
+                    setBushidoInfo(undefined)
                     setCardPlayed(selectedCard)
                     setSelectingPlayer(false)
                     setSelectedCard(undefined)
@@ -2507,15 +2524,20 @@ const GamePage = ({ socket }: GamePageProp) => {
                     const daimyoPoints = ninjaTeam[i].hand.filter(card => card.name === "Daimyo").length
                     points = points + ninjaTeam[i].honourPoints + daimyoPoints
                 }
+                if (deadlyStrikeNinja) {
+                    points = points - 3
+                }
                 return points
             }
             const shogunPoints = () => {
                 let points = 0
+                let daimyoPoints = 0
                 for (let i = 0; i < shogunTeam.length; i++) {
-                    const daimyoPoints = shogunTeam[i].hand.filter(card => card.name === "Daimyo").length
-                    points = points + shogunTeam[i].honourPoints + daimyoPoints
+                    daimyoPoints = shogunTeam[i].hand.filter(card => card.name === "Daimyo").length
+                    points = shogunTeam[i].honourPoints * 2
                 }
-                return points * 2
+                points = points + daimyoPoints
+                return points
             }
 
             if (ninjaPoints() >= shogunPoints()) {
@@ -2593,6 +2615,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 winner={winner}
                 teamNinjaInfo={teamNinjaInfo}
                 teamShogunInfo={teamShogunInfo}
+                deadlyStrikeNinja={deadlyStrikeNinja}
             />}
 
             {playersData.length > 0 && playersData[0].socketID === socket.id &&
@@ -3267,6 +3290,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                 </>
             }
             {turn === socket.id && !parryModule && !ieyasuModule ? <button className='button button--end' onClick={() => endTurn()}>End Turn</button> : <button className='button button--disabled  button--end' disabled>End Turn</button>}
+
 
         </>
     );
