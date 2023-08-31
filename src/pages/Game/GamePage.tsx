@@ -668,6 +668,11 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'property',
+            name: 'Focus',
+            img: focus
+        },
+        {
+            type: 'property',
             name: 'Bushido',
             img: bushido
         },
@@ -1275,7 +1280,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[0].bushido = true
                     }
 
-                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu") {
+                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu" && currentPlayer?.character.name === 'Ieyasu') {
                         setIeyasuModule(true)
                     } else {
                         const newCards: PlayableCard[] = [];
@@ -1341,7 +1346,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDrawDeck(newDrawDeck)
                     setPlayersData(data)
                 }
-            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && discardPile.length > 0) {
+            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && currentPlayer?.character.name === 'Ieyasu' && discardPile.length > 0) {
                 setIeyasuModule(true)
             }
             else {
@@ -2350,6 +2355,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (data[indexOfPlayer].hand.length === 0) {
                         data[indexOfPlayer].harmless = true
                     }
+                    setPlayerHit(false)
                     setDiscardPile([...discardPile, selectedCard])
                     setActiveCard(null)
                     setBushidoInfo(undefined)

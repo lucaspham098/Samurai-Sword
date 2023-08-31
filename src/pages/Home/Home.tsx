@@ -33,11 +33,11 @@ const Home = ({ socket }: HomeProp) => {
         const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ123456789'
         const characterArr = characters.split('')
         const roomCode = []
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 4; i++) {
             const index = Math.floor(Math.random() * 36)
             roomCode.push(characterArr[index])
         }
-        if (roomCode.length === 6) {
+        if (roomCode.length === 4) {
             setRoom(roomCode.join(''))
         }
     }
