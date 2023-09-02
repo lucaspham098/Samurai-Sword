@@ -21,6 +21,8 @@ type AnnouncementModuleProps = {
     geishaInfo: string | undefined
     death: boolean
     lengthForJujitsuBattlecry: number
+    battlecryJujitsuArray: PlayersData[]
+    battlecryJujitsuTurn: PlayersData | undefined
 }
 
 interface PlayableCard {
@@ -56,7 +58,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, battlecryJujitsuArray, battlecryJujitsuTurn }: AnnouncementModuleProps) => {
 
     return (
         <div className='announcement-module'>
@@ -84,17 +86,17 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
 
             {cardPlayed?.name === "Breathing" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} and healed to full health and chose {victim?.name} to draw a card</p>}
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length !== lengthForJujitsuBattlecry &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a Parry or suffer a wound.</p>
+            {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length > 0 &&
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Parry or suffering a wound. It is {battlecryJujitsuTurn?.name}'s turn to resolve Battlecry</p>
             }
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length !== lengthForJujitsuBattlecry &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Waiting for players to discard a Weapon or suffer a wound.</p>
+            {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length > 0 &&
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Weapon or suffering a wound. It is {battlecryJujitsuTurn?.name}'s turn to resolve the Jujitsu</p>
             }
 
-            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s battlecry</p>}
+            {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length === 0 && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s battlecry</p>}
 
-            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length === lengthForJujitsuBattlecry && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s jujitsu</p>}
+            {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length === 0 && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s jujitsu</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>

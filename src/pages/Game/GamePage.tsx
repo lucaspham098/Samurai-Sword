@@ -146,6 +146,8 @@ const GamePage = ({ socket }: GamePageProp) => {
 
     const [parryModule, setParryModule] = useState<boolean>(false)
 
+    const [battlecryJujitsuArray, setBattlecryJujitsuArray] = useState<PlayersData[]>([])
+    const [battlecryJujitsuTurn, setBattlecryJujitsuTurn] = useState<PlayersData | undefined>(undefined)
     const [battlecryInfo, setBattlecryInfo] = useState<string[]>([])
     const [jujitsuInfo, setJujitsuInfo] = useState<string[]>([])
     const [jujitsuInEffect, setJujitsuInEffect] = useState<boolean>(false)
@@ -668,11 +670,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         },
         {
             type: 'property',
-            name: 'Focus',
-            img: focus
-        },
-        {
-            type: 'property',
             name: 'Bushido',
             img: bushido
         },
@@ -853,7 +850,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, emptyDrawDeck, gameOver, deadlyStrikeNinja }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn, emptyDrawDeck, gameOver, deadlyStrikeNinja }) => {
             console.log('game state updated')
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
@@ -875,28 +872,26 @@ const GamePage = ({ socket }: GamePageProp) => {
             setBushidoInfo(bushidoInfo)
             setGeishaInfo(geishaInfo)
             setDeath(death)
-            setLengthForJujitsuBattlecry(lengthForJujitsuBattlecry)
+            setBattlecryJujitsuArray(battlecryJujitsuArray)
+            setBattlecryJujitsuTurn(battlecryJujitsuTurn)
             setEmptyDrawDeck(emptyDrawDeck)
             setGameOver(gameOver)
             setDeadlyStrikeNinja(deadlyStrikeNinja)
         })
 
-        socket.on('battlecryPlayed', (playersData: PlayersData[]) => {
-            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
-                setParryModule(true)
-                setTurn(socket.id)
-            }
+        socket.on('battlecryPlayed', (battlecryJujitsuArray: PlayersData[]) => {
+            console.log(battlecryJujitsuArray)
+            setParryModule(true)
+            setTurn(socket.id)
+
         })
 
-        socket.on('jujitsuPlayed', (playersData: PlayersData[]) => {
-            const playerIndex = playersData.findIndex(player => player.socketID === socket.id)
-            if (playersData[playerIndex].character.name !== 'Chiyome' && playersData[playerIndex].harmless !== true) {
-                setJujitsuInEffect(true)
-                setParryModule(true)
-                setSelectedCard(undefined)
-                setTurn(socket.id)
-            }
+        socket.on('jujitsuPlayed', (battlecryJujitsuArray: PlayersData[]) => {
+            console.log(battlecryJujitsuArray)
+            setJujitsuInEffect(true)
+            setParryModule(true)
+            setSelectedCard(undefined)
+            setTurn(socket.id)
         })
 
 
@@ -912,7 +907,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
+            const dealtPlayer1Character = {
+                name: 'Hanzo',
+                health: 4,
+                img: hanzo
+            }
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             const dealtPlayer1Hand: PlayableCard[] = []
             data[0].character = dealtPlayer1Character
@@ -1064,7 +1064,8 @@ const GamePage = ({ socket }: GamePageProp) => {
             bushidoInfo: bushidoInfo,
             geishaInfo: geishaInfo,
             death: death,
-            lengthForJujitsuBattlecry: lengthForJujitsuBattlecry,
+            battlecryJujitsuArray: battlecryJujitsuArray,
+            battlecryJujitsuTurn: battlecryJujitsuTurn,
             emptyDrawDeck: emptyDrawDeck,
             gameOver: gameOver,
             deadlyStrikeNinja: deadlyStrikeNinja,
@@ -1280,7 +1281,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         data[0].bushido = true
                     }
 
-                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu" && currentPlayer?.character.name === 'Ieyasu') {
+                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu") {
                         setIeyasuModule(true)
                     } else {
                         const newCards: PlayableCard[] = [];
@@ -1346,7 +1347,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDrawDeck(newDrawDeck)
                     setPlayersData(data)
                 }
-            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && currentPlayer?.character.name === 'Ieyasu' && discardPile.length > 0) {
+            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && discardPile.length > 0) {
                 setIeyasuModule(true)
             }
             else {
@@ -1413,13 +1414,21 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (cardPlayed?.name === 'Battlecry') {
             const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon as a Parry`
             const newBattlecryInfo = [...battlecryInfo, newInfo]
+            const battlecryArray = [...battlecryJujitsuArray]
+            battlecryArray.pop()
+
+            setBattlecryJujitsuArray(battlecryArray)
             setBattlecryInfo(newBattlecryInfo)
 
             setTimeout(() => {
                 setTurn('')
-                if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
+                if (battlecryArray.length > 0) {
+                    setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+                    socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+                } else {
                     setTurnBack()
                 }
+                setTurn('')
             }, 250);
         } else {
             setWeaponCardPlayed(false)
@@ -1537,7 +1546,10 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].name} discarded a Parry`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
+        const battlecryArray = [...battlecryJujitsuArray]
+        battlecryArray.pop()
 
+        setBattlecryJujitsuArray(battlecryArray)
         setDiscardPile(newDiscardPile)
         setPlayersData(data)
         setBattlecryInfo(newBattlecryInfo)
@@ -1545,9 +1557,13 @@ const GamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setTimeout(() => {
             setTurn('')
-            if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
+            if (battlecryArray.length > 0) {
+                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+            } else {
                 setTurnBack()
             }
+            setTurn('')
         }, 250);
 
 
@@ -1560,9 +1576,6 @@ const GamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            // if (data[indexOfPlayer].honourPoints <= 0) {
-            //     setGameOver(true)
-            // }
             data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
@@ -1578,15 +1591,22 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newBattlecryInfo = [...battlecryInfo, newInfo]
+        const battlecryArray = [...battlecryJujitsuArray]
+        battlecryArray.pop()
+
+        setBattlecryJujitsuArray(battlecryArray)
         setBattlecryInfo(newBattlecryInfo)
         setParryModule(false)
         setPlayersData(data)
 
         setTimeout(() => {
-            setTurn('')
-            if (newBattlecryInfo.length === lengthForJujitsuBattlecry) {
-                setTurnBack(data as PlayersData[])
+            if (battlecryArray.length > 0) {
+                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+            } else {
+                setTurnBack()
             }
+            setTurn('')
         }, 250);
 
 
@@ -1607,16 +1627,22 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
+        const jujitsuArray = [...battlecryJujitsuArray]
+        jujitsuArray.pop()
 
+        setBattlecryJujitsuArray(jujitsuArray)
         setDiscardPile(newDiscardPile)
         setJujitsuInfo(newJujitsuInfo)
 
         setParryModule(false)
         setTimeout(() => {
-            setTurn('')
-            if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
+            if (jujitsuArray.length > 0) {
+                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+                socket.emit('battlecryPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+            } else {
                 setTurnBack()
             }
+            setTurn('')
         }, 200);
 
 
@@ -1649,14 +1675,23 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
         const newJujitsuInfo = [...jujitsuInfo, newInfo]
+
+        const jujitsuArray = [...battlecryJujitsuArray]
+        jujitsuArray.pop()
+
+        setBattlecryJujitsuArray(jujitsuArray)
         setJujitsuInfo(newJujitsuInfo)
         setJujitsuInEffect(false)
         setParryModule(false)
+
         setTimeout(() => {
-            setTurn('')
-            if (newJujitsuInfo.length === lengthForJujitsuBattlecry) {
-                setTurnBack(data as PlayersData[])
+            if (jujitsuArray.length > 0) {
+                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+                socket.emit('battlecryPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+            } else {
+                setTurnBack()
             }
+            setTurn('')
         }, 250);
 
 
@@ -2236,13 +2271,11 @@ const GamePage = ({ socket }: GamePageProp) => {
                         setNewTurn(false)
                     }
 
-                    const excludedHarmlessData = data.filter(player => player.harmless !== true)
+                    const battlecryJujitsuArray = data.filter(player => player.harmless !== true && player.character.name !== 'Chiyome' && player.character.name !== playersData[indexOfPlayer].character.name).reverse()
 
-                    if (playersData[indexOfPlayer].character.name === 'Chiyome') {
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.length - 1)
-                    } else {
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
-                    }
+                    setBattlecryJujitsuArray(battlecryJujitsuArray)
+                    setBattlecryJujitsuTurn(battlecryJujitsuArray[battlecryJujitsuArray.length - 1])
+
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     if (data[indexOfPlayer].hand.length === 0) {
@@ -2268,24 +2301,15 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setPlayersData(data)
 
-                    if (playersData[indexOfPlayer].character.name === 'Chiyome') {
-                        if (excludedHarmlessData.length - 1 > 0) {
-                            setTimeout(() => {
-                                setTurn('')
-                            }, 250);
 
-                            socket.emit('battlecryPlayed', room, playersData)
-                        }
-                    } else {
-                        if (excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1 > 0) {
-                            setTimeout(() => {
-                                setTurn('')
-                            }, 250);
+                    if (battlecryJujitsuArray.length > 0) {
+                        setTimeout(() => {
+                            setTurn('')
+                        }, 250);
 
-                            socket.emit('battlecryPlayed', room, playersData)
-                        }
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
+                        socket.emit('battlecryPlayed', battlecryJujitsuArray[battlecryJujitsuArray.length - 1].socketID, battlecryJujitsuArray)
                     }
+
                 }
 
 
@@ -2293,13 +2317,12 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (newTurn) {
                         setNewTurn(false)
                     }
-                    const excludedHarmlessData = data.filter(player => player.harmless !== true)
 
-                    if (playersData[indexOfPlayer].character.name === 'Chiyome') {
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.length - 1)
-                    } else {
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
-                    }
+                    const battlecryJujitsuArray = data.filter(player => player.harmless !== true && player.character.name !== 'Chiyome' && player.character.name !== playersData[indexOfPlayer].character.name).reverse()
+
+                    setBattlecryJujitsuArray(battlecryJujitsuArray)
+                    setBattlecryJujitsuTurn(battlecryJujitsuArray[battlecryJujitsuArray.length - 1])
+
                     setDiscardPile([...discardPile, selectedCard])
                     data[indexOfPlayer].hand.splice(indexOfSelectedCard(), 1)
                     if (data[indexOfPlayer].hand.length === 0) {
@@ -2325,24 +2348,12 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                     setPlayersData(data)
 
+                    if (battlecryJujitsuArray.length > 0) {
+                        setTimeout(() => {
+                            setTurn('')
+                        }, 250);
 
-                    if (playersData[indexOfPlayer].character.name === 'Chiyome') {
-                        if (excludedHarmlessData.length - 1 > 0) {
-                            setTimeout(() => {
-                                setTurn('')
-                            }, 250);
-
-                            socket.emit('jujitsuPlayed', room, playersData)
-                        }
-                    } else {
-                        if (excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1 > 0) {
-                            setTimeout(() => {
-                                setTurn('')
-                            }, 250);
-
-                            socket.emit('jujitsuPlayed', room, playersData)
-                        }
-                        setLengthForJujitsuBattlecry(excludedHarmlessData.filter(player => player.character.name !== 'Chiyome').length - 1)
+                        socket.emit('battlecryPlayed', battlecryJujitsuArray[battlecryJujitsuArray.length - 1].socketID, battlecryJujitsuArray)
                     }
 
                 }
@@ -2355,7 +2366,6 @@ const GamePage = ({ socket }: GamePageProp) => {
                     if (data[indexOfPlayer].hand.length === 0) {
                         data[indexOfPlayer].harmless = true
                     }
-                    setPlayerHit(false)
                     setDiscardPile([...discardPile, selectedCard])
                     setActiveCard(null)
                     setBushidoInfo(undefined)
@@ -2580,6 +2590,8 @@ const GamePage = ({ socket }: GamePageProp) => {
                 geishaInfo={geishaInfo}
                 death={death}
                 lengthForJujitsuBattlecry={lengthForJujitsuBattlecry}
+                battlecryJujitsuArray={battlecryJujitsuArray}
+                battlecryJujitsuTurn={battlecryJujitsuTurn}
             />
 
             <PlayerSelectionModule
