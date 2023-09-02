@@ -907,12 +907,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
         if (effectRan.current === false && initialPlayersdata.length > 0) {
 
-            // const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
-            const dealtPlayer1Character = {
-                name: 'Hanzo',
-                health: 4,
-                img: hanzo
-            }
+            const dealtPlayer1Character = shuffledCharacterDeck.pop() as Character
             const dealtPlayer1Role = shuffledRoleDeck.pop() as Role
             const dealtPlayer1Hand: PlayableCard[] = []
             data[0].character = dealtPlayer1Character
