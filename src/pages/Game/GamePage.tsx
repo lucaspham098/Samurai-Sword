@@ -1342,7 +1342,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDrawDeck(newDrawDeck)
                     setPlayersData(data)
                 }
-            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && discardPile.length > 0) {
+            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && currentPlayer?.character.name === 'Ieyasu' && discardPile.length > 0) {
                 setIeyasuModule(true)
             }
             else {
@@ -2192,6 +2192,7 @@ const GamePage = ({ socket }: GamePageProp) => {
 
                 if (selectedCard.name === 'Tea Ceremony') {
                     let newDiscardPile = [...discardPile, selectedCard]
+                    let gameOver = false
 
                     const newCards: PlayableCard[] = [];
                     let newDrawDeck = [...drawDeck]
@@ -2200,8 +2201,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             setEmptyDrawDeck(true)
                             data.map(player => player.honourPoints = player.honourPoints - 1)
                             if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                                setGameOver(true)
-                                console.log('8')
+                                gameOver = true
                                 break
                             }
                             newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
@@ -2222,8 +2222,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                                 setEmptyDrawDeck(true)
                                 data.map(player => player.honourPoints = player.honourPoints - 1)
                                 if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                                    setGameOver(true)
-                                    console.log('9')
+                                    gameOver = true
                                     break
                                 }
                                 newDrawDeck = shuffle(newDiscardPile) as PlayableCard[]
@@ -2241,6 +2240,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                         }
                     }
 
+                    setGameOver(gameOver)
                     setActiveCard(null)
                     setCardPlayed(selectedCard)
                     setWeaponCardPlayed(false)
@@ -2348,7 +2348,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                             setTurn('')
                         }, 250);
 
-                        socket.emit('battlecryPlayed', battlecryJujitsuArray[battlecryJujitsuArray.length - 1].socketID, battlecryJujitsuArray)
+                        socket.emit('jujitsuPlayed', battlecryJujitsuArray[battlecryJujitsuArray.length - 1].socketID, battlecryJujitsuArray)
                     }
 
                 }
@@ -2364,6 +2364,7 @@ const GamePage = ({ socket }: GamePageProp) => {
                     setDiscardPile([...discardPile, selectedCard])
                     setActiveCard(null)
                     setBushidoInfo(undefined)
+                    setBushidoWeapon(undefined)
                     setCardPlayed(selectedCard)
                     setSelectingPlayer(false)
                     setSelectedCard(undefined)
