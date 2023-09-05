@@ -43,3 +43,306 @@ body {
         cursor: pointer;
     }
 }
+
+.card {
+    border: 2px black solid;
+    aspect-ratio: 2.5/3.5;
+    border-radius: 1.1em;
+
+    &:hover {
+        width: 15rem;
+        z-index: 999;
+    }
+}
+
+.game {
+    &__player {
+
+        &-name {
+            display: flex;
+            margin: 0;
+            margin-left: .5rem;
+        }
+
+        &-heading {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        &-flex-container {
+            display: flex;
+            gap: .75rem;
+
+            &--icon {
+                justify-content: space-evenly;
+            }
+        }
+
+        &-turn-indicator {
+            width: 20rem;
+            height: 20rem;
+            position: absolute;
+            z-index: -1;
+            transform: translate(-6rem, -4.5rem);
+            border-radius: 25%;
+            background: radial-gradient(circle closest-side at center,
+                    rgba(255, 0, 0, 1),
+                    rgba(216, 216, 216, 0.3));
+        }
+
+        &-shogun-spacing {
+            height: 1.5rem;
+        }
+
+        &-character-container {
+            // width: 3rem;
+            z-index: 10;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        &-character {
+            width: 7rem;
+            z-index: 10;
+        }
+
+        &-role-container {
+            position: absolute;
+        }
+
+        &-role {
+            width: 7rem;
+            position: relative;
+            bottom: 1.5rem;
+        }
+
+        &-property {
+            width: 2rem;
+            z-index: 10;
+            border-width: 2px;
+            border-radius: .5rem;
+        }
+    }
+
+    &__icon {
+        width: 2rem;
+
+        &--card {
+            border: 1px black solid;
+            aspect-ratio: 2.5/3.5;
+            border-radius: .5em;
+            height: 2.5rem;
+        }
+    }
+
+    &__icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        // margin-bottom: .5rem;
+        gap: .5rem;
+
+    }
+
+    &__icon-text {
+        font-size: 1rem;
+    }
+
+    &__middle-container {
+        position: absolute;
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        gap: 5rem;
+    }
+
+    &__deck {
+        width: 5rem;
+        border-radius: 1.1em;
+        aspect-ratio: 2.5/3.5;
+        border: 2px black solid;
+
+        &--hover {
+            &:hover {
+                position: absolute;
+                width: 20rem;
+                z-index: 999;
+                transform: translateY(-20rem);
+            }
+        }
+    }
+
+    &__user {
+
+        &-container {
+            position: absolute;
+            width: 70vw;
+            display: flex;
+            gap: .75rem;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            margin: auto;
+            max-height: 14.5rem;
+        }
+
+        &--heading {
+            position: absolute;
+            transform: translate(1rem, -6rem);
+
+        }
+
+        &-flex-container {
+            justify-content: space-evenly;
+            z-index: 997;
+            width: fit-content;
+            min-width: 4.5rem;
+        }
+
+        &-turn-indicator {
+            width: 25rem;
+            height: 25rem;
+            position: absolute;
+            z-index: -100;
+            border-radius: 25%;
+            transform: translate(-7rem, -6.5rem);
+            background: radial-gradient(circle closest-side at center,
+                    rgba(255, 0, 0, 1),
+                    rgba(216, 216, 216, 0.3));
+        }
+
+        &-character-container {
+            z-index: 10;
+        }
+
+        &-character {
+            width: 10rem;
+            z-index: 10;
+        }
+
+        &-role-container {
+            position: absolute;
+            z-index: -1;
+        }
+
+        &-role {
+            width: 10rem;
+            position: relative;
+            bottom: 3rem;
+
+            &:hover {
+                width: 12rem;
+            }
+        }
+
+        &-property {
+            width: 3rem;
+            z-index: 997;
+            border-radius: .75rem;
+        }
+
+        &-hand {
+            display: flex;
+            align-items: end;
+            justify-content: center;
+
+        }
+
+        &-card {
+            width: 7rem;
+            z-index: 10;
+
+            &--active {
+                width: 15rem;
+                z-index: 100;
+                margin-right: 2rem;
+            }
+
+            &:hover {
+                cursor: pointer;
+                z-index: 999;
+                margin-right: 2rem;
+            }
+
+            &:nth-child(1) {
+                margin-left: 1rem;
+            }
+
+            &:nth-child(2) {
+                position: relative;
+                transform: translateX(-4rem);
+            }
+
+            &:nth-child(3) {
+                position: relative;
+                transform: translateX(-8rem);
+            }
+
+            &:nth-child(4) {
+                position: relative;
+                transform: translateX(-12rem);
+            }
+
+            &:nth-child(5) {
+                position: relative;
+                transform: translateX(-16rem);
+            }
+
+            &:nth-child(6) {
+                position: relative;
+                transform: translateX(-20rem);
+            }
+
+            &:nth-child(7) {
+                position: relative;
+                transform: translateX(-24rem);
+            }
+
+            &:nth-child(8) {
+                position: relative;
+                transform: translateX(-28rem);
+            }
+
+            &:nth-child(9) {
+                position: relative;
+                transform: translateX(-32rem);
+            }
+
+            &:nth-child(10) {
+                position: relative;
+                transform: translateX(-36rem);
+            }
+
+            &:nth-child(11) {
+                position: relative;
+                transform: translateX(-40rem);
+            }
+
+            &:nth-child(12) {
+                position: relative;
+                transform: translateX(-44rem);
+            }
+
+            &:nth-child(13) {
+                position: relative;
+                transform: translateX(-48rem);
+            }
+
+            &:nth-child(14) {
+                position: relative;
+                transform: translateX(-52rem);
+            }
+
+            &:nth-child(15) {
+                position: relative;
+                transform: translateX(-54rem);
+            }
+        }
+    }
+
+}

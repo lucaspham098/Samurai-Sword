@@ -20,9 +20,9 @@ type AnnouncementModuleProps = {
     bushidoInfo: string | undefined
     geishaInfo: string | undefined
     death: boolean
-    lengthForJujitsuBattlecry: number
     battlecryJujitsuArray: PlayersData[]
     battlecryJujitsuTurn: PlayersData | undefined
+
 }
 
 interface PlayableCard {
@@ -58,7 +58,7 @@ interface Role {
     stars?: number
 }
 
-const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, lengthForJujitsuBattlecry, battlecryJujitsuArray, battlecryJujitsuTurn }: AnnouncementModuleProps) => {
+const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, parryPlayed, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn }: AnnouncementModuleProps) => {
 
     return (
         <div className='announcement-module'>

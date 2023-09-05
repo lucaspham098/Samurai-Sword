@@ -37,6 +37,7 @@ const Lobby = ({ socket }: LobbyProps) => {
     const [playersData, setPlayersData] = useState<PlayersData[]>([]);
     const [isLeader, setIsLeader] = useState<boolean>(false)
 
+
     useEffect(() => {
         if (!effectRan.current) {
             socket.emit('createRoom', room, name);
@@ -52,8 +53,11 @@ const Lobby = ({ socket }: LobbyProps) => {
                     setIsLeader(true)
                 }
             })
-            socket.on('gameStarted', () => {
-                navigate(`/game/${room}`)
+            socket.on('3PlayerGameStarted', () => {
+                navigate(`/3-player-game/${room}`)
+            })
+            socket.on('4PlayerGameStarted', () => {
+                navigate(`/4-player-game/${room}`)
             })
 
             effectRan.current = true;
@@ -61,7 +65,12 @@ const Lobby = ({ socket }: LobbyProps) => {
     }, []);
 
     const onStartGame = () => {
-        socket.emit('startGame', room);
+        if (playersData.length === 3) {
+            socket.emit('3PlayerStartGame', room);
+        }
+        if (playersData.length === 4) {
+            socket.emit('4PlayerStartGame', room);
+        }
     };
 
 
