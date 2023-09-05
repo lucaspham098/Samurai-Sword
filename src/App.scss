@@ -88,6 +88,10 @@ body {
             background: radial-gradient(circle closest-side at center,
                     rgba(255, 0, 0, 1),
                     rgba(216, 216, 216, 0.3));
+
+            &:hover {
+                z-index: -1;
+            }
         }
 
         &-shogun-spacing {
@@ -147,11 +151,15 @@ body {
         }
     }
 
+    &__icon-parent-container {
+        transform: translateX(-1rem);
+        z-index: 999;
+    }
+
     &__icon-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        // margin-bottom: .5rem;
         gap: .5rem;
 
     }
@@ -262,6 +270,11 @@ body {
             width: 3rem;
             z-index: 997;
             border-radius: .75rem;
+
+            &:hover {
+                position: absolute;
+                bottom: 10%;
+            }
         }
 
         &-hand {

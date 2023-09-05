@@ -2557,7 +2557,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                 let daimyoPoints = 0
 
                 for (let i = 0; i < shogunTeam.length; i++) {
-                    daimyoPoints = shogunTeam[i].hand.filter(card => card.name === "Daimyo").length
+                    daimyoPoints = daimyoPoints + shogunTeam[i].hand.filter(card => card.name === "Daimyo").length
                     if (shogunTeam[i].role.role === 'Samurai') {
                         points = points + (shogunTeam[i].honourPoints * 2)
                     } else {
