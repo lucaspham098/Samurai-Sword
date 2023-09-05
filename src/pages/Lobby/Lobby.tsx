@@ -59,6 +59,15 @@ const Lobby = ({ socket }: LobbyProps) => {
             socket.on('4PlayerGameStarted', () => {
                 navigate(`/4-player-game/${room}`)
             })
+            socket.on('5PlayerGameStarted', () => {
+                navigate(`/5-player-game/${room}`)
+            })
+            socket.on('6PlayerGameStarted', () => {
+                navigate(`/6-player-game/${room}`)
+            })
+            socket.on('7PlayerGameStarted', () => {
+                navigate(`/7-player-game/${room}`)
+            })
 
             effectRan.current = true;
         }
@@ -70,6 +79,15 @@ const Lobby = ({ socket }: LobbyProps) => {
         }
         if (playersData.length === 4) {
             socket.emit('4PlayerStartGame', room);
+        }
+        if (playersData.length === 5) {
+            socket.emit('5PlayerStartGame', room);
+        }
+        if (playersData.length === 6) {
+            socket.emit('6PlayerStartGame', room);
+        }
+        if (playersData.length === 7) {
+            socket.emit('7PlayerStartGame', room);
         }
     };
 

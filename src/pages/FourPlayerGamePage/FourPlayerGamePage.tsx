@@ -119,6 +119,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
     const [teamNinjaInfo, setTeamNinjaInfo] = useState<number>()
     const [teamShogunInfo, setTeamShogunInfo] = useState<number>()
+    const [teamRoninInfo, setTeamRoninInfo] = useState<number>()
     const [winner, setWinner] = useState<string>('')
 
     const [indexOfParry, setIndexOfParry] = useState<number>(-1)
@@ -2647,6 +2648,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                 winner={winner}
                 teamNinjaInfo={teamNinjaInfo}
                 teamShogunInfo={teamShogunInfo}
+                teamRoninInfo={teamRoninInfo}
                 deadlyStrikeNinja={deadlyStrikeNinja}
                 deadlyStrikeShogun={deadlyStrikeShogun}
                 victoryOfTheSwordMaster={victoryOfTheSwordMaster}
@@ -2655,7 +2657,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData.length > 0 && playersData[0].socketID === socket.id &&
                 <>
-                    <div className="four-player-game__player--top">
+                    <div className="four-player-game__flex-container--top">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[2].name}</h1>
                             {playersData[2].harmless &&
@@ -2940,7 +2942,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData.length > 0 && socket.id === playersData[1].socketID &&
                 <>
-                    <div className="four-player-game__player--top">
+                    <div className="four-player-game__flex-container--top">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[3].name}</h1>
                             {playersData[3].harmless &&
@@ -3225,7 +3227,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData.length > 0 && socket.id === playersData[2].socketID &&
                 <>
-                    <div className="four-player-game__player--top">
+                    <div className="four-player-game__flex-container--top">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[0].name}</h1>
                             {playersData[0].harmless &&
@@ -3510,7 +3512,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData.length > 0 && socket.id === playersData[3].socketID &&
                 <>
-                    <div className="four-player-game__player--top">
+                    <div className="four-player-game__flex-container--top">
                         <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[1].name}</h1>
                             {playersData[1].harmless &&

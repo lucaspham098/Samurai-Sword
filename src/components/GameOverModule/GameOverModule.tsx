@@ -5,6 +5,7 @@ type GameOverModuleProps = {
     winner: string
     teamNinjaInfo: number | undefined
     teamShogunInfo: number | undefined
+    teamRoninInfo: number | undefined
     deadlyStrikeNinja: boolean
     deadlyStrikeShogun: boolean
     victoryOfTheSwordMaster: boolean
@@ -44,7 +45,7 @@ interface Role {
     stars?: number
 }
 
-const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNinja, deadlyStrikeShogun, victoryOfTheSwordMaster, currentPlayer }: GameOverModuleProps) => {
+const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNinja, deadlyStrikeShogun, victoryOfTheSwordMaster, currentPlayer, teamRoninInfo }: GameOverModuleProps) => {
     return (
         <div className='game-over-module'>
             {victoryOfTheSwordMaster && !deadlyStrikeNinja && !deadlyStrikeShogun &&
@@ -64,6 +65,9 @@ const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNin
             }
             <p>Team Shogun scored {teamShogunInfo}</p>
             <p>Team Ninja scored {teamNinjaInfo}</p>
+            {teamNinjaInfo &&
+                <p>Team Ronin scored {teamRoninInfo}</p>
+            }
         </div>
     );
 };

@@ -1,15 +1,17 @@
-.four-player-game {
+.five-player-game {
 
     &__flex-container {
         position: relative;
-        top: 10rem;
+        top: 12rem;
         display: flex;
         justify-content: space-between;
 
         &--top {
+            display: flex;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
+            gap: 25vw;
         }
     }
 }

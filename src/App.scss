@@ -100,22 +100,32 @@ body {
 
             &:hover {
                 cursor: pointer;
+                z-index: 999;
             }
         }
 
         &-character {
             width: 7rem;
             z-index: 10;
+
         }
 
         &-role-container {
             position: absolute;
+
+            &:hover {
+                z-index: 999;
+            }
         }
 
         &-role {
             width: 7rem;
             position: relative;
             bottom: 1.5rem;
+
+            &:hover {
+                width: 12rem;
+            }
         }
 
         &-property {
@@ -170,9 +180,9 @@ body {
         &--hover {
             &:hover {
                 position: absolute;
-                width: 20rem;
+                width: 15rem;
                 z-index: 999;
-                transform: translateY(-20rem);
+                transform: translateY(-10rem);
             }
         }
     }
@@ -223,11 +233,19 @@ body {
         &-character {
             width: 10rem;
             z-index: 10;
+
+            &:hover {
+                transform: translateY(-7.5rem);
+            }
         }
 
         &-role-container {
             position: absolute;
             z-index: -1;
+
+            &:hover {
+                z-index: 999;
+            }
         }
 
         &-role {
