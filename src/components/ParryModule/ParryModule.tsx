@@ -103,7 +103,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
                 <>
                     <p className='choice-module__text'>Choose from the options below</p>
                     <div className="choice-module__button-container">
-                        <button className='button--small' onClick={() => handleDiscardRandomCard()}>Discard random card form {victim.name}</button>
+                        <button className='button--small' onClick={() => handleDiscardRandomCard()}>Discard random card from {victim.name}</button>
                         {victim.focus > 0 &&
                             <button className='button--small' onClick={() => handleRemoveFocus()}>Remove 1 Focus from {victim.name}</button>
                         }

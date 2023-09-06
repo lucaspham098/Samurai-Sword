@@ -1,5 +1,14 @@
 @use './styles/partials/colours' as *;
 
+@font-face {
+    font-family: JapaneseFont;
+    src: url('./assets/fonts/NightinTokyo.ttf'),
+}
+
+* {
+    font-family: JapaneseFont;
+}
+
 body {
     background-color: $primary-background
 }
@@ -169,6 +178,10 @@ body {
         justify-content: center;
         align-items: center;
         gap: .5rem;
+
+        &--property {
+            min-width: 5rem;
+        }
 
     }
 

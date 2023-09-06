@@ -1196,7 +1196,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (drawDeck.length === 0 && playersData.length > 0) {
+        if (drawDeck.length === 0 && playersData.length > 0 && !gameOver) {
             const data = [...playersData];
             data.map(player => player.honourPoints = player.honourPoints - 1)
             if (data.filter(player => player.honourPoints <= 0).length > 0) {
@@ -2905,19 +2905,19 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
                         <div className="game__user-property-container">
                             {playersData[0].focus > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={focus} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[0].focus}</p>
                                 </div>
                             }
                             {playersData[0].armor > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={armor} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[0].armor}</p>
                                 </div >
                             }
                             {playersData[0].fastDraw > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={fast_draw} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[0].fastDraw}</p>
                                 </div>
@@ -3190,19 +3190,19 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
                         <div className="game__user-property-container">
                             {playersData[1].focus > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={focus} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[1].focus}</p>
                                 </div>
                             }
                             {playersData[1].armor > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={armor} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[1].armor}</p>
                                 </div >
                             }
                             {playersData[1].fastDraw > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={fast_draw} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[1].fastDraw}</p>
                                 </div>
@@ -3474,19 +3474,19 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
                         <div className="game__user-property-container">
                             {playersData[2].focus > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={focus} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[2].focus}</p>
                                 </div>
                             }
                             {playersData[2].armor > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={armor} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[2].armor}</p>
                                 </div >
                             }
                             {playersData[2].fastDraw > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={fast_draw} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[2].fastDraw}</p>
                                 </div>
@@ -3759,19 +3759,19 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
                         <div className="game__user-property-container">
                             {playersData[3].focus > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={focus} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[3].focus}</p>
                                 </div>
                             }
                             {playersData[3].armor > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={armor} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[3].armor}</p>
                                 </div >
                             }
                             {playersData[3].fastDraw > 0 &&
-                                <div className='game__icon-container'>
+                                <div className='game__icon-container game__icon-container--property'>
                                     <img src={fast_draw} className='game__user-property card' />
                                     <p className='game__icon-text'>x {playersData[3].fastDraw}</p>
                                 </div>

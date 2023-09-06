@@ -65,7 +65,7 @@ const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNin
             }
             <p>Team Shogun scored {teamShogunInfo}</p>
             <p>Team Ninja scored {teamNinjaInfo}</p>
-            {teamNinjaInfo &&
+            {teamRoninInfo &&
                 <p>Team Ronin scored {teamRoninInfo}</p>
             }
         </div>

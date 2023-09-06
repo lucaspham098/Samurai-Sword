@@ -1238,7 +1238,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
 
 
     useEffect(() => {
-        if (drawDeck.length === 0 && playersData.length > 0) {
+        if (drawDeck.length === 0 && playersData.length > 0 && !gameOver) {
             const data = [...playersData];
             data.map(player => player.honourPoints = player.honourPoints - 1)
             if (data.filter(player => player.honourPoints <= 0).length > 0) {

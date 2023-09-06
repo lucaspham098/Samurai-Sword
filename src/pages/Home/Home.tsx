@@ -34,7 +34,7 @@ const Home = ({ socket }: HomeProp) => {
         const characterArr = characters.split('')
         const roomCode = []
         for (let i = 0; i < 4; i++) {
-            const index = Math.floor(Math.random() * 36)
+            const index = Math.floor(Math.random() * characterArr.length)
             roomCode.push(characterArr[index])
         }
         if (roomCode.length === 4) {
