@@ -8,6 +8,7 @@ import io from 'socket.io-client'
 import FourPlayerGamePage from './pages/FourPlayerGamePage/FourPlayerGamePage';
 import FivePlayerGamePage from './pages/FivePlayerGamePage/FivePlayerGamePage';
 import SixPlayerGamePage from './pages/SixPlayerGamePage/SixPlayerGamePage';
+import SevenPlayerGamePage from './pages/SevenPlayerGamePage/SevenPlayerGamePage';
 
 // const socket = io(`http://localhost:8080`);
 const socket = io(`https://samurai-sword-4c84a9f6080d.herokuapp.com`);
@@ -22,6 +23,7 @@ function App() {
         <Route path='/4-player-game/:room/' element={<FourPlayerGamePage socket={socket} />} />
         <Route path='/5-player-game/:room/' element={<FivePlayerGamePage socket={socket} />} />
         <Route path='/6-player-game/:room/' element={<SixPlayerGamePage socket={socket} />} />
+        <Route path='/7-player-game/:room/' element={<SevenPlayerGamePage socket={socket} />} />
       </Routes>
     </BrowserRouter>
   );

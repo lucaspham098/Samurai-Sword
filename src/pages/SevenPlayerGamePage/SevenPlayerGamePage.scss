@@ -1,0 +1,18 @@
+.seven-player-game {
+
+
+    &__flex-container {
+        position: relative;
+        top: 14rem;
+        display: flex;
+        justify-content: space-between;
+
+        &--top {
+            display: flex;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-52%);
+            gap: 10vw;
+        }
+    }
+}

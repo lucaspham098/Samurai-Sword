@@ -119,7 +119,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
 
     const [teamNinjaInfo, setTeamNinjaInfo] = useState<number>()
     const [teamShogunInfo, setTeamShogunInfo] = useState<number>()
-    const [teamRoninInfo, setTeamRoninInfo] = useState<number>()
+    const [teamRoninInfo, setTeamRoninInfo] = useState<number | undefined>(undefined)
     const [winner, setWinner] = useState<string>('')
 
     const [indexOfParry, setIndexOfParry] = useState<number>(-1)
@@ -1684,7 +1684,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
         setTimeout(() => {
             if (jujitsuArray.length > 0) {
                 setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('battlecryPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
             } else {
                 setTurnBack()
             }
@@ -1743,7 +1743,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
         setTimeout(() => {
             if (jujitsuArray.length > 0) {
                 setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('battlecryPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
             } else {
                 setTurnBack()
             }

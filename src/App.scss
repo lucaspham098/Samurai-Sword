@@ -58,6 +58,12 @@ body {
 .game {
     &__player {
 
+        &-container {
+            &--bottom {
+                transform: translateY(5rem);
+            }
+        }
+
         &-name {
             display: flex;
             margin: 0;
@@ -75,6 +81,8 @@ body {
 
             &--icon {
                 justify-content: space-evenly;
+                min-width: 9rem;
+                transform: translateX(-1rem);
             }
         }
 
@@ -152,7 +160,7 @@ body {
     }
 
     &__icon-parent-container {
-        transform: translateX(-1rem);
+        transform: translateX(-2rem);
         z-index: 999;
     }
 
