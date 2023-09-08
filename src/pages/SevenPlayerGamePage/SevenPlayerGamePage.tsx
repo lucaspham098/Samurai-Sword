@@ -959,7 +959,7 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
                 }
             } else if (dealtPlayer2Role.role === "Shogun" || dealtPlayer3Role.role === "Shogun") {
                 for (let i = 0; i < 7; i++) {
-                    dealtPlayer6Hand.push(shuffledMainDeck.pop() as PlayableCard)
+                    dealtPlayer1Hand.push(shuffledMainDeck.pop() as PlayableCard)
                 }
             } else {
                 for (let i = 0; i < 5; i++) {
@@ -1542,14 +1542,14 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuArray(battlecryArray)
             setBattlecryInfo(newBattlecryInfo)
 
+            if (battlecryArray.length > 0) {
+                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+            } else {
+                setTurnBack()
+            }
+
             setTimeout(() => {
-                setTurn('')
-                if (battlecryArray.length > 0) {
-                    setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                    socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-                } else {
-                    setTurnBack()
-                }
                 setTurn('')
             }, 250);
         } else {
@@ -1686,14 +1686,15 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
         setBattlecryInfo(newBattlecryInfo)
 
         setParryModule(false)
+
+        if (battlecryArray.length > 0) {
+            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            setTurn('')
-            if (battlecryArray.length > 0) {
-                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 
@@ -1743,13 +1744,14 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setPlayersData(data)
 
+        if (battlecryArray.length > 0) {
+            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (battlecryArray.length > 0) {
-                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 
@@ -1779,13 +1781,15 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
         setJujitsuInfo(newJujitsuInfo)
 
         setParryModule(false)
+
+        if (jujitsuArray.length > 0) {
+            setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+            socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (jujitsuArray.length > 0) {
-                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 200);
 
@@ -1838,13 +1842,14 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
         setJujitsuInEffect(false)
         setParryModule(false)
 
+        if (jujitsuArray.length > 0) {
+            setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+            socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (jujitsuArray.length > 0) {
-                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 

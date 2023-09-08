@@ -1416,16 +1416,17 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuArray(battlecryArray)
             setBattlecryInfo(newBattlecryInfo)
 
+            if (battlecryArray.length > 0) {
+                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+            } else {
+                setTurnBack()
+            }
+
             setTimeout(() => {
                 setTurn('')
-                if (battlecryArray.length > 0) {
-                    setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                    socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-                } else {
-                    setTurnBack()
-                }
-                setTurn('')
             }, 250);
+
         } else {
             setWeaponCardPlayed(false)
             setParryPlayed(true)
@@ -1551,14 +1552,15 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         setBattlecryInfo(newBattlecryInfo)
 
         setParryModule(false)
+
+        if (battlecryArray.length > 0) {
+            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            setTurn('')
-            if (battlecryArray.length > 0) {
-                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 
@@ -1595,13 +1597,14 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         setParryModule(false)
         setPlayersData(data)
 
+        if (battlecryArray.length > 0) {
+            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (battlecryArray.length > 0) {
-                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 
@@ -1631,13 +1634,15 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         setJujitsuInfo(newJujitsuInfo)
 
         setParryModule(false)
+
+        if (jujitsuArray.length > 0) {
+            setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+            socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (jujitsuArray.length > 0) {
-                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 200);
 
@@ -1680,13 +1685,14 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         setJujitsuInEffect(false)
         setParryModule(false)
 
+        if (jujitsuArray.length > 0) {
+            setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
+            socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
+        } else {
+            setTurnBack()
+        }
+
         setTimeout(() => {
-            if (jujitsuArray.length > 0) {
-                setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
-                socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
-            } else {
-                setTurnBack()
-            }
             setTurn('')
         }, 250);
 

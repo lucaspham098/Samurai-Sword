@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useTransition } from 'react';
+import './Lobby.scss'
 import { Socket } from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -95,14 +96,23 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     return (
         <div>
-            <h1>Room code is {room}</h1>
-            <p>Players</p>
-            {playersData &&
-                playersData.map((player, index) => {
-                    return <p key={index}>{player.name}</p>;
-                })}
-            {isLeader && <button onClick={onStartGame}>Start Game</button>}
+            <h1 className='lobby__title'>Room code is {room}</h1>
+            <div className="lobby__container">
+                <h2 className='lobby__heading'>Required Players : 3-7</h2>
+                <div className="lobby__players-container">
+                    {playersData &&
+                        playersData.map((player, index) => {
+                            return <p className='lobby__players' key={index}>{player.name}</p>;
+                        })
+                    }
+                </div>
+                {isLeader && <button className='button button--form button--bottom' onClick={onStartGame}>Start Game</button>}
+                {!isLeader &&
+                    <p>Waiting for leader to start game ...</p>
+                }
+            </div>
         </div>
+
     );
 };
 

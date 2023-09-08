@@ -1,5 +1,6 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { FormEvent, useEffect, useState } from 'react';
+import './Home.scss'
+import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import JoinRoomModal from '../../components/JoinRoomModal';
 
@@ -30,7 +31,7 @@ const Home = ({ socket }: HomeProp) => {
     }, [findRoom]);
 
     const roomGenerator = () => {
-        const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ123456789'
+        const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ'
         const characterArr = characters.split('')
         const roomCode = []
         for (let i = 0; i < 4; i++) {
@@ -50,19 +51,50 @@ const Home = ({ socket }: HomeProp) => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        setFindRoom(event.currentTarget.room.value)
+        setFindRoom((event.currentTarget.room.value).toUpperCase())
     }
 
+    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setName(event.currentTarget.playerName.value)
+    }
+
+    const handleCloseModal = () => {
+        setJoinRoomModal(false)
+        setJoinRoomError('')
+    }
+
+    const handleRemoveError = () => {
+        setJoinRoomError('')
+    }
 
     return (
         <div>
-            <label htmlFor="room">Name</label>
-            <input type="text" name='playerName' onChange={(event) => { setName(event.target.value) }} />
-            <button className='home__button' onClick={() => {
-                roomGenerator()
-            }}>Create Room</button>
-            <button className='home__button' onClick={() => setJoinRoomModal(true)}>Join Room</button>
-            {joinRoomModal && <JoinRoomModal handleSubmit={handleSubmit} errorMessage={joinRoomError} />}
+            <div className="home__title-flex-container">
+                <h1 className='home__title home__title--top'>SAMURAI</h1>
+                <div className='home__title-divider'></div>
+                <h1 className='home__title home__title--bottom'>SWORD</h1>
+            </div>
+            {!name &&
+                <form className='home__form' onSubmit={handleFormSubmit}>
+                    <label className='home__form-label' htmlFor="playerName">Name</label>
+                    <input className='home__form-input' type="text" name='playerName' />
+                    <button className='button--form button'>Enter</button>
+                </form>
+            }
+            {name &&
+                <h2 className='home__heading'>Player Name : {name}</h2>
+            }
+            {name && !joinRoomModal &&
+                <>
+                    <div className="home__button-container">
+                        <button className='button button--home' onClick={() => { roomGenerator() }}>Create Room </button>
+                        <button className='button button--home' onClick={() => setJoinRoomModal(true)}>Join Room</button>
+                    </div>
+                </>
+            }
+            {joinRoomModal && <JoinRoomModal handleSubmit={handleSubmit} errorMessage={joinRoomError} handleCloseModal={handleCloseModal} handleRemoveError={handleRemoveError} />}
+
         </div>
     );
 };

@@ -1,24 +1,27 @@
-import { error } from 'console';
-import React, { FC, FormEvent } from 'react';
+import './JoinRoomModal.scss'
+import back_button from '../assets/images/icons/back_button.svg'
+import React, { FormEvent } from 'react';
 
 type JoinRoomModalProps = {
     handleSubmit: (event: FormEvent<HTMLFormElement>) => void
     errorMessage: string
+    handleCloseModal: () => void
+    handleRemoveError: () => void
 }
 
-const JoinRoomModal = ({ handleSubmit, errorMessage }: JoinRoomModalProps) => {
+const JoinRoomModal = ({ handleSubmit, errorMessage, handleCloseModal, handleRemoveError }: JoinRoomModalProps) => {
 
     return (
         <div>
-            {!errorMessage ? (
-                <form className='joinroom__form' onSubmit={handleSubmit}>
-                    <label htmlFor="room">Room Code</label>
-                    <input type="text" name='room' />
-                    <button>Join</button>
-                </form>
-            ) :
-                <p> {errorMessage}</p>}
-
+            <form className='joinroom__form' onSubmit={handleSubmit}>
+                <img className='joinroom__form-button' src={back_button} alt="back button" onClick={() => { handleCloseModal() }} />
+                <label className='joinroom__form-label' htmlFor="room" >Room Code</label>
+                <input className='joinroom__form-input' type="text" name='room' onChange={() => { handleRemoveError() }} />
+                <button className='button button--form'>Join</button>
+                {errorMessage !== '' &&
+                    <p className='joinroom__form-error'> {errorMessage}</p>
+                }
+            </form>
         </div>
     );
 };

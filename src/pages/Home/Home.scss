@@ -1,0 +1,60 @@
+.home {
+    &__title {
+        font-size: 5rem;
+        width: fit-content;
+
+        &-flex-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        &-divider {
+            border: 1px solid black;
+            width: 20rem;
+        }
+
+        &--top {
+            margin-bottom: 0;
+        }
+
+        &--bottom {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    &__form {
+        border: 7px double black;
+        background-color: wheat;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 15rem;
+        margin: 0 auto;
+        padding: 2rem;
+
+        &-label {
+            font-size: 2rem;
+        }
+
+        &-input {
+            margin: .5rem 0;
+            height: 2rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+    }
+
+    &__heading {
+        text-align: center;
+    }
+
+    &__button-container {
+        display: flex;
+        flex-direction: column;
+        width: 20rem;
+        margin: 3rem auto 0;
+        gap: 1.5rem;
+    }
+}
