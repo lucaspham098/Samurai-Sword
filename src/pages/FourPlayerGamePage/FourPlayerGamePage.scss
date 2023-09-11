@@ -5,6 +5,9 @@
         top: 10rem;
         display: flex;
         justify-content: space-between;
+        width: 98vw;
+        margin: 0 auto;
+        transform: translateX(1rem);
 
         &--top {
             position: absolute;

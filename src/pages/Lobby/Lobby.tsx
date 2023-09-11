@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useTransition } from 'react';
 import './Lobby.scss'
 import { Socket } from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom';
+import HomeButton from '../../components/HomeButton/HomeButton';
 
 
 type LobbyProps = {
@@ -96,6 +97,9 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     return (
         <div>
+
+            <HomeButton />
+
             <h1 className='lobby__title'>Room code is {room}</h1>
             <div className="lobby__container">
                 <h2 className='lobby__heading'>Required Players : 3-7</h2>

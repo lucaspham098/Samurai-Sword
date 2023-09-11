@@ -1,0 +1,25 @@
+.home-button {
+
+    font-size: 1rem;
+    margin: 0;
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 4rem;
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    &__divider {
+        border: 1px solid black;
+        width: 4rem;
+        margin: .2rem;
+    }
+}

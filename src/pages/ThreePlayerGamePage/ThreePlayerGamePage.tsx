@@ -519,6 +519,98 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             name: 'Divertion',
             img: divertion
         },
+
+
+
+
+
+
+
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+        {
+            type: 'action',
+            name: 'Divertion',
+            img: divertion
+        },
+
+
+
+
+
+
+
+
+
+
         {
             type: 'action',
             name: 'Breathing',
@@ -643,6 +735,11 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             type: 'property',
             name: 'Armor',
             img: armor
+        },
+        {
+            type: 'property',
+            name: 'Focus',
+            img: focus
         },
         {
             type: 'property',
@@ -1976,7 +2073,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
     useEffect(() => {
         const handleCardPlayer = () => {
 
-            if (turn !== socket.id || !selectedCard || parryModule || ieyasuModule || discardCards) {
+            if (turn !== socket.id || !selectedCard || parryModule || ieyasuModule || discardCards || gameOver) {
                 return
             }
 
@@ -2138,7 +2235,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                         data[indexOfSelectedPlayer()].harmless = true
                     }
 
-                    data[indexOfPlayer].hand = [...data[indexOfPlayer].hand.filter(card => card !== selectedCard), cardTook]
+                    data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, cardTook]
 
                     setActiveCard(null)
                     setCardPlayed(selectedCard)
@@ -3315,7 +3412,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData[indexOfPlayer]?.character.name === 'Nobunaga' && !parryModule &&
                 <>
-                    {turn === socket.id && playersData[indexOfPlayer].health > 1 ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
+                    {turn === socket.id && playersData[indexOfPlayer].health > 1 && !gameOver ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
                 </>
             }
             {turn === socket.id && !parryModule && !ieyasuModule ? <button className='button button--end' onClick={() => endTurn()}>End Turn</button> : <button className='button button--disabled  button--end' disabled>End Turn</button>}

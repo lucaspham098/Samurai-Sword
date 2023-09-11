@@ -1,6 +1,6 @@
 @use '../../styles/partials/colours' as *;
 
-.game-over-module {
+.game-over {
     border: 10px double black;
     position: absolute;
     top: 45%;
@@ -10,4 +10,31 @@
     background-color: $primary-background;
     height: 50%;
     width: 50%;
+    background-color: wheat;
+    padding: 1rem 2rem;
+
+    &__title {
+        text-align: center;
+        margin-top: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    &__heading {
+        text-align: center;
+        margin-top: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    &__score-container {
+        margin-left: 5rem;
+        height: 15rem;
+    }
+
+    &__score {
+        font-size: 1.2rem;
+    }
+
+    &__extra-info {
+        text-align: center;
+    }
 }

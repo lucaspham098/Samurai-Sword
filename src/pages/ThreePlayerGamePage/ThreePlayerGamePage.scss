@@ -2,5 +2,8 @@
     &__flex-container {
         display: flex;
         justify-content: space-between;
+        width: 98vw;
+        margin: 0 auto;
+        transform: translateX(1rem);
     }
 }

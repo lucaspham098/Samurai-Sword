@@ -91,6 +91,7 @@ body {
         &-heading {
             margin: 0;
             font-size: 1.25rem;
+            margin-left: .75rem;
         }
 
         &-flex-container {
@@ -241,7 +242,7 @@ body {
 
         &--heading {
             position: absolute;
-            transform: translate(1rem, -6rem);
+            transform: translate(1.75rem, -6rem);
 
         }
 

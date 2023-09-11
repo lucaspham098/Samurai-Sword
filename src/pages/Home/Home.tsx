@@ -3,6 +3,7 @@ import './Home.scss'
 import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import JoinRoomModal from '../../components/JoinRoomModal';
+import HomeButton from '../../components/HomeButton/HomeButton';
 
 type HomeProp = {
     socket: Socket;
@@ -68,8 +69,12 @@ const Home = ({ socket }: HomeProp) => {
         setJoinRoomError('')
     }
 
+
     return (
         <div>
+
+            <HomeButton />
+
             <div className="home__title-flex-container">
                 <h1 className='home__title home__title--top'>SAMURAI</h1>
                 <div className='home__title-divider'></div>
@@ -78,7 +83,7 @@ const Home = ({ socket }: HomeProp) => {
             {!name &&
                 <form className='home__form' onSubmit={handleFormSubmit}>
                     <label className='home__form-label' htmlFor="playerName">Name</label>
-                    <input className='home__form-input' type="text" name='playerName' />
+                    <input className='home__form-input' type="text" name='playerName' maxLength={8} />
                     <button className='button--form button'>Enter</button>
                 </form>
             }
@@ -90,6 +95,7 @@ const Home = ({ socket }: HomeProp) => {
                     <div className="home__button-container">
                         <button className='button button--home' onClick={() => { roomGenerator() }}>Create Room </button>
                         <button className='button button--home' onClick={() => setJoinRoomModal(true)}>Join Room</button>
+                        <button className='button button--home' onClick={() => { navigate('/rules-&-how-to-play') }}>Rules & How To Play</button>
                     </div>
                 </>
             }
