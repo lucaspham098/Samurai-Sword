@@ -1,5 +1,5 @@
 import './JoinRoomModal.scss'
-import back_button from '../assets/images/icons/back_button.svg'
+import exit_button from '../assets/images/icons/exit_button.svg'
 import React, { FormEvent } from 'react';
 
 type JoinRoomModalProps = {
@@ -14,7 +14,7 @@ const JoinRoomModal = ({ handleSubmit, errorMessage, handleCloseModal, handleRem
     return (
         <div>
             <form className='joinroom__form' onSubmit={handleSubmit}>
-                <img className='joinroom__form-button' src={back_button} alt="back button" onClick={() => { handleCloseModal() }} />
+                <img className='joinroom__form-button' src={exit_button} alt="back button" onClick={() => { handleCloseModal() }} />
                 <label className='joinroom__form-label' htmlFor="room" >Room Code</label>
                 <input className='joinroom__form-input' type="text" name='room' onChange={() => { handleRemoveError() }} />
                 <button className='button button--form'>Join</button>

@@ -110,7 +110,8 @@ const Lobby = ({ socket }: LobbyProps) => {
                         })
                     }
                 </div>
-                {isLeader && <button className='button button--form button--bottom' onClick={onStartGame}>Start Game</button>}
+                {isLeader && playersData.length > 2 && playersData.length < 8 && <button className='button button--form button--bottom' onClick={onStartGame}>Start Game</button>}
+                {isLeader && (playersData.length < 2 || playersData.length > 8) && <button className='button button--form button--bottom button--disabled' onClick={onStartGame}>Start Game</button>}
                 {!isLeader &&
                     <p>Waiting for leader to start game ...</p>
                 }
