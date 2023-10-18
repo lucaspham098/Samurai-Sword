@@ -60,6 +60,7 @@ import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 
@@ -2210,7 +2211,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
                     const newCard = newDrawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
 
-                    if (data[indexOfSelectedPlayer()].harmless === true) {
+                    if (data[indexOfSelectedPlayer()].harmless === true && data[indexOfSelectedPlayer()].health !== 0) {
                         data[indexOfSelectedPlayer()].harmless = false
                     }
 
@@ -2636,6 +2637,7 @@ const FivePlayerGamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <TabTitleChanger />
             <AnnouncementModule
                 newTurn={newTurn}
                 emptyDrawDeck={emptyDrawDeck}

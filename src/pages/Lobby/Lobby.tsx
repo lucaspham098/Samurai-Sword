@@ -3,6 +3,7 @@ import './Lobby.scss'
 import { Socket } from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom';
 import HomeButton from '../../components/HomeButton/HomeButton';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 type LobbyProps = {
@@ -97,7 +98,7 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     return (
         <div>
-
+            <TabTitleChanger />
             <HomeButton />
 
             <h1 className='lobby__title'>Room code is {room}</h1>
@@ -110,8 +111,13 @@ const Lobby = ({ socket }: LobbyProps) => {
                         })
                     }
                 </div>
+<<<<<<< HEAD
                 {isLeader && playersData.length > 2 && playersData.length < 8 && <button className='button button--form button--bottom' onClick={onStartGame}>Start Game</button>}
                 {isLeader && (playersData.length < 2 || playersData.length > 8) && <button className='button button--form button--bottom button--disabled' onClick={onStartGame}>Start Game</button>}
+=======
+                {isLeader && playersData.length >= 3 && <button className='button button--form button--bottom' onClick={onStartGame}>Start Game</button>}
+                {isLeader && playersData.length < 3 && <button className='button button--form button--bottom button--disabled' >Start Game</button>}
+>>>>>>> develop
                 {!isLeader &&
                     <p>Waiting for leader to start game ...</p>
                 }

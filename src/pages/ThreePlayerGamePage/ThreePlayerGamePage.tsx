@@ -60,6 +60,8 @@ import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
+import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
 
 
 
@@ -146,6 +148,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
     const [emptyDrawDeck, setEmptyDrawDeck] = useState<boolean>(false)
 
     const [parryModule, setParryModule] = useState<boolean>(false)
+    const [battlecryJujitsuModule, setBattlecryJujitsuModule] = useState<boolean>(false)
 
     const [battlecryJujitsuArray, setBattlecryJujitsuArray] = useState<PlayersData[]>([])
     const [battlecryJujitsuTurn, setBattlecryJujitsuTurn] = useState<PlayersData | undefined>(undefined)
@@ -856,7 +859,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn, emptyDrawDeck, gameOver, deadlyStrikeNinja }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn, emptyDrawDeck, gameOver, deadlyStrikeNinja, battlecryJujitsuModule }) => {
             console.log('game state updated')
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
@@ -883,6 +886,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setEmptyDrawDeck(emptyDrawDeck)
             setGameOver(gameOver)
             setDeadlyStrikeNinja(deadlyStrikeNinja)
+            setBattlecryJujitsuModule(battlecryJujitsuModule)
         })
 
         socket.on('battlecryPlayed', (battlecryJujitsuArray: PlayersData[]) => {
@@ -900,7 +904,11 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setTurn(socket.id)
         })
 
-
+        socket.on('closeBattlecryJujitsuModule', () => {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 2000);
+        })
     }, [])
 
 
@@ -1070,6 +1078,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             emptyDrawDeck: emptyDrawDeck,
             gameOver: gameOver,
             deadlyStrikeNinja: deadlyStrikeNinja,
+            battlecryJujitsuModule: battlecryJujitsuModule
         }, room)
     }
 
@@ -1425,6 +1434,10 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                 setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
                 socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
             } else {
+                setTimeout(() => {
+                    setBattlecryJujitsuModule(false)
+                }, 2000);
+                socket.emit('closeBattlecryJujitsuModule', room)
                 setTurnBack()
             }
 
@@ -1562,6 +1575,10 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
             socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
         } else {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 2000);
+            socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
 
@@ -1579,12 +1596,16 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            data[indexOfPlayer].harmless = true
-            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
-
-            if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
-                setDeadlyStrikeNinja(true)
+            if (data[indexOfPlayer].honourPoints <= 0) {
+                if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                    setDeadlyStrikeNinja(true)
+                }
+                setGameOver(true)
             }
+
+            data[indexOfPlayer].harmless = true
+
+            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
             setVictim(playersData[indexOfPlayer])
@@ -1606,6 +1627,10 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
             socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
         } else {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 2000);
+            socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
 
@@ -1644,6 +1669,10 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
             socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
         } else {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 2000);
+            socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
 
@@ -1660,9 +1689,12 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            // if (data[indexOfPlayer].honourPoints <= 0) {
-            //     setGameOver(true)
-            // }
+            if (data[indexOfPlayer].honourPoints <= 0) {
+                if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                    setDeadlyStrikeNinja(true)
+                }
+                setGameOver(true)
+            }
             data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
@@ -1694,6 +1726,10 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
             socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
         } else {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 2000);
+            socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
 
@@ -2179,7 +2215,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                     const newCard = newDrawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
 
-                    if (data[indexOfSelectedPlayer()].harmless === true) {
+                    if (data[indexOfSelectedPlayer()].harmless === true && data[indexOfSelectedPlayer()].health !== 0) {
                         data[indexOfSelectedPlayer()].harmless = false
                     }
 
@@ -2305,7 +2341,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
+                    setBattlecryJujitsuModule(true)
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -2352,7 +2388,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
+                    setBattlecryJujitsuModule(true)
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -2581,6 +2617,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <TabTitleChanger />
             <AnnouncementModule
                 newTurn={newTurn}
                 emptyDrawDeck={emptyDrawDeck}
@@ -2650,6 +2687,15 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                 victoryOfTheSwordMaster={victoryOfTheSwordMaster}
                 currentPlayer={currentPlayer}
 
+            />}
+
+            {battlecryJujitsuModule && <BattlecryJujitsuModule
+                cardPlayed={cardPlayed}
+                cardPlayedBy={cardPlayedBy}
+                battlecryInfo={battlecryInfo}
+                jujitsuInfo={jujitsuInfo}
+                battlecryJujitsuTurn={battlecryJujitsuTurn}
+                battlecryJujitsuArray={battlecryJujitsuArray}
             />}
 
             {playersData.length > 0 && playersData[0].socketID === socket.id &&

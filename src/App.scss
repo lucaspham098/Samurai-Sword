@@ -13,6 +13,11 @@ body {
     background-color: $primary-background
 }
 
+.emphasize {
+    font-size: 1.5rem;
+    text-decoration: underline;
+}
+
 .button {
     padding: 1rem 2rem;
     border-radius: 1rem;
@@ -33,6 +38,7 @@ body {
         z-index: 999;
     }
 
+
     &--end {
         position: absolute;
         left: 2rem;
@@ -45,6 +51,7 @@ body {
         bottom: 6rem;
     }
 
+<<<<<<< HEAD
     &--disabled {
         background-color: $disabled;
 
@@ -53,6 +60,8 @@ body {
         }
     }
 
+=======
+>>>>>>> develop
     &--form {
         font-size: 1rem;
     }
@@ -61,6 +70,23 @@ body {
         font-size: 1.5rem;
         padding: 1.5rem 2.5rem;
     }
+<<<<<<< HEAD
+=======
+
+    &:hover {
+        cursor: pointer;
+        background-color: rgb(252, 211, 135);
+    }
+
+    &--disabled {
+        background-color: $disabled;
+
+        &:hover {
+            cursor: default;
+            background-color: $disabled;
+        }
+    }
+>>>>>>> develop
 }
 
 .card {

@@ -60,6 +60,7 @@ import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 
@@ -2308,7 +2309,7 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
                     const newCard = newDrawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
 
-                    if (data[indexOfSelectedPlayer()].harmless === true) {
+                    if (data[indexOfSelectedPlayer()].harmless === true && data[indexOfSelectedPlayer()].health !== 0) {
                         data[indexOfSelectedPlayer()].harmless = false
                     }
 
@@ -2734,6 +2735,7 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <TabTitleChanger />
             <AnnouncementModule
                 newTurn={newTurn}
                 emptyDrawDeck={emptyDrawDeck}
@@ -4927,71 +4929,6 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
 
                     <div className="seven-player-game__flex-container">
                         <div className='game__player-container--bottom'>
-                            <h1 className='game__player-name'>{playersData[3].name}</h1>
-                            {playersData[3].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[3].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[3].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[3].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[3].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[3].character.img} className='game__player-character card ' />
-
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[3].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[3].honourPoints}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[3].hand.length} </p>
-                                    </div>
-                                </div>
-
-                                <div className="game__icon-parent-container">
-                                    {playersData[3].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[3].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[3].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[3].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div className='game__player-container'>
                             <h1 className='game__player-name'>{playersData[5].name}</h1>
                             {playersData[5].harmless &&
                                 <h2 className='game__player-heading'>HARMLESS</h2>
@@ -5049,6 +4986,71 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
                                         </div>
                                     }
                                     {playersData[5].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[3].name}</h1>
+                            {playersData[3].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[3].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[3].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[3].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[3].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[3].character.img} className='game__player-character card ' />
+
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[3].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[3].honourPoints}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[3].hand.length} </p>
+                                    </div>
+                                </div>
+
+                                <div className="game__icon-parent-container">
+                                    {playersData[3].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[3].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[3].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[3].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].bushido &&
                                         <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>
@@ -5145,473 +5147,6 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
             }
 
             {playersData.length > 0 && socket.id === playersData[5].socketID &&
-                <>
-                    <div className="seven-player-game__flex-container--top">
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>{playersData[1].name}</h1>
-                            {playersData[1].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[1].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[1].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[1].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[1].character.img} className='game__player-character card ' />
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[1].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
-                                        </div>
-                                    </div>
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[1].hand.length} </p>
-                                    </div>
-                                </div>
-                                <div className="game__icon-parent-container">
-                                    {playersData[1].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[1].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[1].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[1].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[1].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[1].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[1].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>{playersData[2].name}</h1>
-                            {playersData[2].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[2].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[2].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[2].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[2].character.img} className='game__player-character card ' />
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[2].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
-                                        </div>
-                                    </div>
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[2].hand.length} </p>
-                                    </div>
-                                </div>
-                                <div className="game__icon-parent-container">
-                                    {playersData[2].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[2].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[2].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[2].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[2].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[2].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[2].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>{playersData[3].name}</h1>
-                            {playersData[3].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[3].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[3].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[3].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[3].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[3].character.img} className='game__player-character card ' />
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[3].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[3].honourPoints}</p>
-                                        </div>
-                                    </div>
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[3].hand.length} </p>
-                                    </div>
-                                </div>
-                                <div className="game__icon-parent-container">
-                                    {playersData[3].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[3].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[3].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[3].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[3].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>{playersData[4].name}</h1>
-                            {playersData[4].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[4].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[4].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[4].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[4].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[4].character.img} className='game__player-character card ' />
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[4].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[4].honourPoints}</p>
-                                        </div>
-                                    </div>
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[4].hand.length} </p>
-                                    </div>
-                                </div>
-                                <div className="game__icon-parent-container">
-                                    {playersData[4].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[4].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[4].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[4].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[4].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[4].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[4].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="seven-player-game__flex-container">
-                        <div className='game__player-container--bottom'>
-                            <h1 className='game__player-name'>{playersData[0].name}</h1>
-                            {playersData[0].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[0].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[0].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[0].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[0].character.img} className='game__player-character card ' />
-
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[0].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[0].hand.length} </p>
-                                    </div>
-                                </div>
-
-                                <div className="game__icon-parent-container">
-                                    {playersData[0].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[0].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[0].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[0].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[0].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[0].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[0].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div className='game__player-container'>
-                            <h1 className='game__player-name'>{playersData[5].name}</h1>
-                            {playersData[5].harmless &&
-                                <h2 className='game__player-heading'>HARMLESS</h2>
-                            }
-                            {playersData[5].role.role === 'Shogun' &&
-                                <>
-                                    <div className='game__player-shogun-spacing'>
-                                    </div>
-                                    <div className="game__player-role-container">
-                                        <img src={playersData[5].role.img} className='game__player-role card' />
-                                    </div>
-                                </>
-                            }
-                            <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[5].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
-                                    {currentPlayer?.socketID === playersData[5].socketID &&
-                                        <div className='game__player-turn-indicator'></div>
-                                    }
-                                    <img src={playersData[5].character.img} className='game__player-character card ' />
-
-                                    <div className="game__player-flex-container game__player-flex-container--icon">
-                                        <div className='game__icon-container'>
-                                            <img src={heart} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[5].health}</p>
-                                        </div>
-                                        <div className='game__icon-container'>
-                                            <img src={cherry_blossum} className='game__icon' />
-                                            <p className='game__icon-text'>x {playersData[5].honourPoints}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className='game__icon-container '>
-                                        <img src={cardBack} className='game__icon--card game__icon' />
-                                        <p className='game__icon-text'>x {playersData[5].hand.length} </p>
-                                    </div>
-                                </div>
-
-                                <div className="game__icon-parent-container">
-                                    {playersData[5].focus > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={focus} className='game__player-property card' />
-                                            <p>x {playersData[5].focus}</p>
-                                        </div>
-                                    }
-                                    {playersData[5].armor > 0 &&
-                                        <div className='game__icon-container '>
-                                            <img src={armor} className='game__player-property card' />
-                                            <p>x {playersData[5].armor}</p>
-                                        </div>
-                                    }
-                                    {playersData[5].fastDraw > 0 &&
-                                        <div className='game__icon-container'>
-                                            <img src={fast_draw} className='game__player-property card' />
-                                            <p>x {playersData[5].fastDraw}</p>
-                                        </div>
-                                    }
-                                    {playersData[5].bushido &&
-                                        <img src={bushido} className='game__player-property card' />
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className='game__middle-container'>
-                        <div className='game__deck-container'>
-                            <img src={cardBack} className='game__deck' />
-                            <p className='game__deck-text'>x {drawDeck.length}</p>
-                        </div>
-                        {discardPile.length > 0 &&
-                            <div className='game__deck-container'>
-                                <img src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
-                                <p>x {discardPile.length}</p>
-                            </div>
-                        }
-                    </div>
-
-
-                    <div className='game__user-container'>
-                        <div className="game__user-flex-container">
-                            <div className='game__icon-container'>
-                                <img src={heart} className='game__icon' />
-                                <p className='game__icon-text'>x {playersData[5].health}</p>
-                            </div>
-                            <div className='game__icon-container'>
-                                <img src={cherry_blossum} className='game__icon' />
-                                <p className='game__icon-text'>x {playersData[5].honourPoints}</p>
-                            </div>
-                            <div className='game__icon-container '>
-                                <img src={cardBack} className='game__icon--card game__icon' />
-                                <p className='game__icon-text'>x {playersData[5].hand.length} </p>
-                            </div>
-                        </div>
-                        <div className='game__user-character-container' id={socket.id}>
-                            {playersData[5].harmless &&
-                                <h2 className='game__user--heading'>HARMLESS</h2>
-                            }
-
-                            {currentPlayer?.socketID === playersData[5].socketID &&
-                                <div className='game__user-turn-indicator'></div>
-                            }
-
-                            <div className="game__user-role-container">
-                                <img src={playersData[5].role.img} className='game__user-role card' />
-                            </div>
-
-                            <div className="game__user-character-container">
-                                <img src={playersData[5].character.img} className='game__user-character card' />
-                            </div>
-
-                        </div>
-
-
-                        <div className="game__user-property-container">
-                            {playersData[5].focus > 0 &&
-                                <div className='game__icon-container'>
-                                    <img src={focus} className='game__user-property card' />
-                                    <p className='game__icon-text'>x {playersData[5].focus}</p>
-                                </div>
-                            }
-                            {playersData[5].armor > 0 &&
-                                <div className='game__icon-container'>
-                                    <img src={armor} className='game__user-property card' />
-                                    <p className='game__icon-text'>x {playersData[5].armor}</p>
-                                </div >
-                            }
-                            {playersData[5].fastDraw > 0 &&
-                                <div className='game__icon-container'>
-                                    <img src={fast_draw} className='game__user-property card' />
-                                    <p className='game__icon-text'>x {playersData[5].fastDraw}</p>
-                                </div>
-                            }
-                            {playersData[5].bushido &&
-                                <img src={bushido} className='game__user-property card' />
-                            }
-                        </div>
-
-                        <div className='game__user-hand'>
-                            {playersData[5].hand.length > 0 && playersData[5].hand.map((card: PlayableCard, index) => {
-                                return <img src={card.img} key={index} onClick={() => {
-                                    handleSelectedCard(card, index)
-                                    handleActiveCard(index)
-                                }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
-                            })}
-                        </div>
-                    </div>
-                </>
-            }
-
-            {playersData.length > 0 && socket.id === playersData[6].socketID &&
                 <>
                     <div className="seven-player-game__flex-container--top">
                         <div className='game__player-container'>
@@ -5983,6 +5518,473 @@ const SevenPlayerGamePage = ({ socket }: GamePageProp) => {
                                         </div>
                                     }
                                     {playersData[4].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div className='game__middle-container'>
+                        <div className='game__deck-container'>
+                            <img src={cardBack} className='game__deck' />
+                            <p className='game__deck-text'>x {drawDeck.length}</p>
+                        </div>
+                        {discardPile.length > 0 &&
+                            <div className='game__deck-container'>
+                                <img src={discardPile[discardPile.length - 1].img} className='game__deck game__deck--hover' />
+                                <p>x {discardPile.length}</p>
+                            </div>
+                        }
+                    </div>
+
+
+                    <div className='game__user-container'>
+                        <div className="game__user-flex-container">
+                            <div className='game__icon-container'>
+                                <img src={heart} className='game__icon' />
+                                <p className='game__icon-text'>x {playersData[5].health}</p>
+                            </div>
+                            <div className='game__icon-container'>
+                                <img src={cherry_blossum} className='game__icon' />
+                                <p className='game__icon-text'>x {playersData[5].honourPoints}</p>
+                            </div>
+                            <div className='game__icon-container '>
+                                <img src={cardBack} className='game__icon--card game__icon' />
+                                <p className='game__icon-text'>x {playersData[5].hand.length} </p>
+                            </div>
+                        </div>
+                        <div className='game__user-character-container' id={socket.id}>
+                            {playersData[5].harmless &&
+                                <h2 className='game__user--heading'>HARMLESS</h2>
+                            }
+
+                            {currentPlayer?.socketID === playersData[5].socketID &&
+                                <div className='game__user-turn-indicator'></div>
+                            }
+
+                            <div className="game__user-role-container">
+                                <img src={playersData[5].role.img} className='game__user-role card' />
+                            </div>
+
+                            <div className="game__user-character-container">
+                                <img src={playersData[5].character.img} className='game__user-character card' />
+                            </div>
+
+                        </div>
+
+
+                        <div className="game__user-property-container">
+                            {playersData[5].focus > 0 &&
+                                <div className='game__icon-container'>
+                                    <img src={focus} className='game__user-property card' />
+                                    <p className='game__icon-text'>x {playersData[5].focus}</p>
+                                </div>
+                            }
+                            {playersData[5].armor > 0 &&
+                                <div className='game__icon-container'>
+                                    <img src={armor} className='game__user-property card' />
+                                    <p className='game__icon-text'>x {playersData[5].armor}</p>
+                                </div >
+                            }
+                            {playersData[5].fastDraw > 0 &&
+                                <div className='game__icon-container'>
+                                    <img src={fast_draw} className='game__user-property card' />
+                                    <p className='game__icon-text'>x {playersData[5].fastDraw}</p>
+                                </div>
+                            }
+                            {playersData[5].bushido &&
+                                <img src={bushido} className='game__user-property card' />
+                            }
+                        </div>
+
+                        <div className='game__user-hand'>
+                            {playersData[5].hand.length > 0 && playersData[5].hand.map((card: PlayableCard, index) => {
+                                return <img src={card.img} key={index} onClick={() => {
+                                    handleSelectedCard(card, index)
+                                    handleActiveCard(index)
+                                }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
+                            })}
+                        </div>
+                    </div>
+                </>
+            }
+
+            {playersData.length > 0 && socket.id === playersData[6].socketID &&
+                <>
+                    <div className="seven-player-game__flex-container--top">
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[1].name}</h1>
+                            {playersData[1].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[1].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[1].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[1].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[1].character.img} className='game__player-character card ' />
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[1].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[1].honourPoints}</p>
+                                        </div>
+                                    </div>
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[1].hand.length} </p>
+                                    </div>
+                                </div>
+                                <div className="game__icon-parent-container">
+                                    {playersData[1].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[1].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[1].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[1].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[1].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[1].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[1].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[2].name}</h1>
+                            {playersData[2].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[2].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[2].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[2].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[2].character.img} className='game__player-character card ' />
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[2].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[2].honourPoints}</p>
+                                        </div>
+                                    </div>
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[2].hand.length} </p>
+                                    </div>
+                                </div>
+                                <div className="game__icon-parent-container">
+                                    {playersData[2].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[2].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[2].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[2].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[2].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[2].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[2].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[3].name}</h1>
+                            {playersData[3].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[3].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[3].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[3].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[3].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[3].character.img} className='game__player-character card ' />
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[3].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[3].honourPoints}</p>
+                                        </div>
+                                    </div>
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[3].hand.length} </p>
+                                    </div>
+                                </div>
+                                <div className="game__icon-parent-container">
+                                    {playersData[3].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[3].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[3].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[3].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[3].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[4].name}</h1>
+                            {playersData[4].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[4].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[4].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[4].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[4].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[4].character.img} className='game__player-character card ' />
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[4].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[4].honourPoints}</p>
+                                        </div>
+                                    </div>
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[4].hand.length} </p>
+                                    </div>
+                                </div>
+                                <div className="game__icon-parent-container">
+                                    {playersData[4].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[4].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[4].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[4].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[4].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[4].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[4].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="seven-player-game__flex-container">
+                        <div className='game__player-container--bottom'>
+                            <h1 className='game__player-name'>{playersData[0].name}</h1>
+                            {playersData[0].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[0].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[0].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[0].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[0].character.img} className='game__player-character card ' />
+
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[0].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[0].honourPoints}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[0].hand.length} </p>
+                                    </div>
+                                </div>
+
+                                <div className="game__icon-parent-container">
+                                    {playersData[0].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[0].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[0].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[0].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[0].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[0].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[0].bushido &&
+                                        <img src={bushido} className='game__player-property card' />
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className='game__player-container'>
+                            <h1 className='game__player-name'>{playersData[5].name}</h1>
+                            {playersData[5].harmless &&
+                                <h2 className='game__player-heading'>HARMLESS</h2>
+                            }
+                            {playersData[5].role.role === 'Shogun' &&
+                                <>
+                                    <div className='game__player-shogun-spacing'>
+                                    </div>
+                                    <div className="game__player-role-container">
+                                        <img src={playersData[5].role.img} className='game__player-role card' />
+                                    </div>
+                                </>
+                            }
+                            <div className="game__player-flex-container">
+                                <div className='game__player-character-container' id={playersData[5].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                    {currentPlayer?.socketID === playersData[5].socketID &&
+                                        <div className='game__player-turn-indicator'></div>
+                                    }
+                                    <img src={playersData[5].character.img} className='game__player-character card ' />
+
+                                    <div className="game__player-flex-container game__player-flex-container--icon">
+                                        <div className='game__icon-container'>
+                                            <img src={heart} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[5].health}</p>
+                                        </div>
+                                        <div className='game__icon-container'>
+                                            <img src={cherry_blossum} className='game__icon' />
+                                            <p className='game__icon-text'>x {playersData[5].honourPoints}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className='game__icon-container '>
+                                        <img src={cardBack} className='game__icon--card game__icon' />
+                                        <p className='game__icon-text'>x {playersData[5].hand.length} </p>
+                                    </div>
+                                </div>
+
+                                <div className="game__icon-parent-container">
+                                    {playersData[5].focus > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={focus} className='game__player-property card' />
+                                            <p>x {playersData[5].focus}</p>
+                                        </div>
+                                    }
+                                    {playersData[5].armor > 0 &&
+                                        <div className='game__icon-container '>
+                                            <img src={armor} className='game__player-property card' />
+                                            <p>x {playersData[5].armor}</p>
+                                        </div>
+                                    }
+                                    {playersData[5].fastDraw > 0 &&
+                                        <div className='game__icon-container'>
+                                            <img src={fast_draw} className='game__player-property card' />
+                                            <p>x {playersData[5].fastDraw}</p>
+                                        </div>
+                                    }
+                                    {playersData[5].bushido &&
                                         <img src={bushido} className='game__player-property card' />
                                     }
                                 </div>

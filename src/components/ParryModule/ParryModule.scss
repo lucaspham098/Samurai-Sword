@@ -1,13 +1,25 @@
 .choice-module {
     border: 7px double black;
     width: fit-content;
+    max-width: 25rem;
     position: absolute;
     bottom: 15rem;
     padding: 1.5rem;
-    z-index: 998;
+    z-index: 997;
     left: 50%;
     transform: translateX(-50%);
     background-color: wheat;
+
+    &--battlecry-jujitsu {
+        right: 2rem;
+        position: absolute;
+        border: 7px double black;
+        padding: 1.5rem;
+        z-index: 998;
+        background-color: wheat;
+        bottom: 10rem;
+        width: 20rem;
+    }
 
     &__text {
         font-size: 1rem;
