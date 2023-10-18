@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client'
 import JoinRoomModal from '../../components/JoinRoomModal';
 import HomeButton from '../../components/HomeButton/HomeButton';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 type HomeProp = {
     socket: Socket;
@@ -16,6 +17,7 @@ const Home = ({ socket }: HomeProp) => {
     const [name, setName] = useState<string | null>(null)
     const [joinRoomModal, setJoinRoomModal] = useState<boolean>(false)
     const [joinRoomError, setJoinRoomError] = useState('')
+
 
 
     useEffect(() => {
@@ -72,7 +74,7 @@ const Home = ({ socket }: HomeProp) => {
 
     return (
         <div>
-
+            <TabTitleChanger />
             <HomeButton />
 
             <div className="home__title-flex-container">

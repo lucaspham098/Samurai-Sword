@@ -60,6 +60,7 @@ import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 
@@ -2230,8 +2231,8 @@ const SixPlayerGamePage = ({ socket }: GamePageProp) => {
                     const indexOfCardTook = data[indexOfSelectedPlayer()].hand.indexOf(cardTook)
                     data[indexOfSelectedPlayer()].hand.splice(indexOfCardTook, 1)
 
-                    if (data[indexOfSelectedPlayer()].hand.length === 0) {
-                        data[indexOfSelectedPlayer()].harmless = true
+                    if (data[indexOfSelectedPlayer()].harmless === true && data[indexOfSelectedPlayer()].health !== 0) {
+                        data[indexOfSelectedPlayer()].harmless = false
                     }
 
                     data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, cardTook]
@@ -2700,6 +2701,7 @@ const SixPlayerGamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <TabTitleChanger />
             <AnnouncementModule
                 newTurn={newTurn}
                 emptyDrawDeck={emptyDrawDeck}

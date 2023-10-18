@@ -70,7 +70,7 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
 
             {weaponCardPlayed &&
                 <>
-                    <p className='announcement-module__text'>{cardPlayedBy?.name} attacked {victim?.name} with {cardPlayed?.name} causing {wounds} wound(s)</p>
+                    <p className='announcement-module__text'>{cardPlayedBy?.name} attacked {victim?.name} with {cardPlayed?.name} causing <span className="emphasize">{wounds}</span> wound(s)</p>
                     <p className='announcement-module__text'>Waiting to see if {victim?.name} will Parry</p>
                 </>
             }
@@ -80,7 +80,7 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
 
             }
 
-            {playerHit && <p className='announcement-module__text'>{victim?.name} took {wounds} wound(s) from {cardPlayedBy?.name}</p>}
+            {playerHit && <p className='announcement-module__text'>{victim?.name} took <span className="emphasize">{wounds}</span> wound(s) from {cardPlayedBy?.name}</p>}
 
             {cardPlayed?.name === "Divertion" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} against {victim?.name}</p>}
 

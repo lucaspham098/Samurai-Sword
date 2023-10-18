@@ -62,7 +62,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
         <div className='choice-module'>
             {cardPlayed?.type === 'weapon' && victim?.character.name !== 'Hanzo' && !discardCards &&
                 <>
-                    <p className='choice-module__text'>Parry the attack or suffer {wounds} wound(s)</p>
+                    <p className='choice-module__text'>Parry the attack or suffer <span className="emphasize">{wounds}</span> wound(s)</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleParry()}>Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleGetAttacked()}>Get Attacked</button>
                 </>
@@ -70,7 +70,7 @@ const ParryModule = ({ indexOfPlayer, playersData, currentPlayer, wounds, indexO
 
             {cardPlayed?.type === 'weapon' && victim?.character.name === 'Hanzo' && !discardCards &&
                 <>
-                    <p className='choice-module__text'>Either discard a Parry, select a Weapon in your hand to use as Parry (unless it is your last card), or suffer {wounds} wound(s)</p>
+                    <p className='choice-module__text'>Either discard a Parry, select a Weapon in your hand to use as Parry (unless it is your last card), or suffer <span className="emphasize">{wounds}</span> wound(s)</p>
                     {indexOfParry !== -1 ? <button className='button--small' onClick={() => handleParry()}>Parry</button> : <button className='button--small button--disabled' disabled>Parry</button>}
                     <button className='button--small' onClick={() => handleGetAttacked()}>Get Attacked</button>
                 </>

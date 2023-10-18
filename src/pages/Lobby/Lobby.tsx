@@ -3,6 +3,7 @@ import './Lobby.scss'
 import { Socket } from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom';
 import HomeButton from '../../components/HomeButton/HomeButton';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 type LobbyProps = {
@@ -97,7 +98,7 @@ const Lobby = ({ socket }: LobbyProps) => {
 
     return (
         <div>
-
+            <TabTitleChanger />
             <HomeButton />
 
             <h1 className='lobby__title'>Room code is {room}</h1>

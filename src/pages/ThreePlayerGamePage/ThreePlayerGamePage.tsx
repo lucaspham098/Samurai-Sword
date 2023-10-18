@@ -60,6 +60,7 @@ import ronin from '../../assets/images/roles/ronin.jpeg'
 import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 
 
@@ -519,98 +520,6 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             name: 'Divertion',
             img: divertion
         },
-
-
-
-
-
-
-
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-        {
-            type: 'action',
-            name: 'Divertion',
-            img: divertion
-        },
-
-
-
-
-
-
-
-
-
-
         {
             type: 'action',
             name: 'Breathing',
@@ -1671,12 +1580,16 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            data[indexOfPlayer].harmless = true
-            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
-
-            if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
-                setDeadlyStrikeNinja(true)
+            if (data[indexOfPlayer].honourPoints <= 0) {
+                if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                    setDeadlyStrikeNinja(true)
+                }
+                setGameOver(true)
             }
+
+            data[indexOfPlayer].harmless = true
+
+            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
             setDeath(true)
             setVictim(playersData[indexOfPlayer])
@@ -1752,9 +1665,12 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         if (data[indexOfPlayer].health - wounds === 0) {
             data[indexOfPlayer].health = 0
             data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            // if (data[indexOfPlayer].honourPoints <= 0) {
-            //     setGameOver(true)
-            // }
+            if (data[indexOfPlayer].honourPoints <= 0) {
+                if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
+                    setDeadlyStrikeNinja(true)
+                }
+                setGameOver(true)
+            }
             data[indexOfPlayer].harmless = true
             data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
 
@@ -2271,7 +2187,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                     const newCard = newDrawDeck.pop()
                     data[indexOfSelectedPlayer()].hand.push(newCard as PlayableCard)
 
-                    if (data[indexOfSelectedPlayer()].harmless === true) {
+                    if (data[indexOfSelectedPlayer()].harmless === true && data[indexOfSelectedPlayer()].health !== 0) {
                         data[indexOfSelectedPlayer()].harmless = false
                     }
 
@@ -2673,6 +2589,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
     return (
         <>
+            <TabTitleChanger />
             <AnnouncementModule
                 newTurn={newTurn}
                 emptyDrawDeck={emptyDrawDeck}

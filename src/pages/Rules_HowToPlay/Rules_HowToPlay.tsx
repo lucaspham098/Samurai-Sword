@@ -12,8 +12,8 @@ import rules_7 from '../../assets/images/rules/rules_7.jpeg'
 import rules_8 from '../../assets/images/rules/rules_8.jpeg'
 import rules_9 from '../../assets/images/rules/rules_9.jpeg'
 import rules_10 from '../../assets/images/rules/rules_10.jpeg'
-import { useSearchParams } from 'react-router-dom';
 import HomeButton from '../../components/HomeButton/HomeButton';
+import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 
 const Rules_HowToPlay = () => {
 
@@ -79,7 +79,7 @@ const Rules_HowToPlay = () => {
 
     return (
         <div>
-
+            <TabTitleChanger />
             <HomeButton />
 
             <h1 className='rules__title'>Rules & How To Play</h1>
