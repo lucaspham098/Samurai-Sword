@@ -1,8 +1,8 @@
 import React from 'react';
-import './BattlecryJujitsuAnnouncementModule.scss'
+import './BattlecryJujitsuModule.scss'
 
 type BattlecryJujitsuAnnouncementModuleProps = {
-    cardPlayed: PlayableCard
+    cardPlayed: PlayableCard | undefined
     cardPlayedBy: PlayersData | undefined
     battlecryInfo: string[]
     jujitsuInfo: string[]
@@ -47,29 +47,29 @@ const BattlecryJujitsuAnnouncementModule = ({ cardPlayed, cardPlayedBy, battlecr
     return (
         <div className='battlecry-jujitsu-module'>
 
-            {cardPlayed.name === 'Battlecry' && battlecryJujitsuArray.length > 0 &&
+            {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length > 0 &&
                 <h2 className='battlecry-jujitsu-module__title'>It is {battlecryJujitsuTurn?.name}'s turn to resolve {cardPlayedBy?.name}'s Battlecry</h2>
             }
 
-            {cardPlayed.name === 'Battlecry' && battlecryJujitsuArray.length === 0 &&
+            {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length === 0 &&
                 <h2 className='battlecry-jujitsu-module__title'>All players have resolved {cardPlayedBy?.name}'s Battlecry</h2>
             }
 
-            {cardPlayed.name === 'Battlecry' && battlecryInfo.length < 0 &&
+            {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 &&
                 battlecryInfo.map((info, index) => {
                     return <p className='battlecry-jujitsu-module__text' key={index}>{info}</p>
                 })
             }
 
-            {cardPlayed.name === 'Jujitsu' && battlecryJujitsuArray.length > 0 &&
+            {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length > 0 &&
                 <h2 className='battlecry-jujitsu-module__title'>It is {battlecryJujitsuTurn?.name}'s turn to resolve {cardPlayedBy?.name}'s Jujitsu</h2>
             }
 
-            {cardPlayed.name === 'Battlecry' && battlecryJujitsuArray.length === 0 &&
+            {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length === 0 &&
                 <h2 className='battlecry-jujitsu-module__title'>All players have resolved {cardPlayedBy?.name}'s Jujitsu</h2>
             }
 
-            {cardPlayed.name === 'Battlecry' && jujitsuInfo.length < 0 &&
+            {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length > 0 &&
                 jujitsuInfo.map((info, index) => {
                     return <p className='battlecry-jujitsu-module__text' key={index}>{info}</p>
                 })

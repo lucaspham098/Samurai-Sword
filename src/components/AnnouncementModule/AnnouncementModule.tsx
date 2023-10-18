@@ -87,24 +87,24 @@ const AnnouncementModule = ({ newTurn, emptyDrawDeck, currentPlayer, cardPlayedB
             {cardPlayed?.name === "Breathing" && <p className='announcement-module__text'>{cardPlayedBy?.name} used {cardPlayed.name} and healed to full health and chose {victim?.name} to draw a card</p>}
 
             {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length > 0 &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Parry or suffering a wound. It is {battlecryJujitsuTurn?.name}'s turn to resolve Battlecry</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Parry or suffering a wound.</p>
             }
 
             {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length > 0 &&
-                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Weapon or suffering a wound. It is {battlecryJujitsuTurn?.name}'s turn to resolve the Jujitsu</p>
+                <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed.name}. Players will take turns discarding a Weapon or suffering a wound.</p>
             }
 
             {cardPlayed?.name === 'Battlecry' && battlecryJujitsuArray.length === 0 && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s battlecry</p>}
 
             {cardPlayed?.name === 'Jujitsu' && battlecryJujitsuArray.length === 0 && <p className='announcement-module__text'>All players have resolved {cardPlayedBy?.name}'s jujitsu</p>}
-
+            {/* 
             {cardPlayed?.name === 'Battlecry' && battlecryInfo.length > 0 && battlecryInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
             })}
 
             {cardPlayed?.name === 'Jujitsu' && jujitsuInfo.length > 0 && jujitsuInfo.map((info, index) => {
                 return <p key={index}>{info}</p>
-            })}
+            })} */}
 
             {actionCardPlayed && !!cardPlayed && cardPlayed?.name !== 'Divertion' && cardPlayed?.name !== 'Breathing' && cardPlayed?.name !== 'Battlecry' && cardPlayed?.name !== 'Jujitsu' && cardPlayed?.name !== 'Geisha' &&
                 <p className='announcement-module__text'>{cardPlayedBy?.name} played {cardPlayed?.name}</p>

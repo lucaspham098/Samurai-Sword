@@ -1,4 +1,25 @@
 .battlecry-jujitsu-module {
     border: 7px double black;
     background-color: wheat;
+    position: absolute;
+    width: 35vw;
+    left: 50%;
+    top: 35%;
+    min-height: 10rem;
+    height: fit-content;
+    transform: translate(-50%);
+    z-index: 998;
+    padding: 1rem;
+
+    &__title {
+        text-align: center;
+    }
+
+    &__text {
+        margin-left: 1rem;
+
+        &:first-of-type {
+            margin-top: 2rem;
+        }
+    }
 }
