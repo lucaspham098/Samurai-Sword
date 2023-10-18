@@ -1,5 +1,6 @@
 import React from 'react';
 import './GameOverModule.scss'
+import { useNavigate } from 'react-router-dom';
 
 type GameOverModuleProps = {
     winner: string
@@ -46,6 +47,9 @@ interface Role {
 }
 
 const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNinja, deadlyStrikeShogun, victoryOfTheSwordMaster, currentPlayer, teamRoninInfo }: GameOverModuleProps) => {
+
+    const navigate = useNavigate()
+
     return (
         <div className='game-over'>
             {!victoryOfTheSwordMaster &&
@@ -76,6 +80,9 @@ const GameOverModule = ({ winner, teamNinjaInfo, teamShogunInfo, deadlyStrikeNin
             {deadlyStrikeShogun &&
                 <p className='game-over__extra-info'>Team Shogun lost 3 honour points due to deadly strike rule</p>
             }
+            <div className='game-over__button-container'>
+                <button className='button button--form' onClick={() => navigate('/')}> Return to Main Menu</button>
+            </div>
         </div>
     );
 };

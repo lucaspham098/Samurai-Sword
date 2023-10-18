@@ -907,7 +907,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         socket.on('closeBattlecryJujitsuModule', () => {
             setTimeout(() => {
                 setBattlecryJujitsuModule(false)
-            }, 1500);
+            }, 2000);
         })
     }, [])
 
@@ -1436,7 +1436,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
             } else {
                 setTimeout(() => {
                     setBattlecryJujitsuModule(false)
-                }, 1500);
+                }, 2000);
                 socket.emit('closeBattlecryJujitsuModule', room)
                 setTurnBack()
             }
@@ -1577,7 +1577,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         } else {
             setTimeout(() => {
                 setBattlecryJujitsuModule(false)
-            }, 1500);
+            }, 2000);
             socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
@@ -1629,7 +1629,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         } else {
             setTimeout(() => {
                 setBattlecryJujitsuModule(false)
-            }, 1500);
+            }, 2000);
             socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
@@ -1671,7 +1671,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         } else {
             setTimeout(() => {
                 setBattlecryJujitsuModule(false)
-            }, 1500);
+            }, 2000);
             socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }
@@ -1728,7 +1728,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
         } else {
             setTimeout(() => {
                 setBattlecryJujitsuModule(false)
-            }, 1500);
+            }, 2000);
             socket.emit('closeBattlecryJujitsuModule', room)
             setTurnBack()
         }

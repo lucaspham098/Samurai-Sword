@@ -10,6 +10,8 @@
     background-color: $primary-background;
     height: 50%;
     width: 50%;
+    max-width: 45rem;
+    min-width: 35rem;
     background-color: wheat;
     padding: 1rem 2rem;
 
@@ -36,5 +38,11 @@
 
     &__extra-info {
         text-align: center;
+    }
+
+    &__button-container {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
     }
 }

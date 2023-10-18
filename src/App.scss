@@ -31,11 +31,8 @@ body {
         border: 3px solid black;
         background-color: $button;
         z-index: 999;
-
-        &:hover {
-            cursor: pointer;
-        }
     }
+
 
     &--end {
         position: absolute;
@@ -49,10 +46,6 @@ body {
         bottom: 6rem;
     }
 
-    &--disabled {
-        background-color: $disabled;
-    }
-
     &--form {
         font-size: 1rem;
     }
@@ -64,6 +57,16 @@ body {
 
     &:hover {
         cursor: pointer;
+        background-color: rgb(252, 211, 135);
+    }
+
+    &--disabled {
+        background-color: $disabled;
+
+        &:hover {
+            cursor: default;
+            background-color: $disabled;
+        }
     }
 }
 
