@@ -61,7 +61,7 @@ import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
 import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
-
+import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
 
 
 type GamePageProp = {
@@ -148,6 +148,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
     const [emptyDrawDeck, setEmptyDrawDeck] = useState<boolean>(false)
 
     const [parryModule, setParryModule] = useState<boolean>(false)
+    const [battlecryJujitsuModule, setBattlecryJujitsuModule] = useState<boolean>(false)
 
     const [battlecryJujitsuArray, setBattlecryJujitsuArray] = useState<PlayersData[]>([])
     const [battlecryJujitsuTurn, setBattlecryJujitsuTurn] = useState<PlayersData | undefined>(undefined)
@@ -850,7 +851,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
 
         })
 
-        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn, emptyDrawDeck, gameOver, deadlyStrikeNinja, deadlyStrikeShogun }) => {
+        socket.on('updateGameState', ({ playersData, discardPile, drawDeck, currentPlayer, cardPlayedBy, victim, wounds, cardPlayed, newTurn, parryPlayed, weaponCardPlayed, actionCardPlayed, propertyCardPlayed, playerHit, battlecryInfo, jujitsuInfo, bushidoWeapon, bushidoInfo, geishaInfo, death, battlecryJujitsuArray, battlecryJujitsuTurn, emptyDrawDeck, gameOver, deadlyStrikeNinja, deadlyStrikeShogun, battlecryJujitsuModule }) => {
             console.log('game state updated')
             setPlayersData(playersData)
             setDrawDeck(drawDeck)
@@ -878,6 +879,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setGameOver(gameOver)
             setDeadlyStrikeNinja(deadlyStrikeNinja)
             setDeadlyStrikeShogun(deadlyStrikeShogun)
+            setBattlecryJujitsuModule(battlecryJujitsuModule)
         })
 
         socket.on('battlecryPlayed', (battlecryJujitsuArray: PlayersData[]) => {
@@ -895,6 +897,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setTurn(socket.id)
         })
 
+        socket.on('closeBattlecryJujitsuModule', () => {
+            setTimeout(() => {
+                setBattlecryJujitsuModule(false)
+            }, 1500);
+        })
 
     }, [])
 
@@ -1101,6 +1108,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             gameOver: gameOver,
             deadlyStrikeNinja: deadlyStrikeNinja,
             deadlyStrikeShogun: deadlyStrikeShogun,
+            battlecryJujitsuModule: battlecryJujitsuModule
         }, room)
     }
 
@@ -1412,6 +1420,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                 setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
                 socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
             } else {
+                socket.on('closeBattlecryJujitsuModule', () => {
+                    setTimeout(() => {
+                        setBattlecryJujitsuModule(false)
+                    }, 1500);
+                })
                 setTurnBack()
             }
 
@@ -1555,6 +1568,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
             socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
         } else {
+            socket.on('closeBattlecryJujitsuModule', () => {
+                setTimeout(() => {
+                    setBattlecryJujitsuModule(false)
+                }, 1500);
+            })
             setTurnBack()
         }
 
@@ -1611,6 +1629,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
             socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
         } else {
+            socket.on('closeBattlecryJujitsuModule', () => {
+                setTimeout(() => {
+                    setBattlecryJujitsuModule(false)
+                }, 1500);
+            })
             setTurnBack()
         }
 
@@ -1649,6 +1672,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
             socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
         } else {
+            socket.on('closeBattlecryJujitsuModule', () => {
+                setTimeout(() => {
+                    setBattlecryJujitsuModule(false)
+                }, 1500);
+            })
             setTurnBack()
         }
         setTimeout(() => {
@@ -1708,6 +1736,11 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
             setBattlecryJujitsuTurn(jujitsuArray[jujitsuArray.length - 1])
             socket.emit('jujitsuPlayed', jujitsuArray[jujitsuArray.length - 1].socketID, jujitsuArray)
         } else {
+            socket.on('closeBattlecryJujitsuModule', () => {
+                setTimeout(() => {
+                    setBattlecryJujitsuModule(false)
+                }, 1500);
+            })
             setTurnBack()
         }
         setTimeout(() => {
@@ -2291,7 +2324,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
+                    setBattlecryJujitsuModule(true)
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -2338,7 +2371,7 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                     setBushidoInfo(undefined)
                     setBushidoWeapon(undefined)
                     setDeath(false)
-
+                    setBattlecryJujitsuModule(true)
                     setSelectedCard(undefined)
                     setBattlecryInfo([])
                     setJujitsuInfo([])
@@ -2661,6 +2694,15 @@ const FourPlayerGamePage = ({ socket }: GamePageProp) => {
                 deadlyStrikeShogun={deadlyStrikeShogun}
                 victoryOfTheSwordMaster={victoryOfTheSwordMaster}
                 currentPlayer={currentPlayer}
+            />}
+
+            {battlecryJujitsuModule && <BattlecryJujitsuModule
+                cardPlayed={cardPlayed}
+                cardPlayedBy={cardPlayedBy}
+                battlecryInfo={battlecryInfo}
+                jujitsuInfo={jujitsuInfo}
+                battlecryJujitsuTurn={battlecryJujitsuTurn}
+                battlecryJujitsuArray={battlecryJujitsuArray}
             />}
 
             {playersData.length > 0 && playersData[0].socketID === socket.id &&
