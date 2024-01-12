@@ -7,6 +7,12 @@ import ParryModule from '../../components/ParryModule/ParryModule';
 import IeyasuModule from '../../components/IeyasuModule/IeyasuModule';
 import GameOverModule from '../../components/GameOverModule/GameOverModule';
 
+import { Role } from '../../utils/types/Roles';
+import { Character } from '../../utils/types/Character';
+import { PlayableCard } from '../../utils/types/PlayableCard';
+import { PlayersData } from '../../utils/types/PlayersData';
+
+
 import heart from '../../assets/images/icons/heart.svg'
 import cherry_blossum from '../../assets/images/icons/cherry_blossum.svg'
 
@@ -64,47 +70,13 @@ import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
 import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
 
 
+import handleParry from '../../utils/GameFunctions/handleParry';
+
 
 type GamePageProp = {
     socket: Socket
 }
 
-interface PlayersData {
-    name: string,
-    socketID: string,
-    role: Role,
-    character: Character,
-    hand: PlayableCard[],
-    attacks: number,
-    health: number,
-    honourPoints: number
-    focus: number,
-    armor: number,
-    fastDraw: number,
-    bushido: boolean,
-    harmless: boolean
-}
-
-interface PlayableCard {
-    type: string;
-    name: string;
-    range?: number;
-    damage?: number;
-    img: string
-}
-
-interface Character {
-    name: string;
-    health: number;
-    img: string
-}
-
-interface Role {
-    role: string;
-    team: string;
-    stars?: number;
-    img: string
-}
 
 const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
