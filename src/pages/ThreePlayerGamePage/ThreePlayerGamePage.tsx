@@ -12,6 +12,20 @@ import { Character } from '../../utils/types/Character';
 import { PlayableCard } from '../../utils/types/PlayableCard';
 import { PlayersData } from '../../utils/types/PlayersData';
 
+import shuffle from '../../utils/GameFunctions/shuffle';
+import handleSelectedPlayer from '../../utils/GameFunctions/handleSelectedPlayer';
+import handleSelectedCard from '../../utils/GameFunctions/handleSelectedCard';
+import indexOfSelectedPlayer from '../../utils/GameFunctions/indexOfSelectedPlayer';
+import indexOfCurrentPlayer from '../../utils/GameFunctions/indexOfCurrentPlayer';
+import randomCard from '../../utils/GameFunctions/randomCard';
+import handleEmptyDrawDeck from '../../utils/GameFunctions/handleEmptyDrawDeck';
+import handleParry from '../../utils/GameFunctions/handleParry';
+import handleNobunaga from '../../utils/GameFunctions/handleNobunaga';
+import handleNewTurn from '../../utils/GameFunctions/ThreePlayerFunctions/handleNewTurn';
+import drawCardFromDiscard3Player from '../../utils/GameFunctions/ThreePlayerFunctions/handleDrawCardFromDiscard3Player';
+import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
+import handleGetAttacked from '../../utils/GameFunctions/ThreePlayerFunctions/handleGetAttacked';
+import handleBattlecryDiscard from '../../utils/GameFunctions/handleBattlecryDiscard';
 
 import heart from '../../assets/images/icons/heart.svg'
 import cherry_blossum from '../../assets/images/icons/cherry_blossum.svg'
@@ -67,10 +81,11 @@ import samurai from '../../assets/images/roles/samurai.jpeg'
 import shogun from '../../assets/images/roles/shogun.jpeg'
 import PlayerSelectionModule from '../../components/PlayerSelectionModule/PlayerSelectionModule';
 import TabTitleChanger from '../../components/TabTitleChanger/TabTitleChanger';
-import BattlecryJujitsuModule from '../../components/BattlecryJujitsuModule/BattlecryJujitsuModule';
+import handleBattlecryWound3Player from '../../utils/GameFunctions/ThreePlayerFunctions/handleBattlecryWound3Player';
 
 
-import handleParry from '../../utils/GameFunctions/handleParry';
+
+
 
 
 type GamePageProp = {
@@ -766,15 +781,6 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
     ]
 
-    const shuffle = (arr: object[]): object[] => {
-        for (let i = arr.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            let temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-        return arr
-    }
 
 
     socket.on('initGameState', (playersData: PlayersData[]) => {
@@ -1070,547 +1076,153 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
     }, [playersData])
 
 
-    const handleSelectedPlayer = (target: HTMLDivElement) => {
-        if (turn === socket.id && selectingPlayer) {
-            setSelectedPlayer(target.id)
-        }
+    const handleSelectedPlayerClick = (targetID: string) => {
+        handleSelectedPlayer(turn, socket.id, targetID, selectingPlayer, setSelectedPlayer)
     }
 
-    const handleSelectedCard = (card: PlayableCard, index: number) => {
-        if (turn === socket.id) {
-            setSelectedCard(card)
-            setActiveCard(null)
-
-            if (discardCards) {
-                setActiveCard(null)
-                const data = [...playersData]
-                setDiscardPile([...discardPile, card])
-                data[indexOfPlayer].hand.splice(index, 1)
-                setPlayersData(data)
-                setSelectedCard(undefined)
-                if (data[indexOfPlayer].hand.length === 7) {
-                    setParryModule(false)
-                    setDiscardCards(false)
-                    setTimeout(() => {
-                        endTurn()
-                    }, 100);
-                }
-            }
-
-            if (card.type === 'weapon' && turn === socket.id && jujitsuInEffect) {
-                handleJujitsuDiscard(card, index)
-                setJujitsuInEffect(false)
-                setSelectedCard(undefined)
-                setActiveCard(null)
-
-            }
-
-            if (card.type === 'weapon' && turn === socket.id && bushidoWeapon) {
-                handleBushidoDiscard(card, index)
-                setBushidoWeapon(undefined)
-                setSelectedCard(undefined)
-                setActiveCard(null)
-
-            }
-
-            if (card.type === 'weapon' && turn === socket.id && (weaponCardPlayed || cardPlayed?.name === 'Battlecry') && parryModule && playersData[indexOfPlayer].character.name === "Hanzo" && playersData[indexOfPlayer].hand.length > 1) {
-                handleHanzoWeaponParry(card, index)
-                setSelectedCard(undefined)
-                setActiveCard(null)
-
-            }
-
-
-        }
+    const handleSelectedCardClick = (card: PlayableCard, index: number) => {
+        handleSelectedCard(card, index, turn, socket.id, setSelectedCard, setActiveCard, discardCards, playersData, setDiscardPile, discardPile, indexOfPlayer, setPlayersData, setParryModule, setDiscardCards, endTurn, jujitsuInEffect, handleJujitsuDiscard, setJujitsuInEffect, bushidoWeapon, handleBushidoDiscard, setBushidoWeapon, weaponCardPlayed, cardPlayed, parryModule, battlecryInfo, battlecryJujitsuArray, setBattlecryJujitsuArray, setBattlecryInfo, setBattlecryJujitsuTurn, socket, setBattlecryJujitsuModule, setTurnBack, setTurn, setWeaponCardPlayed, setParryPlayed, room)
 
     }
 
-    const handleActiveCard = (cardIndex: number) => {
-        if (currentPlayer?.socketID === socket.id && !bushidoWeapon && !discardCards) {
-            setActiveCard(cardIndex === activeCard ? null : cardIndex)
-        }
-    }
+    // const handleActiveCard = (cardIndex: number) => {
+    //     if (currentPlayer?.socketID === socket.id && !bushidoWeapon && !discardCards) {
+    //         setActiveCard(cardIndex === activeCard ? null : cardIndex)
+    //     }
+    // }
 
-    const indexOfSelectedPlayer: () => number = () => {
-        return playersData.findIndex(player => player.socketID === selectedPlayer)
-    }
+    // const indexOfSelectedPlayer = () => {
+    //     return playersData.findIndex(player => player.socketID === selectedPlayer)
+    // }
 
-    const indexOfCurrentPlayer = () => {
-        return playersData.findIndex(player => player.socketID == currentPlayer?.socketID)
-    }
+    // const indexOfCurrentPlayer = () => {
+    //     return playersData.findIndex(player => player.socketID == currentPlayer?.socketID)
+    // }
 
-    const indexOfSelectedCard: () => number = () => {
-        if (selectedCard) {
-            return playersData[indexOfPlayer].hand.indexOf(selectedCard)
-        } else return -1
-    }
+    // const indexOfSelectedCard: () => number = () => {
+    //     if (selectedCard) {
+    //         return playersData[indexOfPlayer].hand.indexOf(selectedCard)
+    //     } else return -1
+    // }
 
-    const randomCard: (arr: PlayableCard[]) => number = (arr) => {
-        const randomIndex = Math.floor(Math.random() * arr.length)
-        return randomIndex
-    }
+    // const randomCard: (arr: PlayableCard[]) => number = (arr) => {
+    //     const randomIndex = Math.floor(Math.random() * arr.length)
+    //     return randomIndex
+    // }
 
 
     useEffect(() => {
-        if (drawDeck.length === 0 && playersData.length > 0 && !gameOver) {
-            const data = [...playersData];
-            data.map(player => player.honourPoints = player.honourPoints - 1)
-            if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                setGameOver(true)
-            }
-            setDrawDeck(shuffle(discardPile) as PlayableCard[])
-            setDiscardPile([])
-            setEmptyDrawDeck(true)
-            setPlayersData(data)
-        }
+        handleEmptyDrawDeck(drawDeck, playersData, gameOver, setGameOver, setDrawDeck, discardPile, setDiscardPile, setEmptyDrawDeck, setPlayersData,)
     }, [drawDeck])
 
-    const drawCards = (number: number) => {
-        if (playersData.length > 0 && !gameOver) {
-            const data = [...playersData];
-            const newCards: PlayableCard[] = [];
-            let newDrawDeck = [...drawDeck]
+    // const drawCards = (number: number) => {
+    //     if (playersData.length > 0 && !gameOver) {
+    //         const data = [...playersData];
+    //         const newCards: PlayableCard[] = [];
+    //         let newDrawDeck = [...drawDeck]
 
-            for (let i = 0; i < number; i++) {
-                if (newDrawDeck.length === 0) {
-                    setEmptyDrawDeck(true)
-                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                    setDiscardPile([])
-                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                        setGameOver(true)
-                        break
-                    }
-                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                    newCards.push(newDrawDeck.pop() as PlayableCard)
+    //         for (let i = 0; i < number; i++) {
+    //             if (newDrawDeck.length === 0) {
+    //                 setEmptyDrawDeck(true)
+    //                 data.map(player => player.honourPoints = player.honourPoints - 1)
+    //                 setDiscardPile([])
+    //                 if (data.filter(player => player.honourPoints <= 0).length > 0) {
+    //                     setGameOver(true)
+    //                     break
+    //                 }
+    //                 newDrawDeck = shuffle(discardPile) as PlayableCard[]
+    //                 newCards.push(newDrawDeck.pop() as PlayableCard)
 
-                } else {
-                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                }
-            }
+    //             } else {
+    //                 newCards.push(newDrawDeck.pop() as PlayableCard);
+    //             }
+    //         }
 
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
-            setDrawDeck(newDrawDeck)
-            setPlayersData(data);
+    //         data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
+    //         setDrawDeck(newDrawDeck)
+    //         setPlayersData(data);
 
-            if (ieyasuModule === true) {
-                setIeyasuModule(false);
-            }
-        }
-    };
+    //         if (ieyasuModule === true) {
+    //             setIeyasuModule(false);
+    //         }
+    //     }
+    // };
 
-    const handleNobunaga = () => {
-        const data = [...playersData]
-        if (data[indexOfPlayer].health > 1) {
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, drawDeck.pop() as PlayableCard]
-            data[indexOfPlayer].health = data[indexOfPlayer].health - 1
-
-            setPlayersData(data)
-        }
-
+    const handleNobunagaClick = () => {
+        handleNobunaga(playersData, indexOfPlayer, drawDeck, setPlayersData)
     }
 
 
     useEffect(() => {
-        if (turn === socket.id && newTurn) {
-
-            if (playersData[indexOfPlayer]?.harmless === true) {
-                const data = [...playersData]
-                data[indexOfPlayer].harmless = false
-                setPlayersData(data)
-            }
-
-            if (playersData[indexOfPlayer]?.health === 0) {
-                const data = [...playersData]
-                data[indexOfPlayer].health = data[indexOfPlayer].character.health
-                setPlayersData(data)
-            }
-
-            if (playersData[indexOfPlayer]?.bushido === true) {
-                let newDrawDeck = [...drawDeck]
-                const drawnCard = newDrawDeck.pop() as PlayableCard
-
-                setDiscardPile([...discardPile, drawnCard])
-
-
-                if (drawnCard.type === 'weapon') {
-                    setDrawDeck(newDrawDeck)
-                    setWeaponCardPlayed(false)
-                    setActionCardPlayed(false)
-                    setPropertyCardPlayed(false)
-                    setPlayerHit(false)
-                    setParryPlayed(false)
-                    setBushidoInfo(undefined)
-                    setBushidoWeapon(true)
-
-                    setTimeout(() => {
-                        setParryModule(true)
-                    }, 100);
-                }
-                else {
-                    setWeaponCardPlayed(false)
-                    setActionCardPlayed(false)
-                    setPropertyCardPlayed(false)
-                    setPlayerHit(false)
-                    setParryPlayed(false)
-                    setBushidoInfo(undefined)
-                    setBushidoWeapon(false)
-
-                    const data = [...playersData]
-                    data[indexOfPlayer].bushido = false
-                    if (!!playersData[indexOfPlayer + 1]) {
-                        data[indexOfPlayer + 1].bushido = true
-                    } else {
-                        data[0].bushido = true
-                    }
-
-                    if (playersData[indexOfPlayer]?.character.name === "Ieyasu") {
-                        setIeyasuModule(true)
-                    } else {
-                        const newCards: PlayableCard[] = [];
-                        if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' && playersData[indexOfPlayer]?.role.role === 'Shogun') {
-
-                            for (let i = 0; i < 4; i++) {
-                                if (newDrawDeck.length === 0) {
-                                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                                    setEmptyDrawDeck(true)
-                                    setDiscardPile([])
-                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                                        setGameOver(true)
-                                        break
-                                    }
-                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                                    newCards.push(newDrawDeck.pop() as PlayableCard)
-
-                                } else {
-                                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                                }
-                            }
-
-                        } else if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' || playersData[indexOfPlayer]?.role.role === 'Shogun') {
-
-                            for (let i = 0; i < 3; i++) {
-                                if (newDrawDeck.length === 0) {
-                                    setEmptyDrawDeck(true)
-                                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                                    setDiscardPile([])
-                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                                        setGameOver(true)
-                                        break
-                                    }
-                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                                    newCards.push(newDrawDeck.pop() as PlayableCard)
-
-                                } else {
-                                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                                }
-                            }
-
-                        } else {
-                            for (let i = 0; i < 2; i++) {
-                                if (newDrawDeck.length === 0) {
-                                    setEmptyDrawDeck(true)
-                                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                                    setDiscardPile([])
-                                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                                        setGameOver(true)
-                                        break
-                                    }
-                                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                                    newCards.push(newDrawDeck.pop() as PlayableCard)
-
-                                } else {
-                                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                                }
-                            }
-                        }
-
-                        data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards];
-                    }
-                    setDrawDeck(newDrawDeck)
-                    setPlayersData(data)
-                }
-            } else if (playersData[indexOfPlayer]?.character.name === 'Ieyasu' && currentPlayer?.character.name === 'Ieyasu' && discardPile.length > 0) {
-                setIeyasuModule(true)
-            }
-            else {
-                if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' && playersData[indexOfPlayer]?.role.role === 'Shogun') {
-                    drawCards(4)
-                } else if (playersData[indexOfPlayer]?.character.name === 'Hideyoshi' || playersData[indexOfPlayer]?.role.role === 'Shogun') {
-                    drawCards(3)
-                } else {
-                    drawCards(2)
-                }
-            }
-
-        }
-
+        handleNewTurn(turn, socket.id, newTurn, playersData, indexOfPlayer, setPlayersData, drawDeck, setDiscardPile, discardPile, setDrawDeck, setWeaponCardPlayed, setActionCardPlayed, setPropertyCardPlayed, setPlayerHit, setParryPlayed, setBushidoInfo, setBushidoWeapon, setParryModule, setIeyasuModule, setEmptyDrawDeck, setGameOver, currentPlayer, gameOver, ieyasuModule)
     }, [turn]);
 
     const drawCardFromDiscard = () => {
-        let newDrawDeck = [...drawDeck]
-        const data = [...playersData]
-        const newCards: PlayableCard[] = [];
-
-        if (playersData[indexOfPlayer].role.role === 'Shogun') {
-            for (let i = 0; i < 2; i++) {
-                if (newDrawDeck.length === 0) {
-                    setEmptyDrawDeck(true)
-                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                    setDiscardPile([])
-                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                        setGameOver(true)
-                        break
-                    }
-                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                    newCards.push(newDrawDeck.pop() as PlayableCard)
-
-                } else {
-                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                }
-            }
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, ...newCards]
-        } else {
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, discardPile.pop() as PlayableCard, newDrawDeck.pop() as PlayableCard]
-        }
-
-        setDrawDeck(newDrawDeck)
-        setPlayersData(data)
-
-
-        if (ieyasuModule === true) {
-            setIeyasuModule(false)
-        }
+        drawCardFromDiscard3Player(drawDeck, playersData, indexOfPlayer, setEmptyDrawDeck, setDiscardPile, setGameOver, discardPile, setDrawDeck, setPlayersData, ieyasuModule, setIeyasuModule)
     }
 
     const setTurnBack = (data: PlayersData[] = []) => {
         socket.emit('setTurnBack', currentPlayer, data)
     }
 
-    const handleHanzoWeaponParry = (card: PlayableCard, index: number) => {
-        setParryModule(false)
+    // const handleHanzoWeaponParry = (card: PlayableCard, index: number) => {
+    //     setParryModule(false)
 
-        setDiscardPile([...discardPile, card])
-        const data = [...playersData]
-        data[indexOfPlayer].hand.splice(index, 1)
+    //     setDiscardPile([...discardPile, card])
+    //     const data = [...playersData]
+    //     data[indexOfPlayer].hand.splice(index, 1)
 
-        if (cardPlayed?.name === 'Battlecry') {
-            const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon as a Parry`
-            const newBattlecryInfo = [...battlecryInfo, newInfo]
-            const battlecryArray = [...battlecryJujitsuArray]
-            battlecryArray.pop()
+    //     if (cardPlayed?.name === 'Battlecry') {
+    //         const newInfo = `${playersData[indexOfPlayer].name} discarded a Weapon as a Parry`
+    //         const newBattlecryInfo = [...battlecryInfo, newInfo]
+    //         const battlecryArray = [...battlecryJujitsuArray]
+    //         battlecryArray.pop()
 
-            setBattlecryJujitsuArray(battlecryArray)
-            setBattlecryInfo(newBattlecryInfo)
+    //         setBattlecryJujitsuArray(battlecryArray)
+    //         setBattlecryInfo(newBattlecryInfo)
 
-            if (battlecryArray.length > 0) {
-                setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-                socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-            } else {
-                setTimeout(() => {
-                    setBattlecryJujitsuModule(false)
-                }, 2000);
-                socket.emit('closeBattlecryJujitsuModule', room)
-                setTurnBack()
-            }
+    //         if (battlecryArray.length > 0) {
+    //             setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
+    //             socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
+    //         } else {
+    //             setTimeout(() => {
+    //                 setBattlecryJujitsuModule(false)
+    //             }, 2000);
+    //             socket.emit('closeBattlecryJujitsuModule', room)
+    //             setTurnBack()
+    //         }
 
-            setTimeout(() => {
-                setTurn('')
-            }, 250);
+    //         setTimeout(() => {
+    //             setTurn('')
+    //         }, 250);
 
-        } else {
-            setWeaponCardPlayed(false)
-            setParryPlayed(true)
-            setTimeout(() => {
-                setTurn('')
-                setTurnBack()
-            }, 250);
-        }
+    //     } else {
+    //         setWeaponCardPlayed(false)
+    //         setParryPlayed(true)
+    //         setTimeout(() => {
+    //             setTurn('')
+    //             setTurnBack()
+    //         }, 250);
+    //     }
 
-        setPlayersData(data)
+    //     setPlayersData(data)
 
+    // }
+
+    const handleParryClick = () => {
+        handleParry(setDiscardPile, discardPile, playersData, indexOfPlayer, indexOfParry, setPlayersData, setParryModule, setWeaponCardPlayed, setParryPlayed, setTurn, setTurnBack)
     }
 
-    const handleParry = () => {
-        setDiscardPile([...discardPile, {
-            type: 'action',
-            name: 'Parry',
-            img: parry
-        } as PlayableCard])
-        const data = [...playersData]
-        data[indexOfPlayer].hand.splice(indexOfParry, 1)
-
-        if (data[indexOfPlayer].hand.length === 0) {
-            data[indexOfPlayer].harmless = true
-        }
-
-        setPlayersData(data)
-        setParryModule(false)
-        setWeaponCardPlayed(false)
-        setParryPlayed(true)
-        setTimeout(() => {
-            setTurn('')
-            setTurnBack()
-        }, 250);
-
+    const handleGetAttackedClick = () => {
+        handleGetAttacked(playersData, drawDeck, currentPlayer, setDrawDeck, indexOfPlayer, wounds, setDeadlyStrikeNinja, setGameOver, selectedPlayer, setDeath, setEmptyDrawDeck, discardPile, setDiscardPile, setPlayersData, setPlayerHit, setParryModule, setWeaponCardPlayed, setTurn, setTurnBack)
     }
 
-    const handleGetAttacked = () => {
-        const data = [...playersData]
-        let newDrawDeck = [...drawDeck]
-
-
-        if (currentPlayer?.character.name === "Tomoe") {
-            const indexOfTomoe = playersData.findIndex(player => player.character.name === 'Tomoe')
-            data[indexOfTomoe].hand = [...data[indexOfTomoe].hand, newDrawDeck.pop() as PlayableCard]
-            setDrawDeck(newDrawDeck)
-        }
-
-        if (data[indexOfPlayer].health - wounds === 0 || data[indexOfPlayer].health - wounds < 0) {
-            data[indexOfPlayer].health = 0
-            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            if (data[indexOfPlayer].honourPoints <= 0) {
-                if (currentPlayer?.role.team === 'Ninja' && data[indexOfPlayer].role.team === 'Ninja') {
-                    setDeadlyStrikeNinja(true)
-                }
-                setGameOver(true)
-                console.log('3')
-            }
-            data[indexOfPlayer].harmless = true
-
-            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
-
-            setDeath(true)
-        } else {
-            data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
-        }
-
-        if (playersData[indexOfPlayer].character.name === "Ushiwaka") {
-            const newCards: PlayableCard[] = []
-
-            for (let i = 0; i < wounds; i++) {
-                if (newDrawDeck.length === 0) {
-                    setEmptyDrawDeck(true)
-                    data.map(player => player.honourPoints = player.honourPoints - 1)
-                    if (data.filter(player => player.honourPoints <= 0).length > 0) {
-                        setGameOver(true)
-                        console.log('4')
-                        break
-                    }
-                    newDrawDeck = shuffle(discardPile) as PlayableCard[]
-                    newCards.push(newDrawDeck.pop() as PlayableCard)
-                    setDiscardPile([])
-
-                } else {
-                    newCards.push(newDrawDeck.pop() as PlayableCard);
-                }
-            }
-            data[indexOfPlayer].hand = [...data[indexOfPlayer].hand, ...newCards]
-            setDrawDeck(newDrawDeck)
-        }
-
-        setPlayersData(data)
-        setPlayerHit(true)
-        setParryModule(false)
-        setWeaponCardPlayed(false)
-        setTimeout(() => {
-            setTurn('')
-            setTurnBack()
-        }, 100);
+    const handleBattlecryDiscardClick = () => {
+        handleBattlecryDiscard(discardPile, playersData, indexOfPlayer, indexOfParry, battlecryInfo, battlecryJujitsuArray, setBattlecryJujitsuArray, setDiscardPile, setPlayersData, setBattlecryInfo, setParryModule, setBattlecryJujitsuTurn, socket, setBattlecryJujitsuModule, setTurnBack, setTurn, room)
     }
 
-    const handleBattlecryDiscard = () => {
-        const newDiscardPile: PlayableCard[] = [...discardPile, {
-            type: 'action',
-            name: 'Parry',
-            img: parry
-        } as PlayableCard]
-        const data = [...playersData]
-        data[indexOfPlayer].hand.splice(indexOfParry, 1)
-
-        if (data[indexOfPlayer].hand.length === 0) {
-            data[indexOfPlayer].harmless = true
-        }
-
-        const newInfo = `${playersData[indexOfPlayer].name} discarded a Parry`
-        const newBattlecryInfo = [...battlecryInfo, newInfo]
-        const battlecryArray = [...battlecryJujitsuArray]
-        battlecryArray.pop()
-
-        setBattlecryJujitsuArray(battlecryArray)
-        setDiscardPile(newDiscardPile)
-        setPlayersData(data)
-        setBattlecryInfo(newBattlecryInfo)
-
-        setParryModule(false)
-
-        if (battlecryArray.length > 0) {
-            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-        } else {
-            setTimeout(() => {
-                setBattlecryJujitsuModule(false)
-            }, 2000);
-            socket.emit('closeBattlecryJujitsuModule', room)
-            setTurnBack()
-        }
-
-        setTimeout(() => {
-            setTurn('')
-        }, 250);
-
-
-
-    }
-
-    const handleBattlecryWound = () => {
-        const data = [...playersData]
-
-        if (data[indexOfPlayer].health - wounds === 0) {
-            data[indexOfPlayer].health = 0
-            data[indexOfPlayer].honourPoints = data[indexOfPlayer].honourPoints - 1
-            if (data[indexOfPlayer].honourPoints <= 0) {
-                if (currentPlayer?.role.team === 'Ninja' && playersData[indexOfPlayer].role.team === 'Ninja') {
-                    setDeadlyStrikeNinja(true)
-                }
-                setGameOver(true)
-            }
-
-            data[indexOfPlayer].harmless = true
-
-            data[indexOfCurrentPlayer()].honourPoints = data[indexOfCurrentPlayer()].honourPoints + 1
-
-            setDeath(true)
-            setVictim(playersData[indexOfPlayer])
-        } else {
-            data[indexOfPlayer].health = data[indexOfPlayer].health - wounds
-        }
-
-        const newInfo = `${playersData[indexOfPlayer].name} took 1 wound`
-        const newBattlecryInfo = [...battlecryInfo, newInfo]
-        const battlecryArray = [...battlecryJujitsuArray]
-        battlecryArray.pop()
-
-        setBattlecryJujitsuArray(battlecryArray)
-        setBattlecryInfo(newBattlecryInfo)
-        setParryModule(false)
-        setPlayersData(data)
-
-        if (battlecryArray.length > 0) {
-            setBattlecryJujitsuTurn(battlecryArray[battlecryArray.length - 1])
-            socket.emit('battlecryPlayed', battlecryArray[battlecryArray.length - 1].socketID, battlecryArray)
-        } else {
-            setTimeout(() => {
-                setBattlecryJujitsuModule(false)
-            }, 2000);
-            socket.emit('closeBattlecryJujitsuModule', room)
-            setTurnBack()
-        }
-
-        setTimeout(() => {
-            setTurn('')
-        }, 250);
-
-
+    const handleBattlecryWoundClick = () => {
+        handleBattlecryWound3Player(playersData, indexOfPlayer, currentPlayer, setDeadlyStrikeNinja, setGameOver, selectedPlayer, setDeath, setVictim, battlecryInfo, battlecryJujitsuArray, setBattlecryJujitsuArray, setBattlecryInfo, setParryModule, setPlayersData, setBattlecryJujitsuTurn, socket, setBattlecryJujitsuModule, setTurnBack, setTurn, room, wounds)
     }
 
     const handleJujitsuDiscard = (card: PlayableCard, index: number) => {
@@ -2625,11 +2237,11 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                 currentPlayer={currentPlayer}
                 wounds={wounds}
                 indexOfParry={indexOfParry}
-                handleParry={handleParry}
-                handleGetAttacked={handleGetAttacked}
+                handleParryClick={handleParryClick}
+                handleGetAttackedClick={handleGetAttackedClick}
                 cardPlayed={cardPlayed}
-                handleBattlecryDiscard={handleBattlecryDiscard}
-                handleBattlecryWound={handleBattlecryWound}
+                handleBattlecryDiscardClick={handleBattlecryDiscardClick}
+                handleBattlecryWoundClick={handleBattlecryWoundClick}
                 handleJujitsuWound={handleJujitsuWound}
                 bushidoWeapon={bushidoWeapon}
                 handleLoseHonourPoint={handleLoseHonourPoint}
@@ -2688,7 +2300,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={() => { handleSelectedPlayerClick(playersData[1].socketID) }}>
                                     {currentPlayer?.socketID === playersData[1].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -2753,7 +2365,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={() => { handleSelectedPlayerClick(playersData[2].socketID) }}>
                                     {currentPlayer?.socketID === playersData[2].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -2883,7 +2495,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                         <div className='game__user-hand'>
                             {playersData[0].hand.length > 0 && playersData[0].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
-                                    handleSelectedCard(card, index)
+                                    handleSelectedCardClick(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
                             })}
@@ -2910,7 +2522,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[2].socketID} onClick={() => { handleSelectedPlayerClick(playersData[2].socketID) }}>
                                     {currentPlayer?.socketID === playersData[2].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -2975,7 +2587,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={() => { handleSelectedPlayerClick(playersData[0].socketID) }}>
                                     {currentPlayer?.socketID === playersData[0].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -3106,7 +2718,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                         <div className='game__user-hand'>
                             {playersData[1].hand.length > 0 && playersData[1].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
-                                    handleSelectedCard(card, index)
+                                    handleSelectedCardClick(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
                             })}
@@ -3133,7 +2745,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[0].socketID} onClick={() => { handleSelectedPlayerClick(playersData[0].socketID) }}>
                                     {currentPlayer?.socketID === playersData[0].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -3198,7 +2810,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                                 </>
                             }
                             <div className="game__player-flex-container">
-                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={(event: React.MouseEvent<HTMLDivElement>) => { handleSelectedPlayer(event.currentTarget) }}>
+                                <div className='game__player-character-container' id={playersData[1].socketID} onClick={() => { handleSelectedPlayerClick(playersData[1].socketID) }}>
                                     {currentPlayer?.socketID === playersData[1].socketID &&
                                         <div className='game__player-turn-indicator'></div>
                                     }
@@ -3327,7 +2939,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
                         <div className='game__user-hand'>
                             {playersData[2].hand.length > 0 && playersData[2].hand.map((card: PlayableCard, index) => {
                                 return <img src={card.img} key={index} onClick={() => {
-                                    handleSelectedCard(card, index)
+                                    handleSelectedCardClick(card, index)
                                     handleActiveCard(index)
                                 }} className={`game__user-card ${index === activeCard ? 'game__user-card--active' : ''} card`} />
                             })}
@@ -3338,7 +2950,7 @@ const ThreePlayerGamePage = ({ socket }: GamePageProp) => {
 
             {playersData[indexOfPlayer]?.character.name === 'Nobunaga' && !parryModule &&
                 <>
-                    {turn === socket.id && playersData[indexOfPlayer].health > 1 && !gameOver ? <button className='button button--ability' onClick={() => handleNobunaga()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
+                    {turn === socket.id && playersData[indexOfPlayer].health > 1 && !gameOver ? <button className='button button--ability' onClick={() => handleNobunagaClick()}>Use Ability</button> : <button className='button button--disabled button--ability' disabled>Use Ability</button>}
                 </>
             }
             {turn === socket.id && !parryModule && !ieyasuModule ? <button className='button button--end' onClick={() => endTurn()}>End Turn</button> : <button className='button button--disabled  button--end' disabled>End Turn</button>}

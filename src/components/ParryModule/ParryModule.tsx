@@ -1,5 +1,6 @@
 import React from 'react';
 import './ParryModule.scss'
+import { PlayableCard } from '../../utils/types/PlayableCard';
 
 type ParryModuleProps = {
     indexOfPlayer: number
@@ -22,13 +23,6 @@ type ParryModuleProps = {
     handleRemoveFastDraw: () => void
     handleRemoveBushido: () => void
     discardCards: boolean
-}
-
-interface PlayableCard {
-    type: string;
-    name: string;
-    range?: number;
-    damage?: number;
 }
 
 interface PlayersData {
